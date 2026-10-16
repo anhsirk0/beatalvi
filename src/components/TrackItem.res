@@ -49,7 +49,7 @@ let make = (~track: Shape.Track.t, ~idx, ~onClick) => {
     <Cover track />
     <div className="flex flex-col grow h-full">
       <p className="r-text-lg font-medium truncate"> {track.name->React.string} </p>
-      <p className={`r-text truncate ${isPlaying ? "text-primary-content/80" : "text-80"}`}>
+      <p className={`r-text truncate ${isPlaying ? "text-primary-content/90" : "text-80"}`}>
         {track.artist->React.string}
       </p>
     </div>

@@ -21,7 +21,7 @@ module TrackItem = {
 }
 
 @react.component
-let make = (~album: Shape.Album.item) => {
+let make = (~album: Shape.Album.item, ~onBack, ~onPlayFromHere) => {
   let id = `album-${album.id->Float.toString}`
   let _ = Hook.useFetch({
     fn: () => Invoke.getAlbumCoverArt({album: album.name}),
@@ -40,19 +40,33 @@ let make = (~album: Shape.Album.item) => {
   | _ => (0, 0)
   }
 
-  <div className="flex flex-col p-4 2xl:p-8 size-full gap-8">
-    <div className="flex gap-8">
+  let onPlay = _ => onPlayFromHere(album.id)
+
+  <div className="flex flex-col p-8 size-full gap-8 overflow-y-auto min-h-0 relative">
+    <button
+      id="close-btn"
+      onClick={_ => onBack()}
+      className="btn bg-base-100 btn-ghost r-btn nb-box active:nb-box absolute top-4 right-4 2xl:top-8 2xl:right-8"
+    >
+      <Icon.arrowLeft className="r-icon" weight=Bold />
+      {"Go back"->React.string}
+    </button>
+    <div className="flex gap-4 2xl:gap-8">
       <div
-        className="w-64 aspect-square bg-base-content/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
+        className="w-44 2xl:w-52 aspect-square bg-base-content/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
       >
         <img id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
-          <p className="text-9xl text-center text-base-content font-serif"> {"?"->React.string} </p>
+          <p className="text-6xl 2xl:text-8xl text-center text-base-content font-serif">
+            {"?"->React.string}
+          </p>
         </div>
       </div>
-      <div className="flex flex-col gap-4">
-        <p className="text-7xl pl-1 pt-2 font-bold truncate"> {album.name->React.string} </p>
-        <p className="text-4xl pl-1 text-80 truncate">
+      <div className="flex flex-col">
+        <p className="text-3xl 2xl:text-5xl pl-1 pt-2 font-semibold truncate">
+          {album.name->React.string}
+        </p>
+        <p className="text-xl 2xl:text-3xl pl-1 text-80 truncate">
           <span className="font-medium"> {album.artist->React.string} </span>
           {switch tracks {
           | Loading | Failed => React.null
@@ -64,14 +78,14 @@ let make = (~album: Shape.Album.item) => {
               </span>
               <span className="px-4"> {Constant.sep->React.string} </span>
               <span className="text-60">
-                {trackDuration->Util.durationToString->React.string}
+                {trackDuration->Util.durationToTimeString->React.string}
               </span>
             </React.Fragment>
           }}
         </p>
-        <button className="btn btn-xl btn-primary w-40 mt-auto">
+        <button onClick=onPlay className="btn btn-lg 2xl:btn-xl btn-primary w-40 mt-auto">
           <Icon.play className="r-icon pr-2" weight=Fill />
-          {" Play"->React.string}
+          <span className="font-medium"> {" Play"->React.string} </span>
         </button>
       </div>
     </div>
@@ -79,9 +93,7 @@ let make = (~album: Shape.Album.item) => {
     | Loading | Failed => React.null
     | Success(tracks) =>
       <React.Fragment>
-        <p className="r-text text-80 border-b-2 border-accent py-2 mt-4">
-          {"Tracks"->React.string}
-        </p>
+        <p className="r-text text-80 border-b-2 border-accent"> {"Tracks"->React.string} </p>
         <div className="grid grid-cols-2 gap-4 w-full px-1">
           {tracks
           ->Array.mapWithIndex((track, idx) => <TrackItem idx track key=track.uri />)

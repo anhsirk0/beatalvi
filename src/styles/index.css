@@ -160,7 +160,7 @@ html {
 }
 
 #beatalvi {
-  @apply flex items-center justify-center h-screen w-screen transition-all duration-300 ease-out bg-base-300 flex-col relative;
+  @apply flex items-center justify-center h-screen w-screen transition-all duration-300 ease-out bg-base-300 flex-col relative min-h-0;
 }
 
 /* .modal-bottom { */

@@ -49,7 +49,7 @@ let make = () => {
 
   <React.Fragment>
     <Toast.Toaster />
-    <div className="size-full flex flex-row">
+    <div className="size-full flex flex-row min-h-0">
       <Sidebar active=route />
       {switch state {
       | Failed => <p className="text-7xl font-bold"> {"Todo: Error"->React.string} </p>

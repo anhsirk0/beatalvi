@@ -25,6 +25,19 @@ let durationToString = seconds => {
   hrs > 0 ? `${hrs->padInt}:${mins}:${secs}` : `${mins}:${secs}`
 }
 
+let durationToTimeString = seconds => {
+  let hrs = seconds / 3600
+  let mins = seconds % 3600 / 60
+  let secs = (seconds % 60)->Int.toString
+  if hrs > 0 {
+    `${hrs->Int.toString} h  ${mins->Int.toString} m`
+  } else if mins > 0 {
+    `${mins->Int.toString} m  ${secs} s`
+  } else {
+    `${secs} s`
+  }
+}
+
 module Str = {
   let isEmpty = str => str->String.length === 0
   let or = (str, str2) => str->isEmpty ? str2 : str

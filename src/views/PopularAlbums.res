@@ -1,6 +1,6 @@
 module AlbumItem = {
   @react.component
-  let make = (~album: Shape.Album.item, ~onClick, ~onPlayFromHere) => {
+  let make = (~album: Shape.Album.item, ~onClick, ~onPlayFromHere, ~width="w-full") => {
     let isActive = Store.Player.useShallow(s =>
       s.data.track->Option.map(t => t.album) == Some(album.name)
     )
@@ -16,15 +16,15 @@ module AlbumItem = {
 
     let onPlayClick = evt => {
       evt->ReactEvent.Mouse.stopPropagation
-      onPlayFromHere()
+      onPlayFromHere(album.id)
     }
 
-    let border = isActive ? "nb-primary" : ""
+    let border = isActive ? "nb-active" : ""
 
     <div onClick={_ => onClick()} className="flex flex-col animate-fade cursor-pointer">
       <div
         role="button"
-        className={`w-full aspect-square bg-base-content/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain ${border}`}
+        className={`${width} aspect-square bg-base-content/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain ${border}`}
       >
         <img id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
@@ -60,7 +60,7 @@ let make = () => {
   let albums = Hook.useFetch({
     fn: Invoke.getTop100Albums,
     // onSuccess: all =>
-    //   switch all[4] {
+    //   switch all[5] {
     //   | Some(album) => setView(_ => Album(album))
     //   | None => ignore()
     //   },
@@ -77,7 +77,7 @@ let make = () => {
   }
 
   switch view {
-  | Album(album) => <AlbumView album />
+  | Album(album) => <AlbumView album onBack={() => setView(_ => AllAlbums)} onPlayFromHere />
   | AllAlbums =>
     switch albums {
     | Loading => React.null
@@ -89,12 +89,7 @@ let make = () => {
         {albums
         ->Array.mapWithIndex((album, i) =>
           <Delay key={album.id->Float.toString} timeout={i * 20}>
-            <AlbumItem
-              album
-              key={album.id->Float.toString}
-              onClick={() => setView(_ => Album(album))}
-              onPlayFromHere={() => onPlayFromHere(album.id)}
-            />
+            <AlbumItem album onClick={() => setView(_ => Album(album))} onPlayFromHere />
           </Delay>
         )
         ->React.array}

@@ -146,7 +146,6 @@ fn play_many_from_index(uris: Vec<String>, index: usize, state: State<AppState>)
 #[tauri::command]
 fn play_tracks_by_albums_from_album_id(album_ids: Vec<i64>, album_id: i64, state: State<AppState>) {
     let tracks = database::get_track_uris_by_albums(album_ids).unwrap();
-    println!("{:?}", tracks);
     let uris = tracks.iter().map(|(uri, _)| uri.clone()).collect();
 
     if let Some(index) = tracks.iter().position(|(_, id)| id == &album_id) {

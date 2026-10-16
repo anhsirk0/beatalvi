@@ -374,7 +374,7 @@ FROM albums a
 JOIN tracks t ON a.id = t.album_id
 JOIN album_order ao ON a.id = ao.id
 WHERE a.id IN ({})
-ORDER BY ao.sort_order, t.id;
+ORDER BY ao.sort_order, t.name;
         "#,
         cte_rows, joined_ids
     );
@@ -474,7 +474,12 @@ pub fn increment_track_and_album_popularity_by_uri(uri: &str) -> Result<()> {
         params![uri],
     )?;
     conn.execute(
-        "UPDATE albums SET popularity = popularity + 1
+        "UPDATE albums 
+SET popularity = popularity + (
+  SELECT CAST(1.0 / COUNT(*) * 100 AS INTEGER)
+  FROM tracks
+  WHERE album_id = albums.id
+)
 WHERE id = (SELECT album_id FROM tracks WHERE uri = ?);",
         params![uri],
     )?;
