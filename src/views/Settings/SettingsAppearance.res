@@ -1,0 +1,82 @@
+module Card = {
+  @react.component
+  let make = (~theme: Theme.t, ~current, ~onChange) => {
+    let isActive = current == theme
+    let className = `flex flex-col flex-1 nb-box bg-transparent overflow-hidden h-40 ${isActive
+        ? "nb-active"
+        : ""}`
+    let component =
+      <li className onClick={_ => onChange(theme)} tabIndex=0>
+        <div className="flex flex-row grow">
+          <div className="w-2/5 h-full bg-neutral"></div>
+          <div className="w-3/5 h-full bg-base-200 p-4">
+            <div className="nb-box bg-primary h-4 w-16"></div>
+          </div>
+        </div>
+        <div className="flex p-4 justify-between border-t-2 border-accent bg-base-100">
+          <p className="r-title capitalize font-medium"> {theme->Theme.toString->React.string} </p>
+          {isActive ? <Icon.check className="r-icon" weight=Bold /> : React.null}
+        </div>
+      </li>
+
+    React.cloneElement(component, {"data-theme": theme->Theme.toString})
+  }
+}
+
+module ModeBtns = {
+  @react.component
+  let make = (~onChange, ~isDark, ~current) => {
+    let onDarkClick = _ => {
+      if !isDark {
+        onChange(current->Theme.toggleTheme)
+      }
+    }
+    let onLightClick = _ => {
+      if isDark {
+        onChange(current->Theme.toggleTheme)
+      }
+    }
+
+    <div className="flex r-gap">
+      {isDark
+        ? <button onClick=onLightClick className="btn r-btn nb-outline active:nb-outline btn-ghost">
+            {"Light"->React.string}
+          </button>
+        : <button onClick=onLightClick className="btn r-btn btn-primary">
+            {"Light"->React.string}
+          </button>}
+      {isDark
+        ? <button onClick=onDarkClick className="btn r-btn btn-primary">
+            {"Dark"->React.string}
+          </button>
+        : <button onClick=onDarkClick className="btn r-btn nb-outline active:nb-outline btn-ghost">
+            {"Dark"->React.string}
+          </button>}
+    </div>
+  }
+}
+
+@react.component
+let make = () => {
+  let (current, isDark, updateConfig) = Store.Config.useShallow(s => (
+    s.config.theme,
+    s.config.theme->Theme.isDark,
+    s.updateConfig,
+  ))
+
+  let onChange = theme => {
+    updateConfig(SetTheme(theme))
+  }
+
+  <React.Fragment>
+    // <p className="r-text-xl font-semibold"> {"Appearance"->React.string} </p>
+    <p className="mt-4 text-80 uppercase font-medium"> {"Mode"->React.string} </p>
+    <ModeBtns onChange isDark current />
+    <p className="mt-4 text-80 uppercase font-medium"> {"Theme"->React.string} </p>
+    <div className="grid grid-cols-4 gap-8">
+      {(isDark ? Theme.darkThemes : Theme.lightThemes)
+      ->Array.map(theme => <Card theme current onChange key={theme->Theme.toString} />)
+      ->React.array}
+    </div>
+  </React.Fragment>
+}

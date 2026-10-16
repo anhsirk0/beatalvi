@@ -1,0 +1,7 @@
+{
+  "imports": {
+    "rescript": "npm:rescript@^12.3.1",
+    "@rescript/runtime": "npm:@rescript/runtime@^12.3.1"
+  },
+  "nodeModulesDir": "auto"
+}
