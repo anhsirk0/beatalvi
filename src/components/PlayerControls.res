@@ -77,7 +77,6 @@ let make = () => {
 
   Event.useListen(Event.listenToggle, playing => update(SetState(playing ? Playing : Paused)))
 
-
   <div
     className={`${Constant.headerHeight} flex border-b-2 border-accent center w-full center gap-4`}
   >

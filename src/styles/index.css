@@ -154,9 +154,20 @@
   @apply max-w-7xl 2xl:max-w-[90vw];
 }
 
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 html {
+  scroll-behavior: smooth;
   scrollbar-gutter: auto !important;
   overflow-x: hidden;
+}
+
+body {
+  scroll-behavior: smooth;
 }
 
 #beatalvi {

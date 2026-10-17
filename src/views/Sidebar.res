@@ -1,6 +1,6 @@
 module Item = {
   @react.component
-  let make = (~route: Route.t, ~active: Route.t) => {
+  let make = (~route: Route.t, ~active: Route.t, ~idx) => {
     let isSelected = route == active
     let (title, icon) = (route->Route.toTitle, route->Route.toIcon)
 
@@ -9,7 +9,7 @@ module Item = {
     let iconClassname = isSelected
       ? "r-icon text-primary-content"
       : "r-icon text-neutral-content/80"
-    <Route.Link to=route className>
+    <Route.Link to=route className id={`side-item-${idx->Int.toString}`}>
       {React.createElement(icon, {className: iconClassname, weight: Bold})}
       <span className="truncate grow r-title font-medium"> {title->React.string} </span>
     </Route.Link>
@@ -18,23 +18,23 @@ module Item = {
 
 @react.component
 let make = (~active) => {
-  let track = Store.Player.useShallow(s => s.data.track)
+  let (track, queue) = Store.Player.useShallow(s => (s.data.track, s.data.queue))
 
   <div
     className={`${Constant.sidebarWidth} flex flex-col gap-1 2xl:gap-2 h-full bg-neutral text-neutral-content`}
   >
     {switch track {
-    | Some(track) => <PlayerControls key=track.uri />
+    | Some(track) => <PlayerControls key={track.uri ++ queue->Array.length->Int.toString} />
     | None => <Logo />
     }}
     <div className="flex flex-col r-gap p-4 overflow-y-auto">
       {Route.all
-      ->Array.map(route => <Item route key={route->Route.toTitle} active />)
+      ->Array.mapWithIndex((route, idx) => <Item route key={route->Route.toTitle} active idx />)
       ->React.array}
     </div>
-    // {switch track {
-    // | Some(track) => <Logo classes="mt-auto" />
-    // | None => React.null
-    // }}
+    {switch track {
+    | Some(_) => <Logo classes="mt-auto" />
+    | None => React.null
+    }}
   </div>
 }

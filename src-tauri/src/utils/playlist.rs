@@ -2,6 +2,7 @@ pub struct Playlist {
     pub tracks: Vec<String>,
     pub current_index: Option<usize>,
 }
+
 impl Playlist {
     pub fn new() -> Self {
         Playlist {

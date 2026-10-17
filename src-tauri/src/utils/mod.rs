@@ -1,5 +1,6 @@
 pub mod config;
 pub mod database;
+pub mod event;
 pub mod importer;
 pub mod player;
 pub mod playlist;

@@ -1,6 +1,6 @@
 module AlbumItem = {
   @react.component
-  let make = (~album: Shape.Album.item, ~onClick, ~onPlayFromHere, ~width="w-full") => {
+  let make = (~album: Shape.Album.item, ~onClick, ~onPlay, ~width="w-full") => {
     let isActive = Store.Player.useShallow(s =>
       s.data.track->Option.map(t => t.album) == Some(album.name)
     )
@@ -16,7 +16,7 @@ module AlbumItem = {
 
     let onPlayClick = evt => {
       evt->ReactEvent.Mouse.stopPropagation
-      onPlayFromHere(album.id)
+      onPlay(album.id, ~index=0)
     }
 
     let border = isActive ? "nb-active" : ""
@@ -65,19 +65,21 @@ let make = () => {
     //   | None => ignore()
     //   },
   })
-  let onPlayFromHere = id => {
+
+  let onPlay = (id, ~index) => {
     switch albums {
     | Success(albums) =>
       Invoke.playTracksByAlbumsFromAlbumId({
         albumIds: albums->Array.map(a => a.id),
         albumId: id,
+        index,
       })->ignore
     | _ => ignore()
     }
   }
 
   switch view {
-  | Album(album) => <AlbumView album onBack={() => setView(_ => AllAlbums)} onPlayFromHere />
+  | Album(album) => <AlbumView album onBack={() => setView(_ => AllAlbums)} onPlay />
   | AllAlbums =>
     switch albums {
     | Loading => React.null
@@ -89,7 +91,7 @@ let make = () => {
         {albums
         ->Array.mapWithIndex((album, i) =>
           <Delay key={album.id->Float.toString} timeout={i * 20}>
-            <AlbumItem album onClick={() => setView(_ => Album(album))} onPlayFromHere />
+            <AlbumItem album onClick={() => setView(_ => Album(album))} onPlay />
           </Delay>
         )
         ->React.array}

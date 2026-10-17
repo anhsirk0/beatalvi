@@ -1,17 +1,24 @@
 module TrackItem = {
   @react.component
-  let make = (~track: Shape.Track.t, ~idx) => {
+  let make = (~track: Shape.Track.t, ~idx, ~onPlay) => {
     let currentTrack = Store.Player.useShallow(s => s.data.track)
     let isPlaying = Some(track.id) == currentTrack->Option.map(t => t.id)
     let bg = isPlaying ? "bg-primary text-primary-content nb-active" : "bg-base-100"
 
+    let onMouseDown = evt => {
+      if evt->ReactEvent.Mouse.button == 1 {
+        evt->ReactEvent.Mouse.preventDefault
+        Invoke.queueToggleTrack({uri: track.uri})->ignore
+      }
+    }
+
     <div
       role="button"
+      onClick={_ => onPlay()}
+      onMouseDown
       className={`flex flex-row items-center cursor-pointer p-4 py-2 nb nb-box active:nb-plain gap-4 border-2 ${bg}`}
     >
-      <p className={`r-text-lg font-medium ${isPlaying ? "text-primary-content/80" : "text-80"}`}>
-        {(idx + 1)->Util.padInt->React.string}
-      </p>
+      <TrackIndex uri=track.uri idx />
       <div className="flex flex-col grow h-full">
         <p className="r-text-lg font-medium truncate"> {track.name->React.string} </p>
       </div>
@@ -21,7 +28,7 @@ module TrackItem = {
 }
 
 @react.component
-let make = (~album: Shape.Album.item, ~onBack, ~onPlayFromHere) => {
+let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
   let id = `album-${album.id->Float.toString}`
   let _ = Hook.useFetch({
     fn: () => Invoke.getAlbumCoverArt({album: album.name}),
@@ -40,7 +47,8 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlayFromHere) => {
   | _ => (0, 0)
   }
 
-  let onPlay = _ => onPlayFromHere(album.id)
+  let onTrackPlay = index => onPlay(album.id, ~index)
+  let onPlayClick = _ => onPlay(album.id, ~index=0)
 
   <div className="flex flex-col p-8 size-full gap-8 overflow-y-auto min-h-0 relative">
     <button
@@ -83,7 +91,7 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlayFromHere) => {
             </React.Fragment>
           }}
         </p>
-        <button onClick=onPlay className="btn btn-lg 2xl:btn-xl btn-primary w-40 mt-auto">
+        <button onClick=onPlayClick className="btn btn-lg 2xl:btn-xl btn-primary w-40 mt-auto">
           <Icon.play className="r-icon pr-2" weight=Fill />
           <span className="font-medium"> {" Play"->React.string} </span>
         </button>
@@ -96,7 +104,9 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlayFromHere) => {
         <p className="r-text text-80 border-b-2 border-accent"> {"Tracks"->React.string} </p>
         <div className="grid grid-cols-2 gap-4 w-full px-1">
           {tracks
-          ->Array.mapWithIndex((track, idx) => <TrackItem idx track key=track.uri />)
+          ->Array.mapWithIndex((track, idx) =>
+            <TrackItem idx track key=track.uri onPlay={() => onTrackPlay(idx)} />
+          )
           ->React.array}
         </div>
       </React.Fragment>

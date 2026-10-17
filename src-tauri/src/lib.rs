@@ -5,6 +5,7 @@ use tauri::{AppHandle, Emitter, Manager, State};
 use tokio::task;
 use utils::config;
 use utils::database;
+use utils::event;
 use utils::importer;
 use utils::scanner;
 use utils::state::AppState;
@@ -71,13 +72,13 @@ fn play(track_uri: String, app_handle: AppHandle, state: State<AppState>) {
     }
     player.play(&track_uri).unwrap();
     let track = database::find_track_by_uri(&track_uri).unwrap();
-    app_handle.emit("play", track).unwrap();
+    app_handle.emit(event::PLAY, track).unwrap();
 }
 
 #[tauri::command]
 fn pause(app_handle: AppHandle, state: State<AppState>) {
     state.player.lock().unwrap().pause().unwrap();
-    app_handle.emit("pause", true).unwrap();
+    app_handle.emit(event::PAUSE, true).unwrap();
 }
 
 #[tauri::command]
@@ -90,22 +91,24 @@ fn toggle(app_handle: AppHandle, state: State<AppState>) {
     let player = state.player.lock().unwrap();
     player.toggle().unwrap();
     let is_playing = player.is_playing().unwrap();
-    app_handle.emit("toggle", is_playing).unwrap();
+    app_handle.emit(event::TOGGLE, is_playing).unwrap();
 }
 
 #[tauri::command]
 fn stop(app_handle: AppHandle, state: State<AppState>) {
     state.player.lock().unwrap().stop().unwrap();
-    app_handle.emit("stop", true).unwrap();
+    app_handle.emit(event::STOP, true).unwrap();
 }
 
 #[tauri::command]
-fn queue_one(uri: String, state: State<AppState>) {
-    state.queue_track(&uri)
+fn queue_toggle_track(uri: String, app_handle: AppHandle, state: State<AppState>) {
+    state.queue_toggle_track(&uri);
+    app_handle.emit(event::QUEUE_TOGGLE, uri).unwrap();
 }
 
 #[tauri::command]
 fn play_many(uris: Vec<String>, state: State<AppState>) {
+    state.playlist.lock().unwrap().clear();
     state.playlist.lock().unwrap().add_many(uris);
 
     if !state.player.lock().unwrap().is_stopped().unwrap() {
@@ -144,17 +147,22 @@ fn play_many_from_index(uris: Vec<String>, index: usize, state: State<AppState>)
 }
 
 #[tauri::command]
-fn play_tracks_by_albums_from_album_id(album_ids: Vec<i64>, album_id: i64, state: State<AppState>) {
+fn play_tracks_by_albums_from_album_id(
+    album_ids: Vec<i64>,
+    album_id: i64,
+    index: usize,
+    state: State<AppState>,
+) {
     let tracks = database::get_track_uris_by_albums(album_ids).unwrap();
     let uris = tracks.iter().map(|(uri, _)| uri.clone()).collect();
 
-    if let Some(index) = tracks.iter().position(|(_, id)| id == &album_id) {
+    if let Some(idx) = tracks.iter().position(|(_, id)| id == &album_id) {
         state.player.lock().unwrap().stop().unwrap();
         let _ = state
             .playlist
             .lock()
             .unwrap()
-            .add_many_and_jump_to_index(uris, index);
+            .add_many_and_jump_to_index(uris, idx + index);
         if !state.player.lock().unwrap().is_stopped().unwrap() {
             let _ = state.player.lock().unwrap().stop();
         }
@@ -166,21 +174,21 @@ fn play_tracks_by_albums_from_album_id(album_ids: Vec<i64>, album_id: i64, state
 #[tauri::command]
 fn seek(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
     if state.player.lock().unwrap().seek(seconds).is_ok() {
-        let _ = app_handle.emit("position", seconds);
+        let _ = app_handle.emit(event::POSITION, seconds);
     }
 }
 
 #[tauri::command]
 fn seek_10_seconds(app_handle: AppHandle, state: State<AppState>) {
     if let Ok(seconds) = state.player.lock().unwrap().seek_10_seconds() {
-        let _ = app_handle.emit("position", seconds);
+        let _ = app_handle.emit(event::POSITION, seconds);
     }
 }
 
 #[tauri::command]
 fn rewind_10_seconds(app_handle: AppHandle, state: State<AppState>) {
     if let Ok(seconds) = state.player.lock().unwrap().rewind_10_seconds() {
-        let _ = app_handle.emit("position", seconds);
+        let _ = app_handle.emit(event::POSITION, seconds);
     }
 }
 
@@ -245,7 +253,7 @@ pub fn run() {
             pause,
             toggle,
             stop,
-            queue_one,
+            queue_toggle_track,
             play_many,
             get_position,
             seek,

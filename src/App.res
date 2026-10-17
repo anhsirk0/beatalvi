@@ -33,8 +33,12 @@ let make = () => {
 
   Event.useListen(Event.listenPlay, setTrack)
   Event.useListen(Event.listenStart, setTrack)
-  Event.useListen(Event.listenNext, setTrack)
+  Event.useListen(Event.listenNext, track => {
+    setTrack(track)
+    update(QueueRemove(track.uri))
+  })
   Event.useListen(Event.listenPrevious, setTrack)
+  Event.useListen(Event.listenQueueToggle, uri => update(QueueToggle(uri)))
 
   Event.useListen(Event.listenFinished, _ => {
     update(SetState(Stopped))

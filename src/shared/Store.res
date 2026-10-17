@@ -38,20 +38,25 @@ module Player = {
     track: option<Shape.Track.t>,
     state: state,
     position: int,
+    queue: array<string>, // array of uris
   }
 
   type action =
     | SetState(state)
     | SetTrack(Shape.Track.t)
-    | SetPosition(int)
     | RemoveTrack
+    | SetPosition(int)
+    | QueueToggle(string)
+    | QueueRemove(string)
 
   let reducer = (data, action) =>
     switch action {
     | SetState(state) => {...data, state}
     | SetTrack(track) => {...data, track: Some(track)}
-    | SetPosition(position) => {...data, position}
     | RemoveTrack => {...data, track: None}
+    | SetPosition(position) => {...data, position}
+    | QueueToggle(uri) => {...data, queue: data.queue->Util.Arr.toggle(uri)}
+    | QueueRemove(uri) => {...data, queue: data.queue->Array.filter(u => u != uri)}
     }
 
   module StoreData = {
@@ -64,6 +69,7 @@ module Player = {
       track: None,
       state: Stopped,
       position: 0,
+      queue: [],
     },
     update: action => set(prev => {...prev, data: prev.data->reducer(action)}),
   })

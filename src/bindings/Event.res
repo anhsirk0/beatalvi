@@ -17,7 +17,9 @@ let listenStart = (fn: track => unit) => listen("start", d => fn(d.payload))
 let listenNext = (fn: track => unit) => listen("next", d => fn(d.payload))
 let listenPrevious = (fn: track => unit) => listen("previous", d => fn(d.payload))
 let listenPosition = (fn: int => unit) => listen("position", d => fn(d.payload))
+let listenQueueToggle = (fn: string => unit) => listen("queue_toggle", d => fn(d.payload))
 // let listenTrackState = (fn: Shape.Track.state => unit) => listen("track_state", d => fn(d.payload))
+
 // let useListen = eventFn => {
 //   React.useEffect0(() => {
 //     let unlisten = eventFn()

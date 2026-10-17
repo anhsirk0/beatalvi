@@ -86,3 +86,11 @@ pub struct TrackState {
     pub is_playing: bool,
     pub position: u64,
 }
+
+pub enum Event {
+    Play,
+    Pause,
+    Toggle,
+    Stop,
+    Position,
+}

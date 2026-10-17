@@ -1,0 +1,12 @@
+pub const PLAY: &str = "play";
+pub const PAUSE: &str = "pause";
+pub const TOGGLE: &str = "toggle";
+pub const STOP: &str = "stop";
+pub const POSITION: &str = "position";
+pub const QUEUE_TOGGLE: &str = "queue_toggle";
+pub const NEXT: &str = "next";
+pub const START: &str = "start";
+pub const PREVIOUS: &str = "previous";
+pub const FINISHED: &str = "finished";
+pub const EMPTY: &str = "empty";
+pub const PLAYBACK_ERROR: &str = "playback_error";

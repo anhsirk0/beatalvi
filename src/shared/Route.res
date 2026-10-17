@@ -82,12 +82,12 @@ let toPath = route =>
 
 module Link = {
   @react.component
-  let make = (~to, ~className, ~children) => {
+  let make = (~to, ~className, ~children, ~id=?) => {
     let path = to->toPath
     let onClick = evt => {
       evt->ReactEvent.Mouse.preventDefault
       RescriptReactRouter.push(path)
     }
-    <a href=path className onClick> {children} </a>
+    <a ?id href=path className onClick> {children} </a>
   }
 }

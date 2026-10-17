@@ -56,7 +56,10 @@ let playManyFromIndex: invokeFn<playManyFromIndexArgs, unit> = makeInvoke("play_
 
 let getTrackState: invokeFn<unit, Nullable.t<Shape.Track.state>> = makeInvoke("get_track_state")
 
-type playTracksByAlbumsFromAlbumIdArgs = {albumIds: array<float>, albumId: float}
+type playTracksByAlbumsFromAlbumIdArgs = {albumIds: array<float>, albumId: float, index: int}
 let playTracksByAlbumsFromAlbumId: invokeFn<playTracksByAlbumsFromAlbumIdArgs, unit> = makeInvoke(
   "play_tracks_by_albums_from_album_id",
 )
+
+type queueToggleTrackArgs = {uri: string}
+let queueToggleTrack: invokeFn<queueToggleTrackArgs, unit> = makeInvoke("queue_toggle_track")

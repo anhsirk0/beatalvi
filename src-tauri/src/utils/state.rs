@@ -1,5 +1,6 @@
 use crate::models::TrackState;
 use crate::utils::database;
+use crate::utils::event;
 use crate::utils::player::Player;
 use crate::utils::playlist::Playlist;
 use gstreamer as gst;
@@ -47,7 +48,6 @@ impl AppState {
                     match msg.view() {
                         gst::MessageView::Eos(..) => {
                             println!("\n Song finished");
-                            // app_handle.emit("finished", true).unwrap();
                             player.lock().unwrap().stop().unwrap();
                             if let Some(uri) = player.lock().unwrap().get_current_uri() {
                                 database::increment_track_and_album_popularity_by_uri(&uri)
@@ -64,20 +64,22 @@ impl AppState {
                                 match player.lock().unwrap().play(&uri) {
                                     Ok(_) => {
                                         if let Some(track) = database::find_track_by_uri(&uri) {
-                                            app_handle.emit("next", &track).unwrap();
+                                            app_handle.emit(event::NEXT, &track).unwrap();
                                         }
                                         println!("Now playing: {}", uri);
                                     }
                                     Err(e) => {
                                         eprintln!("Failed to play next: {}", e);
-                                        app_handle.emit("playback_error", e.to_string()).unwrap();
+                                        app_handle
+                                            .emit(event::PLAYBACK_ERROR, e.to_string())
+                                            .unwrap();
                                     }
                                 }
                             } else {
-                                app_handle.emit("finished", true).unwrap();
+                                app_handle.emit(event::FINISHED, true).unwrap();
                                 println!("Playist & Queue empty - stopping");
                                 player.lock().unwrap().stop().unwrap();
-                                app_handle.emit("empty", true).unwrap();
+                                app_handle.emit(event::EMPTY, true).unwrap();
                             }
                         }
                         gst::MessageView::Error(err) => {
@@ -90,8 +92,17 @@ impl AppState {
         });
     }
 
-    pub fn queue_track(&self, uri: &str) {
-        self.queue.lock().unwrap().push_back(uri.to_string());
+    // pub fn queue_track(&self, uri: &str) {
+    //     self.queue.lock().unwrap().push_back(uri.to_string());
+    // }
+
+    pub fn queue_toggle_track(&self, uri: &str) {
+        let mut queue = self.queue.lock().unwrap();
+        if let Some(pos) = queue.iter().position(|s| uri == s) {
+            queue.remove(pos);
+        } else {
+            queue.push_back(uri.to_string());
+        }
     }
 
     pub fn start_playback(&self) {
@@ -99,7 +110,7 @@ impl AppState {
             match self.player.lock().unwrap().play(&track_uri) {
                 Ok(_) => {
                     if let Some(track) = database::find_track_by_uri(&track_uri) {
-                        self.app_handle.emit("start", &track).unwrap();
+                        self.app_handle.emit(event::START, &track).unwrap();
                         println!("Playing: {}", track_uri);
                     }
                 }
@@ -112,19 +123,16 @@ impl AppState {
 
     pub fn play_next(&self) -> Result<(), String> {
         let mut player = self.player.lock().unwrap();
-        let track_uri = self.queue.lock().unwrap().pop_front().or(self
-            .playlist
-            .lock()
-            .unwrap()
-            .next()
-            .cloned());
-
+        let track_uri = match self.queue.lock().unwrap().pop_front() {
+            Some(uri) => Some(uri),
+            None => self.playlist.lock().unwrap().next().cloned(),
+        };
         if let Some(uri) = track_uri {
             match player.play(&uri) {
                 Ok(_) => {
                     if let Some(track) = database::find_track_by_uri(&uri) {
                         self.app_handle
-                            .emit("next", &track)
+                            .emit(event::NEXT, &track)
                             .map_err(|e| e.to_string())?;
                         println!("Playing next: {}", uri);
                         Ok(())
@@ -141,7 +149,7 @@ impl AppState {
             println!("Queue empty");
             player.stop().map_err(|e| e.to_string())?;
             self.app_handle
-                .emit("empty", true)
+                .emit(event::EMPTY, true)
                 .map_err(|e| e.to_string())?;
             Err("No more tracks in queue".to_string())
         }
@@ -174,7 +182,7 @@ impl AppState {
                 Ok(_) => {
                     if let Some(track) = database::find_track_by_uri(&uri) {
                         self.app_handle
-                            .emit("previous", &track)
+                            .emit(event::PREVIOUS, &track)
                             .map_err(|e| e.to_string())?;
                         println!("Playing previous: {}", uri);
                         Ok(())

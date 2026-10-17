@@ -23,7 +23,8 @@ let make = () => {
     <div className="flex flex-col w-full min-w-0">
       <div className="flex justify-between">
         <p className="r-text-2xl font-serif"> {"Top Tracks"->React.string} </p>
-        <button onClick=onPlayAll className="btn btn-ghost bg-base-100 nb-box active:nb-box">
+        <button onClick=onPlayAll className="btn btn-ghost bg-base-100 nb-box active:nb-box r-btn">
+          <Icon.play className="r-icon" />
           {"Play all"->React.string}
         </button>
       </div>

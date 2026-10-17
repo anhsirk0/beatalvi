@@ -38,14 +38,20 @@ let make = (~track: Shape.Track.t, ~idx, ~onClick) => {
     },
   })
 
+  let onMouseDown = evt => {
+    if evt->ReactEvent.Mouse.button == 1 {
+      evt->ReactEvent.Mouse.preventDefault
+      Invoke.queueToggleTrack({uri: track.uri})->ignore
+    }
+  }
+
   <div
     role="button"
     onClick={_ => onClick()}
+    onMouseDown
     className={`flex flex-row items-center cursor-pointer p-4 py-2 nb nb-box active:nb-plain gap-4 border-2 ${bg}`}
   >
-    <p className={`r-text-lg font-medium ${isPlaying ? "text-primary-content/80" : "text-80"}`}>
-      {(idx + 1)->Util.padInt->React.string}
-    </p>
+    <TrackIndex uri=track.uri idx />
     <Cover track />
     <div className="flex flex-col grow h-full">
       <p className="r-text-lg font-medium truncate"> {track.name->React.string} </p>
