@@ -16,10 +16,10 @@ module TrackItem = {
       role="button"
       onClick={_ => onPlay()}
       onMouseDown
-      className={`flex flex-row items-center cursor-pointer p-4 py-2 nb nb-box active:nb-plain gap-4 border-2 ${bg}`}
+      className={`flex flex-row items-center cursor-pointer p-4 py-0 nb nb-box active:nb-plain gap-4 border-2 ${bg}`}
     >
       <TrackIndex uri=track.uri idx />
-      <div className="flex flex-col grow h-full">
+      <div className="flex grow py-2">
         <p className="r-text-lg font-medium truncate"> {track.name->React.string} </p>
       </div>
       <p className="text-lg"> {track.duration->Util.durationToString->React.string} </p>
