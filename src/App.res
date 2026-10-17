@@ -58,7 +58,7 @@ let make = () => {
       {switch state {
       | Failed => <p className="text-7xl font-bold"> {"Todo: Error"->React.string} </p>
       | Loading => <Loading />
-      | Success(_) =>
+      | Success(_) => 
         <div className="flex flex-col size-full min-h-0 min-w-0">
           <Header />
           {switch route {
