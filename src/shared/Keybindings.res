@@ -42,6 +42,8 @@ let useKeys = () => {
       Invoke.rewind10Seconds()->ignore
     } else if key == "ArrowRight" || key == "l" {
       Invoke.seek10Seconds()->ignore
+    } else if isCtrl && key == "r" {
+      Invoke.reloadWindow()->ignore
     } else if isCtrl && digit->Option.isSome {
       switch digit {
       | Some(i) =>

@@ -1,7 +1,7 @@
 pub mod models;
 mod utils;
 use models::{Artist, BasicAlbum, BasicTrack, Stats, Track, TrackState};
-use tauri::{AppHandle, Emitter, Manager, State};
+use tauri::{AppHandle, Emitter, Manager, State, Webview};
 use tokio::task;
 use utils::config;
 use utils::database;
@@ -293,6 +293,16 @@ fn set_album_loved_by_id(album_id: i64, loved: bool, app_handle: AppHandle) {
     }
 }
 
+#[tauri::command]
+fn reload_app(app_handle: AppHandle) {
+    app_handle.restart()
+}
+
+#[tauri::command]
+fn reload_window(webview: Webview) {
+    webview.eval("location.reload()").ok();
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let _ = config::create_config_dir_if_not_exists();
@@ -309,6 +319,8 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            reload_app,
+            reload_window,
             load_music,
             get_stats,
             get_top_10_tracks,

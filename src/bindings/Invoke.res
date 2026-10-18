@@ -7,6 +7,8 @@ let make = name => invoke(name, _)
 
 type albums = array<Shape.Album.item>
 
+let reloadApp: fn<unit, unit> = make("reload_app")
+let reloadWindow: fn<unit, unit> = make("reload_window")
 let loadMusic: fn<unit, string> = make("load_music")
 let getStats: fn<unit, Shape.Stats.t> = make("get_stats")
 let getTop10Tracks: fn<unit, array<Shape.Track.t>> = make("get_top_10_tracks")

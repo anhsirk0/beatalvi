@@ -6,7 +6,7 @@ module Kbd = {
 module Item = {
   @react.component
   let make = (~title, ~children) => {
-    <div className="flex py-4 items-center border-b border-accent">
+    <div className="flex py-4 px-1 items-center border-b border-accent">
       <p className="r-text-lg grow"> {title->React.string} </p>
       {children}
     </div>
@@ -51,6 +51,8 @@ let make = () => {
         </Item>
         <Item title="Back / close">
           <Kbd k="Backspace" />
+          <p className="px-2 text-3xl text-60"> {"or"->React.string} </p>
+          <Kbd k="Escape︎" />
         </Item>
         <Item title="Settings">
           <Kbd k="," />
@@ -58,6 +60,11 @@ let make = () => {
       </div>
       <div className="flex flex-col">
         <p className="r-text-xl font-semibold"> {"App"->React.string} </p>
+        <Item title="Reload window">
+          <Kbd k="ctrl" />
+          <p className="px-2 text-3xl"> {"+"->React.string} </p>
+          <Kbd k="r" />
+        </Item>
         <Item title="Rotate theme">
           <Kbd k="." />
         </Item>
