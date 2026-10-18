@@ -57,3 +57,7 @@ module Album = {
     // mutable loved: bool,
   }
 }
+
+module Artist = {
+  type t = {id: float, name: string}
+}

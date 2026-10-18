@@ -1,6 +1,6 @@
 pub mod models;
 mod utils;
-use models::{BasicAlbum, BasicTrack, Stats, Track, TrackState};
+use models::{Artist, BasicAlbum, BasicTrack, Stats, Track, TrackState};
 use tauri::{AppHandle, Emitter, Manager, State};
 use tokio::task;
 use utils::config;
@@ -70,6 +70,11 @@ fn get_tracks_by_albums(album_ids: Vec<i64>) -> Vec<Track> {
 }
 
 #[tauri::command]
+fn get_all_artists() -> Vec<Artist> {
+    database::get_all_artists().unwrap()
+}
+
+#[tauri::command]
 async fn get_track_cover_art(album: String, track_uri: String) -> Option<Vec<u8>> {
     tokio::task::spawn_blocking(move || importer::get_and_set_cover_art(&album, &track_uri).ok())
         .await
@@ -81,6 +86,19 @@ async fn get_album_cover_art(album: String) -> Option<Vec<u8>> {
     tokio::task::spawn_blocking(move || importer::get_cover_art(&album).ok())
         .await
         .unwrap()
+}
+
+#[tauri::command]
+async fn get_artist_cover_art(artist_id: i64) -> Option<Vec<u8>> {
+    tokio::task::spawn_blocking(move || {
+        if let Ok(Some(album)) = database::get_random_album_name_by_artist_id(artist_id) {
+            importer::get_cover_art(&album).ok()
+        } else {
+            None
+        }
+    })
+    .await
+    .unwrap()
 }
 
 #[tauri::command]
@@ -303,6 +321,8 @@ pub fn run() {
             get_tracks_by_albums,
             get_track_cover_art,
             get_album_cover_art,
+            get_artist_cover_art,
+            get_all_artists,
             play,
             pause,
             toggle,

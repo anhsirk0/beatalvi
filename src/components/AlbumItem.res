@@ -20,10 +20,9 @@ let make = (~album: Shape.Album.item, ~onClick, ~onPlay, ~width="w-full") => {
 
   let border = isActive ? "nb-active" : ""
 
-  <div onClick={_ => onClick()} className="flex flex-col animate-fade cursor-pointer">
+  <div role="button" onClick={_ => onClick()} className="flex flex-col animate-fade cursor-pointer">
     <div
-      role="button"
-      className={`${width} aspect-square bg-base-content/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain ${border}`}
+      className={`${width} aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain ${border}`}
     >
       <img id className="object-cover h-full z-10" />
       <div className="center p-4 absolute inset-0">

@@ -67,7 +67,7 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
     </button>
     <div className="flex gap-4 2xl:gap-8">
       <div
-        className="w-40 2xl:w-56 aspect-square bg-base-content/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
+        className="w-40 2xl:w-56 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
       >
         <img id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
@@ -76,27 +76,24 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
           </p>
         </div>
       </div>
-      <div className="flex flex-col">
-        <p className="text-3xl 2xl:text-5xl pl-1 pt-2 font-semibold truncate">
+      <div className="flex flex-col gap-1">
+        <p className="text-3xl 2xl:text-5xl pl-1 font-semibold truncate">
           {album.name->React.string}
         </p>
-        <p className="text-xl 2xl:text-3xl pl-1 text-80 truncate">
-          <span className="font-medium"> {album.artist->React.string} </span>
-          {switch tracks {
-          | Loading | Failed => React.null
-          | Success(_) =>
-            <React.Fragment>
-              <span className="px-4"> {Constant.sep->React.string} </span>
-              <span className="text-60">
-                {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
-              </span>
-              <span className="px-4"> {Constant.sep->React.string} </span>
-              <span className="text-60">
-                {trackDuration->Util.durationToTimeString->React.string}
-              </span>
-            </React.Fragment>
-          }}
+        <p className="text-xl 2xl:text-3xl pl-1 text-80 truncate font-medium">
+          {album.artist->React.string}
         </p>
+        {switch tracks {
+        | Loading | Failed => React.null
+        | Success(_) =>
+          <p className="text-lg 2xl:text-2xl pl-1 text-60">
+            {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
+            <span className="px-4"> {Constant.sep->React.string} </span>
+            {trackDuration->Util.durationToTimeString->React.string}
+            <span className="px-4"> {Constant.sep->React.string} </span>
+            {album.year->Int.toString->React.string}
+          </p>
+        }}
         <div className="flex r-gap items-center mt-auto">
           <button onClick=onPlayClick className="btn btn-lg 2xl:btn-xl btn-primary w-40">
             <Icon.play className="r-icon pr-2" weight=Fill />

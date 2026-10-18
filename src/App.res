@@ -69,6 +69,7 @@ let make = () => {
           | LovedAlbums => <LovedAlbums />
           | RecentAlbums => <RecentAlbums />
           | AllAlbums => <AllAlbums />
+          | AllArtists => <AllArtists />
           | Settings => <Settings />
           | _ => <ErrorPage />
           }}

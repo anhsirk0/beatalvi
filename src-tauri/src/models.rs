@@ -9,6 +9,9 @@ pub struct Album {
     pub mtime: i64,
     pub loved: bool,
 }
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
 pub struct Artist {
     pub id: i64,
     pub name: String,

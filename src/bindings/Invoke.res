@@ -20,10 +20,13 @@ type getTracksByAlbumsArgs = {albumIds: array<float>}
 let getTracksByAlbums: fn<getTracksByAlbumsArgs, array<Shape.Track.t>> = make(
   "get_tracks_by_albums",
 )
+let getAllArtists: fn<unit, array<Shape.Artist.t>> = make("get_all_artists")
 type getTrackCoverArtArgs = {album: string, trackUri: string}
 let getTrackCoverArt: fn<getTrackCoverArtArgs, Shape.Bytes.t> = make("get_track_cover_art")
 type getAlbumCoverArtArgs = {album: string}
 let getAlbumCoverArt: fn<getAlbumCoverArtArgs, Shape.Bytes.t> = make("get_album_cover_art")
+type getArtistCoverArtArgs = {artistId: float}
+let getArtistCoverArt: fn<getArtistCoverArtArgs, Shape.Bytes.t> = make("get_artist_cover_art")
 
 type playArgs = {trackUri: string}
 let play: fn<playArgs, unit> = make("play")

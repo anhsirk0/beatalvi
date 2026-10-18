@@ -1,7 +1,8 @@
 use rusqlite::{Connection, Result, params, params_from_iter};
 extern crate dirs;
 use crate::models::{
-    AlbumInfo, BasicAlbum, BasicTrack, IdMtime, NameIdMap, Stats, Track, TrackInfo, TracksMetaMap,
+    AlbumInfo, Artist, BasicAlbum, BasicTrack, IdMtime, NameIdMap, Stats, Track, TrackInfo,
+    TracksMetaMap,
 };
 use crate::utils::config;
 
@@ -521,6 +522,42 @@ ORDER BY ao.sort_order, t.name;
         })?
         .collect::<Result<Vec<Track>, _>>()?;
     Ok(tracks)
+}
+
+pub fn get_all_artists() -> Result<Vec<Artist>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let mut stmt = conn.prepare("SELECT a.id, a.name FROM artists a ORDER BY a.name ASC")?;
+
+    let artists = stmt
+        .query_map([], |row| {
+            Ok(Artist {
+                id: row.get(0)?,
+                name: row.get(1)?,
+            })
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+
+    Ok(artists)
+}
+
+pub fn get_random_album_name_by_artist_id(artist_id: i64) -> Result<Option<String>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let mut stmt = conn.prepare(
+        "SELECT 
+          a.id,
+          a.name AS album_name
+        FROM albums a
+        WHERE a.id IN (
+          SELECT DISTINCT aa.album_id
+          FROM album_artists aa
+          WHERE aa.artist_id = ?
+        )
+        ORDER BY RANDOM()
+        LIMIT 1",
+    )?;
+
+    let name = stmt.query_row([artist_id], |row| Ok(row.get(1)?)).ok();
+    Ok(name)
 }
 
 /* ───────────────────────────── DB Updates ───────────────────────────── */
