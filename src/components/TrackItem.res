@@ -12,7 +12,7 @@ module Cover = {
     })
 
     <div
-      className="size-12 lg:size-12 2xl:size-16 bg-base-content/30 rounded-box flex shrink-0 overflow-hidden nb-outline relative isolate"
+      className="size-12 lg:size-12 2xl:size-14 bg-base-content/30 rounded-box flex shrink-0 overflow-hidden nb-outline relative isolate"
     >
       <img key=id id className="object-cover h-full z-10" />
       <div className="center p-4 absolute inset-0">
@@ -54,8 +54,8 @@ let make = (~track: Shape.Track.t, ~idx, ~onClick) => {
     <TrackIndex uri=track.uri idx />
     <Cover track />
     <div className="flex flex-col grow h-full">
-      <p className="r-text-lg font-medium truncate"> {track.name->React.string} </p>
-      <p className={`r-text truncate ${isPlaying ? "text-primary-content/90" : "text-80"}`}>
+      <p className="r-text-lg font-medium line-clamp-1"> {track.name->React.string} </p>
+      <p className={`r-text line-clamp-1 ${isPlaying ? "text-primary-content/90" : "text-80"}`}>
         {track.artist->React.string}
       </p>
     </div>

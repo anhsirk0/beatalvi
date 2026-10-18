@@ -279,6 +279,16 @@ pub fn get_stats() -> Result<Stats> {
     )
 }
 
+pub fn is_album_loved(album_id: i64) -> Result<bool> {
+    let conn = Connection::open(config::get_db_path())?;
+    let loved = conn.query_row(
+        "SELECT loved FROM albums WHERE id = ?",
+        params![album_id],
+        |row| row.get::<_, i32>(0).map(|v| v != 0),
+    )?;
+    Ok(loved)
+}
+
 pub fn get_top_10_tracks() -> Result<Vec<Track>> {
     let conn = Connection::open(config::get_db_path())?;
     let mut stmt = conn.prepare(
@@ -314,7 +324,9 @@ LIMIT 10",
     Ok(tracks)
 }
 
-fn top_n_albums_query(num: usize) -> String {
+fn albums_query(limit: Option<usize>, order: Option<String>) -> String {
+    let order_by = order.unwrap_or("a.popularity DESC".into());
+    let limit = limit.map(|n| format!("\nLIMIT {}", n)).unwrap_or("".into());
     format!(
         "SELECT 
   a.id,
@@ -330,15 +342,28 @@ fn top_n_albums_query(num: usize) -> String {
    JOIN artists ar ON unique_artists.artist_id = ar.id
   ) AS artists
 FROM albums a
-ORDER BY a.popularity DESC
-LIMIT {}",
-        num
+ORDER BY {}{}",
+        order_by, limit
     )
 }
 
-pub fn get_top_n_albums(num: usize) -> Result<Vec<BasicAlbum>> {
+fn n_albums_query(num: usize, order: Option<String>) -> String {
+    albums_query(Some(num), order.or(Some("a.popularity DESC".into())))
+}
+
+fn top_n_albums_query(num: usize) -> String {
+    n_albums_query(num, None)
+}
+fn random_n_albums_query(num: usize) -> String {
+    n_albums_query(num, Some("RANDOM()".into()))
+}
+fn recent_n_albums_query(num: usize) -> String {
+    n_albums_query(num, Some("a.mtime DESC".into()))
+}
+
+fn get_albums(sql: &str) -> Result<Vec<BasicAlbum>> {
     let conn = Connection::open(config::get_db_path())?;
-    let mut stmt = conn.prepare(&top_n_albums_query(num))?;
+    let mut stmt = conn.prepare(sql)?;
     let albums = stmt
         .query_map([], |row| {
             Ok(BasicAlbum {
@@ -349,6 +374,58 @@ pub fn get_top_n_albums(num: usize) -> Result<Vec<BasicAlbum>> {
             })
         })?
         .collect::<Result<Vec<BasicAlbum>, _>>()?;
+    Ok(albums)
+}
+
+pub fn get_top_n_albums(num: usize) -> Result<Vec<BasicAlbum>> {
+    get_albums(&top_n_albums_query(num))
+}
+
+pub fn get_random_n_albums(num: usize) -> Result<Vec<BasicAlbum>> {
+    get_albums(&random_n_albums_query(num))
+}
+
+pub fn get_recent_n_albums(num: usize) -> Result<Vec<BasicAlbum>> {
+    get_albums(&recent_n_albums_query(num))
+}
+
+pub fn get_all_albums() -> Result<Vec<BasicAlbum>> {
+    get_albums(&albums_query(None, Some("artists ASC".into())))
+}
+
+pub fn get_loved_albums() -> Result<Vec<BasicAlbum>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let mut stmt = conn.prepare(
+        "SELECT 
+          a.id,
+          a.name,
+          a.year,
+          a.loved,
+          a.popularity,
+          (SELECT GROUP_CONCAT(ar.name, ', ')
+           FROM (
+             SELECT DISTINCT aa.artist_id
+             FROM album_artists aa
+             WHERE aa.album_id = a.id
+           ) AS unique_artists
+           JOIN artists ar ON unique_artists.artist_id = ar.id
+          ) AS artists
+        FROM albums a
+        WHERE a.loved = 1
+        ORDER BY a.popularity DESC",
+    )?;
+
+    let albums = stmt
+        .query_map([], |row| {
+            Ok(BasicAlbum {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                year: row.get(2)?,
+                artist: row.get(5)?,
+            })
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+
     Ok(albums)
 }
 
@@ -476,12 +553,21 @@ pub fn increment_track_and_album_popularity_by_uri(uri: &str) -> Result<()> {
     conn.execute(
         "UPDATE albums 
 SET popularity = popularity + (
-  SELECT CAST(1.0 / COUNT(*) * 100 AS INTEGER)
+  SELECT CAST(1.0 / COUNT(*) * 30 AS INTEGER)
   FROM tracks
   WHERE album_id = albums.id
 )
 WHERE id = (SELECT album_id FROM tracks WHERE uri = ?);",
         params![uri],
+    )?;
+    Ok(())
+}
+
+pub fn set_album_loved_by_id(album_id: i64, loved: bool) -> Result<()> {
+    let conn = Connection::open(config::get_db_path())?;
+    conn.execute(
+        "UPDATE albums SET loved = ? WHERE id = ?",
+        params![loved as i64, album_id],
     )?;
     Ok(())
 }

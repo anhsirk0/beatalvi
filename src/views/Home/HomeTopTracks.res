@@ -23,12 +23,16 @@ let make = () => {
     <div className="flex flex-col w-full min-w-0">
       <div className="flex justify-between">
         <p className="r-text-2xl font-serif"> {"Top Tracks"->React.string} </p>
-        <button onClick=onPlayAll className="btn btn-ghost bg-base-100 nb-box active:nb-box r-btn">
+        <button
+          id="play-all"
+          onClick=onPlayAll
+          className="btn btn-ghost bg-base-100 nb-box active:nb-box r-btn"
+        >
           <Icon.play className="r-icon" />
           {"Play all"->React.string}
         </button>
       </div>
-      <div className="grid grid-cols-2 gap-4 w-full py-4 px-1">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full py-4 px-1">
         {tracks
         ->Array.mapWithIndex((track, idx) =>
           <TrackItem idx track key=track.uri onClick={() => onTrackClick(idx)} />

@@ -50,6 +50,12 @@ module Arr = {
   let or = (arr, arr2) => arr->isEmpty ? arr2 : arr
   let toggle = (arr: array<'a>, item: 'a) =>
     arr->Array.some(i => i == item) ? arr->Array.filter(i => i != item) : arr->Array.concat([item])
+  let rotate = (arr, item) => {
+    switch arr->Array.findIndexOpt(i => i == item) {
+    | Some(idx) => arr[mod(idx + 1, arr->Array.length)]
+    | None => arr[0]
+    }
+  }
   // let render = (arr, fn) => arr->Array.map(fn)->React.array
   // let renderOr = (arr, fn, empty) => arr->isEmpty ? empty : arr->Array.map(fn)->React.array
 }

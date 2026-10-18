@@ -1,29 +1,32 @@
 module Config = {
   type t = {
     theme: Theme.t,
+    volume: int,
   }
 
-  type action = SetTheme(Theme.t)
+  type action = SetTheme(Theme.t) | SetVolume(int)
 
-  let reducer = (_config, action) =>
+  let reducer = (config, action) =>
     switch action {
-    | SetTheme(theme) => {theme: theme}
+    | SetTheme(theme) => {...config, theme}
+    | SetVolume(volume) => {...config, volume}
     }
 
   let defaultOptions = {
     theme: Lemon,
+    volume: 100,
   }
   module StoreData = {
     type state = {
       config: t,
-      updateConfig: action => unit,
+      update: action => unit,
     }
   }
   module Store = Zustand.MakeStore(StoreData)
 
   let store = Store.create(Store.persist(set => {
       config: defaultOptions,
-      updateConfig: action => set(state => {...state, config: state.config->reducer(action)}),
+      update: action => set(state => {...state, config: state.config->reducer(action)}),
     }, {name: "beatalvi-config"}))
 
   let use = _ => store->Store.use(state => state)

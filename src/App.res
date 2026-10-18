@@ -1,7 +1,7 @@
 @react.component
 let make = () => {
   let route = Route.useRoute()
-  let theme = Store.Config.useShallow(s => s.config.theme)
+  let (theme, volume) = Store.Config.useShallow(s => (s.config.theme, s.config.volume))
   let update = Store.Player.useShallow(s => s.update)
   let handleKeys = Keybindings.useKeys()
 
@@ -19,6 +19,7 @@ let make = () => {
       }
     },
   })
+  let _ = Hook.useFetch({fn: () => Invoke.setVolume({volume: volume})})
 
   let setTrack = track => {
     update(SetState(Playing))
@@ -58,12 +59,16 @@ let make = () => {
       {switch state {
       | Failed => <p className="text-7xl font-bold"> {"Todo: Error"->React.string} </p>
       | Loading => <Loading />
-      | Success(_) => 
+      | Success(_) =>
         <div className="flex flex-col size-full min-h-0 min-w-0">
           <Header />
           {switch route {
           | Home => <Home />
           | PopularAlbums => <PopularAlbums />
+          | RandomAlbums => <RandomAlbums />
+          | LovedAlbums => <LovedAlbums />
+          | RecentAlbums => <RecentAlbums />
+          | AllAlbums => <AllAlbums />
           | Settings => <Settings />
           | _ => <ErrorPage />
           }}

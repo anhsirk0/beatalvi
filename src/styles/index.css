@@ -160,14 +160,11 @@
   text-rendering: optimizeLegibility;
 }
 
-html {
+html,
+body {
   scroll-behavior: smooth;
   scrollbar-gutter: auto !important;
   overflow-x: hidden;
-}
-
-body {
-  scroll-behavior: smooth;
 }
 
 #beatalvi {
@@ -200,6 +197,10 @@ body {
 
 .r-text-2xl {
   @apply text-2xl md:text-3xl 2xl:text-4xl;
+}
+
+.r-text-4xl {
+  @apply text-4xl md:text-5xl 2xl:text-6xl;
 }
 
 .r-title {
@@ -242,4 +243,8 @@ body {
 
 .btn {
   --depth: 0;
+}
+
+[popover]:not(:popover-open) {
+  pointer-events: none;
 }

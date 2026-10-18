@@ -47,3 +47,7 @@ type t = React.component<props>
 @module("@phosphor-icons/react") external heart: t = "HeartIcon"
 @module("@phosphor-icons/react") external clockCounterClockwise: t = "ClockCounterClockwiseIcon"
 @module("@phosphor-icons/react") external disc: t = "DiscIcon"
+@module("@phosphor-icons/react") external speakerLow: t = "SpeakerLowIcon"
+@module("@phosphor-icons/react") external speakerHigh: t = "SpeakerHighIcon"
+@module("@phosphor-icons/react") external speakerSimpleLow: t = "SpeakerSimpleLowIcon"
+@module("@phosphor-icons/react") external speakerSimpleHigh: t = "SpeakerSimpleHighIcon"

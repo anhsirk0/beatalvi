@@ -54,5 +54,6 @@ module Album = {
     name: string,
     year: int,
     artist: string,
+    // mutable loved: bool,
   }
 }

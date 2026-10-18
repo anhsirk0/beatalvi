@@ -45,6 +45,26 @@ fn get_top_100_albums() -> Vec<BasicAlbum> {
 }
 
 #[tauri::command]
+fn get_random_100_albums() -> Vec<BasicAlbum> {
+    database::get_random_n_albums(100).unwrap()
+}
+
+#[tauri::command]
+fn get_recent_100_albums() -> Vec<BasicAlbum> {
+    database::get_recent_n_albums(100).unwrap()
+}
+
+#[tauri::command]
+fn get_all_albums() -> Vec<BasicAlbum> {
+    database::get_all_albums().unwrap()
+}
+
+#[tauri::command]
+fn get_loved_albums() -> Vec<BasicAlbum> {
+    database::get_loved_albums().unwrap()
+}
+
+#[tauri::command]
 fn get_tracks_by_albums(album_ids: Vec<i64>) -> Vec<Track> {
     database::get_tracks_by_albums(album_ids).unwrap()
 }
@@ -225,6 +245,36 @@ fn get_track_state(state: State<AppState>) -> Option<TrackState> {
     state.get_track_state()
 }
 
+#[tauri::command]
+fn get_volume(state: State<AppState>) -> i32 {
+    state.player.lock().unwrap().get_volume()
+}
+
+#[tauri::command]
+fn set_volume(volume: i32, app_handle: AppHandle, state: State<AppState>) {
+    match state.player.lock().unwrap().set_volume(volume) {
+        Ok(_) => {
+            let _ = app_handle.emit(event::VOLUME, volume);
+        }
+        Err(e) => eprintln!("{:?}", e),
+    }
+}
+
+#[tauri::command]
+fn is_album_loved(album_id: i64) -> bool {
+    database::is_album_loved(album_id).unwrap_or(false)
+}
+
+#[tauri::command]
+fn set_album_loved_by_id(album_id: i64, loved: bool, app_handle: AppHandle) {
+    match database::set_album_loved_by_id(album_id, loved) {
+        Ok(_) => {
+            let _ = app_handle.emit(event::LOVED, (album_id, loved));
+        }
+        Err(e) => eprintln!("{:?}", e),
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let _ = config::create_config_dir_if_not_exists();
@@ -246,6 +296,10 @@ pub fn run() {
             get_top_10_tracks,
             get_top_10_albums,
             get_top_100_albums,
+            get_random_100_albums,
+            get_loved_albums,
+            get_recent_100_albums,
+            get_all_albums,
             get_tracks_by_albums,
             get_track_cover_art,
             get_album_cover_art,
@@ -267,6 +321,10 @@ pub fn run() {
             play_many_from_index,
             play_tracks_by_albums_from_album_id,
             get_track_state,
+            get_volume,
+            set_volume,
+            is_album_loved,
+            set_album_loved_by_id
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

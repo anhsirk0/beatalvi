@@ -1,35 +1,43 @@
-module TrackItem = {
+module LoveBtn = {
   @react.component
-  let make = (~track: Shape.Track.t, ~idx, ~onPlay) => {
-    let currentTrack = Store.Player.useShallow(s => s.data.track)
-    let isPlaying = Some(track.id) == currentTrack->Option.map(t => t.id)
-    let bg = isPlaying ? "bg-primary text-primary-content nb-active" : "bg-base-100"
+  let make = (~albumId) => {
+    let (isLoved, setIsLoved) = React.useState(_ => false)
 
-    let onMouseDown = evt => {
-      if evt->ReactEvent.Mouse.button == 1 {
-        evt->ReactEvent.Mouse.preventDefault
-        Invoke.queueToggleTrack({uri: track.uri})->ignore
+    let loved = Hook.useFetch({
+      fn: () => Invoke.isAlbumLoved({albumId: albumId}),
+      onSuccess: l => setIsLoved(_ => l),
+    })
+    let onClick = _ => Invoke.setAlbumLovedById({albumId, loved: !isLoved})->ignore
+
+    Event.useListen(Event.listenAlbumLoved, ((id, l)) => {
+      if id == albumId {
+        setIsLoved(_ => l)
       }
-    }
+    })
 
-    <div
-      role="button"
-      onClick={_ => onPlay()}
-      onMouseDown
-      className={`flex flex-row items-center cursor-pointer p-4 py-0 nb nb-box active:nb-plain gap-4 border-2 ${bg}`}
-    >
-      <TrackIndex uri=track.uri idx />
-      <div className="flex grow py-2">
-        <p className="r-text-lg font-medium truncate"> {track.name->React.string} </p>
+    switch loved {
+    | Loading | Failed => React.null
+    | Success(_) =>
+      <div
+        role="button"
+        tabIndex=0
+        className="cursor-pointer active:scale-110 transitional outline-none mb-1"
+        onClick
+      >
+        {isLoved
+          ? <Icon.heart
+              weight=Fill className="size-10 stroke-primary-content stroke-4 text-error"
+            />
+          : <Icon.heart className="size-10" />}
       </div>
-      <p className="text-lg"> {track.duration->Util.durationToString->React.string} </p>
-    </div>
+    }
   }
 }
 
 @react.component
 let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
   let id = `album-${album.id->Float.toString}`
+  let hasManyArtists = album.artist->String.includes(", ")
   let _ = Hook.useFetch({
     fn: () => Invoke.getAlbumCoverArt({album: album.name}),
     onSuccess: bytes => {
@@ -38,9 +46,7 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
       }
     },
   })
-  let tracks = Hook.useFetch({
-    fn: () => Invoke.getTracksByAlbums({albumIds: [album.id]}),
-  })
+  let tracks = Hook.useFetch({fn: () => Invoke.getTracksByAlbums({albumIds: [album.id]})})
 
   let (trackCount, trackDuration) = switch tracks {
   | Success(tracks) => (tracks->Array.length, tracks->Shape.Track.totalDuration)
@@ -50,7 +56,7 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
   let onTrackPlay = index => onPlay(album.id, ~index)
   let onPlayClick = _ => onPlay(album.id, ~index=0)
 
-  <div className="flex flex-col p-8 size-full gap-8 overflow-y-auto min-h-0 relative">
+  <div className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative">
     <button
       id="close-btn"
       onClick={_ => onBack()}
@@ -61,7 +67,7 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
     </button>
     <div className="flex gap-4 2xl:gap-8">
       <div
-        className="w-44 2xl:w-52 aspect-square bg-base-content/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
+        className="w-40 2xl:w-56 aspect-square bg-base-content/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
       >
         <img id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
@@ -91,21 +97,30 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
             </React.Fragment>
           }}
         </p>
-        <button onClick=onPlayClick className="btn btn-lg 2xl:btn-xl btn-primary w-40 mt-auto">
-          <Icon.play className="r-icon pr-2" weight=Fill />
-          <span className="font-medium"> {" Play"->React.string} </span>
-        </button>
+        <div className="flex r-gap items-center mt-auto">
+          <button onClick=onPlayClick className="btn btn-lg 2xl:btn-xl btn-primary w-40">
+            <Icon.play className="r-icon pr-2" weight=Fill />
+            <span className="font-medium"> {" Play"->React.string} </span>
+          </button>
+          <LoveBtn albumId=album.id />
+        </div>
       </div>
     </div>
     {switch tracks {
     | Loading | Failed => React.null
     | Success(tracks) =>
       <React.Fragment>
-        <p className="r-text text-80 border-b-2 border-accent"> {"Tracks"->React.string} </p>
-        <div className="grid grid-cols-2 gap-4 w-full px-1">
+        // <p className="r-text text-80 border-b-2 border-accent"> {"Tracks"->React.string} </p>
+        <div className="grid grid-cols-2 gap-4 w-full px-1 pt-2">
           {tracks
           ->Array.mapWithIndex((track, idx) =>
-            <TrackItem idx track key=track.uri onPlay={() => onTrackPlay(idx)} />
+            <AlbumTrackItem
+              idx
+              track
+              key=track.uri
+              onPlay={() => onTrackPlay(idx)}
+              artist=?{hasManyArtists ? Some(track.artist) : None}
+            />
           )
           ->React.array}
         </div>

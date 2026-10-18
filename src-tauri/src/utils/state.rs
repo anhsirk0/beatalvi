@@ -47,7 +47,7 @@ impl AppState {
                 for msg in bus.iter_timed(gst::ClockTime::NONE) {
                     match msg.view() {
                         gst::MessageView::Eos(..) => {
-                            println!("\n Song finished");
+                            println!("\n Track finished");
                             player.lock().unwrap().stop().unwrap();
                             if let Some(uri) = player.lock().unwrap().get_current_uri() {
                                 database::increment_track_and_album_popularity_by_uri(&uri)

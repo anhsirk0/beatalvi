@@ -1,0 +1,52 @@
+@react.component
+let make = (~album: Shape.Album.item, ~onClick, ~onPlay, ~width="w-full") => {
+  let isActive = Store.Player.useShallow(s =>
+    s.data.track->Option.map(t => t.album) == Some(album.name)
+  )
+  let id = `album-${album.id->Float.toString}`
+  let _ = Hook.useFetch({
+    fn: () => Invoke.getAlbumCoverArt({album: album.name}),
+    onSuccess: bytes => {
+      if bytes->Array.length > 0 {
+        bytes->Shape.Bytes.toImageUrl->Util.Dom.setImageSrc(id)
+      }
+    },
+  })
+
+  let onPlayClick = evt => {
+    evt->ReactEvent.Mouse.stopPropagation
+    onPlay(album.id, ~index=0)
+  }
+
+  let border = isActive ? "nb-active" : ""
+
+  <div onClick={_ => onClick()} className="flex flex-col animate-fade cursor-pointer">
+    <div
+      role="button"
+      className={`${width} aspect-square bg-base-content/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain ${border}`}
+    >
+      <img id className="object-cover h-full z-10" />
+      <div className="center p-4 absolute inset-0">
+        <p className="text-9xl text-center text-base-content font-serif"> {"?"->React.string} </p>
+      </div>
+      <div
+        className="flex items-center transitional translate-y-14 group-hover:translate-y-0 h-14 w-full z-20 absolute -bottom-0 p-2"
+      >
+        <button
+          onClick=onPlayClick className="btn btn-ghost btn-square bg-primary text-primary-content"
+        >
+          <Icon.play className="r-icon" weight=Fill />
+        </button>
+        <div className="grow"></div>
+        // <button
+        //   onClick=onPlayFromHereClick
+        //   className="btn btn-ghost btn-square bg-primary text-primary-content"
+        // >
+        //   <Icon.arrowRight className="r-icon" weight=Bold />
+        // </button>
+      </div>
+    </div>
+    <p className="r-text pl-1 pt-2 font-medium truncate"> {album.name->React.string} </p>
+    <p className="r-text-sm pl-1 text-80 truncate"> {album.artist->React.string} </p>
+  </div>
+}

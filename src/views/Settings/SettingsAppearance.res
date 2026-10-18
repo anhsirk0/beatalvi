@@ -2,11 +2,11 @@ module Card = {
   @react.component
   let make = (~theme: Theme.t, ~current, ~onChange) => {
     let isActive = current == theme
-    let className = `flex flex-col flex-1 nb-box bg-transparent overflow-hidden h-40 ${isActive
+    let className = `flex flex-col flex-1 nb-box bg-transparent overflow-hidden h-36 ${isActive
         ? "nb-active"
         : ""}`
     let component =
-      <li className onClick={_ => onChange(theme)} tabIndex=0>
+      <div className onClick={_ => onChange(theme)} tabIndex=0>
         <div className="flex flex-row grow">
           <div className="w-2/5 h-full bg-neutral"></div>
           <div className="w-3/5 h-full bg-base-200 p-4">
@@ -17,7 +17,7 @@ module Card = {
           <p className="r-title capitalize font-medium"> {theme->Theme.toString->React.string} </p>
           {isActive ? <Icon.check className="r-icon" weight=Bold /> : React.null}
         </div>
-      </li>
+      </div>
 
     React.cloneElement(component, {"data-theme": theme->Theme.toString})
   }
@@ -61,19 +61,17 @@ let make = () => {
   let (current, isDark, updateConfig) = Store.Config.useShallow(s => (
     s.config.theme,
     s.config.theme->Theme.isDark,
-    s.updateConfig,
+    s.update,
   ))
 
-  let onChange = theme => {
-    updateConfig(SetTheme(theme))
-  }
+  let onChange = theme => updateConfig(SetTheme(theme))
 
   <React.Fragment>
-    // <p className="r-text-xl font-semibold"> {"Appearance"->React.string} </p>
+    <p className="r-text-2xl font-bold"> {"Appearance"->React.string} </p>
     <p className="mt-4 text-80 uppercase font-medium"> {"Mode"->React.string} </p>
     <ModeBtns onChange isDark current />
     <p className="mt-4 text-80 uppercase font-medium"> {"Theme"->React.string} </p>
-    <div className="grid grid-cols-4 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {(isDark ? Theme.darkThemes : Theme.lightThemes)
       ->Array.map(theme => <Card theme current onChange key={theme->Theme.toString} />)
       ->React.array}

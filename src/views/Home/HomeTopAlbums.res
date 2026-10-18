@@ -15,8 +15,12 @@ let make = (~setAlbum, ~albums: array<Shape.Album.item>, ~onPlay) => {
     <div className="flex flex-row overflow-x-auto gap-4 w-full pt-4 px-1">
       {albums
       ->Array.map(album =>
-        <PopularAlbums.AlbumItem
-          key={album.id->Float.toString} album onClick={_ => setAlbum(album)} onPlay width="w-56"
+        <AlbumItem
+          key={album.id->Float.toString}
+          album
+          onClick={_ => setAlbum(album)}
+          onPlay
+          width="w-40 2xl:w-52"
         />
       )
       ->React.array}

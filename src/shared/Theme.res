@@ -60,6 +60,8 @@ let toggleTheme = theme =>
   | Cherry => CherryDark
   }
 
+let rotate = theme => (theme->isDark ? darkThemes : lightThemes)->Util.Arr.rotate(theme)
+
 let setTheme = theme => {
   "html"->Util.Dom.querySelectAndThen(Util.Dom.setAttribute(_, "data-theme", theme->toString))
   "beatalviTheme"->Dom.Storage.setItem(theme->toString, Dom.Storage.localStorage)

@@ -1,6 +1,9 @@
 @react.component
 let make = () => {
+  let (isKeybindingsOpen, setIsKeybindingsOpen) = React.useState(_ => false)
+
   let track = Store.Player.useShallow(s => s.data.track)
+  let popoverId = "settings-menu"
 
   <div
     className={`${Constant.headerHeight} border-b-2 border-accent px-8 w-full flex items-center r-gap`}
@@ -16,11 +19,43 @@ let make = () => {
       <button className="btn bg-base-100 btn-square btn-ghost r-btn nb-box active:nb-box">
         <Icon.magnifyingGlass className="r-icon" />
       </button>
-      <Route.Link
-        to=Settings className="btn bg-base-100 btn-square btn-ghost r-btn nb-box active:nb-box"
+      <button
+        onClick={_ => setIsKeybindingsOpen(_ => true)} id="keybindings-modal" className="hidden"
       >
-        <Icon.sliders className="r-icon" />
-      </Route.Link>
+      </button>
+      <Popover.Btn target=popoverId anchor="settings-btn">
+        <button className="btn bg-base-100 btn-square btn-ghost r-btn nb-box active:nb-plain">
+          <Icon.sliders className="r-icon" />
+        </button>
+      </Popover.Btn>
+      <Popover.Menu id=popoverId anchor="settings-btn">
+        <div
+          className="dropdown dropdown-end p-4 w-80 mt-4 bg-base-100 nb-box nb-active flex flex-col"
+        >
+          <VolumeSlider />
+          <div className="divider divider-accent"></div>
+          <ThemeSwitcher />
+          <div className="divider divider-accent"></div>
+          <Route.Link
+            onClick={_ => Popover.close(popoverId)}
+            to=Settings
+            className="btn btn-lg btn-ghost nb-box active:nb-box"
+          >
+            {"More Settings"->React.string}
+            <Icon.arrowRight className="ml-auto r-icon" weight=Bold />
+          </Route.Link>
+        </div>
+      </Popover.Menu>
     </div>
+    {isKeybindingsOpen
+      ? <Modal
+          title={<p className="text-4xl font-bold"> {"Keybindings"->React.string} </p>}
+          onClose={() => setIsKeybindingsOpen(_ => false)}
+          classes="min-w-[60vw]"
+        >
+          <div className="divider divider-accent -mt-1"></div>
+          <SettingsKeybinding />
+        </Modal>
+      : React.null}
   </div>
 }

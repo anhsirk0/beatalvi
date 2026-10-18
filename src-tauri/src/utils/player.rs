@@ -94,8 +94,14 @@ impl Player {
         }
     }
 
-    // pub fn set_volume(&self, vol: f64) -> Result<(), Box<dyn Error>> {
-    //     self.playbin.set_property("volume", vol);
-    //     Ok(())
-    // }
+    pub fn get_volume(&self) -> i32 {
+        let vol = self.playbin.property::<f64>("volume");
+        (vol * 100.) as i32
+    }
+
+    pub fn set_volume(&self, volume: i32) -> Result<(), Box<dyn Error>> {
+        let vol = ((volume as f64) / 100.).max(0.).min(1.);
+        self.playbin.set_property("volume", vol);
+        Ok(())
+    }
 }
