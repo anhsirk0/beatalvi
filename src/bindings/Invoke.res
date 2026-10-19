@@ -5,13 +5,17 @@ external invoke: (string, 'a) => promise<'b> = "invoke"
 
 let make = name => invoke(name, _)
 
-type albums = array<Shape.Album.item>
+type albums = array<Shape.Album.t>
+type tracks = array<Shape.Track.t>
+
+type coverArt = Nullable.t<Shape.Bytes.t>
 
 let reloadApp: fn<unit, unit> = make("reload_app")
 let reloadWindow: fn<unit, unit> = make("reload_window")
 let loadMusic: fn<unit, string> = make("load_music")
+let regenerateCoverArtCache: fn<unit, unit> = make("regenerate_cover_art_cache")
 let getStats: fn<unit, Shape.Stats.t> = make("get_stats")
-let getTop10Tracks: fn<unit, array<Shape.Track.t>> = make("get_top_10_tracks")
+let getTop10Tracks: fn<unit, tracks> = make("get_top_10_tracks")
 let getTop10Albums: fn<unit, albums> = make("get_top_10_albums")
 let getTop100Albums: fn<unit, albums> = make("get_top_100_albums")
 let getRandom100Albums: fn<unit, albums> = make("get_random_100_albums")
@@ -19,17 +23,20 @@ let getLovedAlbums: fn<unit, albums> = make("get_loved_albums")
 let getRecent100Albums: fn<unit, albums> = make("get_recent_100_albums")
 let getAllAlbums: fn<unit, albums> = make("get_all_albums")
 type getTracksByAlbumsArgs = {albumIds: array<float>}
-let getTracksByAlbums: fn<getTracksByAlbumsArgs, array<Shape.Track.t>> = make(
-  "get_tracks_by_albums",
-)
+let getTracksByAlbums: fn<getTracksByAlbumsArgs, tracks> = make("get_tracks_by_albums")
 let getAllArtists: fn<unit, array<Shape.Artist.t>> = make("get_all_artists")
 type getTrackCoverArtArgs = {album: string, trackUri: string}
-let getTrackCoverArt: fn<getTrackCoverArtArgs, Shape.Bytes.t> = make("get_track_cover_art")
+let getTrackCoverArt: fn<getTrackCoverArtArgs, coverArt> = make("get_track_cover_art")
 type getAlbumCoverArtArgs = {album: string}
-let getAlbumCoverArt: fn<getAlbumCoverArtArgs, Shape.Bytes.t> = make("get_album_cover_art")
+let getAlbumCoverArt: fn<getAlbumCoverArtArgs, coverArt> = make("get_album_cover_art")
 type getArtistCoverArtArgs = {artistId: float}
-let getArtistCoverArt: fn<getArtistCoverArtArgs, Shape.Bytes.t> = make("get_artist_cover_art")
-
+let getArtistCoverArt: fn<getArtistCoverArtArgs, coverArt> = make("get_artist_cover_art")
+type getArtistStatsArgs = {artistId: float}
+let getArtistStats: fn<getArtistStatsArgs, Shape.Artist.stats> = make("get_artist_stats")
+type getAlbumsByArtistIdArgs = {artistId: float}
+let getAlbumsByArtistId: fn<getAlbumsByArtistIdArgs, array<Shape.Album.item>> = make(
+  "get_albums_by_artist_id",
+)
 type playArgs = {trackUri: string}
 let play: fn<playArgs, unit> = make("play")
 
@@ -65,10 +72,9 @@ type playTracksByAlbumsFromAlbumIdArgs = {albumIds: array<float>, albumId: float
 let playTracksByAlbumsFromAlbumId: fn<playTracksByAlbumsFromAlbumIdArgs, unit> = make(
   "play_tracks_by_albums_from_album_id",
 )
-
 type queueToggleTrackArgs = {uri: string}
 let queueToggleTrack: fn<queueToggleTrackArgs, unit> = make("queue_toggle_track")
-let getTrackState: fn<unit, Nullable.t<Shape.Track.state>> = make("get_track_state")
+let getTrackState: fn<unit, Shape.Track.state> = make("get_track_state")
 let getVolume: fn<unit, int> = make("get_volume")
 type setVolumeArgs = {volume: int}
 let setVolume: fn<setVolumeArgs, unit> = make("set_volume")

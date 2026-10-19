@@ -2,6 +2,7 @@ use crate::models::{AlbumInfo, NameIdMap};
 use crate::utils::config;
 use crate::utils::database;
 use crate::utils::reader;
+use rayon::prelude::*;
 use rusqlite::{Connection, Result};
 use std::{
     collections::HashMap,
@@ -221,4 +222,19 @@ pub fn get_and_set_cover_art(album: &str, track_uri: &str) -> Result<Vec<u8>, Bo
 pub fn get_cover_art(album: &str) -> Result<Vec<u8>, Box<dyn Error>> {
     let path = config::get_cache_dir().join(format!("{}.jpg", album));
     Ok(std::fs::read(&path)?)
+}
+
+pub fn regenerate_cover_art_cache() -> Result<(), Box<dyn Error>> {
+    let album_tracks = database::get_one_track_per_album()?;
+
+    album_tracks.par_iter().for_each(|item| {
+        let path = config::get_cache_dir().join(format!("{}.jpg", item.album_name));
+        if !path.exists() {
+            if let Err(e) = store_album_cover_from_uri(&item.track_uri, &path) {
+                eprintln!("Failed to store album cover: {}", e);
+            }
+        }
+    });
+
+    Ok(())
 }

@@ -1,5 +1,5 @@
 @react.component
-let make = (~setAlbum, ~albums: array<Shape.Album.item>, ~onPlay) => {
+let make = (~setAlbum, ~albums: array<Shape.Album.t>, ~onPlay) => {
   let onPlayAll = _ => {
     Invoke.playTracksByAlbums({albumIds: albums->Array.map(a => a.id)})->ignore
   }

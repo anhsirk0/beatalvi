@@ -56,8 +56,11 @@ module ModeBtns = {
   }
 }
 
+type btnState = Idle | Loading | Done
+
 @react.component
 let make = () => {
+  let (state, setState) = React.useState(_ => Idle)
   let (current, isDark, updateConfig) = Store.Config.useShallow(s => (
     s.config.theme,
     s.config.theme->Theme.isDark,
@@ -65,6 +68,15 @@ let make = () => {
   ))
 
   let onChange = theme => updateConfig(SetTheme(theme))
+  let onRegenCover = _ => {
+    setState(_ => Loading)
+    Invoke.regenerateCoverArtCache()
+    ->Promise.then(async _ => {
+      setTimeout(() => setState(_ => Done), 1000)->ignore
+      setTimeout(() => setState(_ => Idle), 8000)->ignore
+    })
+    ->ignore
+  }
 
   <React.Fragment>
     <p className="r-text-2xl font-bold"> {"Appearance"->React.string} </p>
@@ -76,5 +88,21 @@ let make = () => {
       ->Array.map(theme => <Card theme current onChange key={theme->Theme.toString} />)
       ->React.array}
     </div>
+    <p className="mt-4 text-80 uppercase font-medium"> {"Cover art"->React.string} </p>
+    {switch state {
+    | Idle =>
+      <button onClick=onRegenCover className="btn r-btn w-96">
+        {"Regenerate cover art cache"->React.string}
+      </button>
+    | Done =>
+      <button onClick=onRegenCover className="btn btn-success r-btn w-96">
+        {"Cover art cache regenerated"->React.string}
+      </button>
+    | Loading =>
+      <button disabled=true className="btn r-btn w-96">
+        <span className="loading loading-spinner"></span>
+        {"Generating cover art cache ..."->React.string}
+      </button>
+    }}
   </React.Fragment>
 }

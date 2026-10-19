@@ -1,12 +1,13 @@
 module Kbd = {
   @react.component
-  let make = (~k) => <kbd className="kbd kbd-xl nb-shadow nb-box"> {k->React.string} </kbd>
+  let make = (~k) =>
+    <kbd className="kbd kbd-lg 2xl:kbd-xl nb-shadow nb-box"> {k->React.string} </kbd>
 }
 
 module Item = {
   @react.component
   let make = (~title, ~children) => {
-    <div className="flex py-4 px-1 items-center border-b border-accent">
+    <div className="flex py-2 2xl:py-4 px-1 items-center border-b border-accent">
       <p className="r-text-lg grow"> {title->React.string} </p>
       {children}
     </div>
@@ -29,16 +30,19 @@ let make = () => {
       </Item>
       <Item title="Skip forward 10 seconds">
         <Kbd k="🡆" />
-        <p className="px-2 text-3xl text-60"> {"or"->React.string} </p>
+        <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
         <Kbd k="l︎" />
       </Item>
       <Item title="Skip backward 10 seconds">
         <Kbd k="🡄" />
-        <p className="px-2 text-3xl text-60"> {"or"->React.string} </p>
+        <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
         <Kbd k="h︎" />
       </Item>
       <Item title="Start playback / play all">
         <Kbd k="s" />
+      </Item>
+      <Item title="Add track to queue">
+        <Kbd k="middle click" />
       </Item>
     </div>
     <div className="grid grid-cols-1 gap-8 2xl:gap-16">
@@ -46,12 +50,12 @@ let make = () => {
         <p className="r-text-xl font-semibold"> {"Navigation"->React.string} </p>
         <Item title="Sidebar item (s)">
           <Kbd k="ctrl" />
-          <p className="px-2 text-3xl"> {"+"->React.string} </p>
+          <p className="px-2 text-2xl 2xl:text-3xl"> {"+"->React.string} </p>
           <Kbd k="1-9" />
         </Item>
         <Item title="Back / close">
           <Kbd k="Backspace" />
-          <p className="px-2 text-3xl text-60"> {"or"->React.string} </p>
+          <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
           <Kbd k="Escape︎" />
         </Item>
         <Item title="Settings">

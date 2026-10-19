@@ -1,4 +1,4 @@
-type view = All | Album(Shape.Album.item)
+type view = All | One(Shape.Album.t)
 
 @react.component
 let make = () => {
@@ -23,9 +23,9 @@ let make = () => {
       <HomeTopTracks />
       {switch albums {
       | Loading | Failed => React.null
-      | Success(albums) => <HomeTopAlbums onPlay albums setAlbum={a => setView(_ => Album(a))} />
+      | Success(albums) => <HomeTopAlbums onPlay albums setAlbum={a => setView(_ => One(a))} />
       }}
     </div>
-  | Album(album) => <AlbumView album onBack={() => setView(_ => All)} onPlay />
+  | One(album) => <AlbumView album onBack={() => setView(_ => All)} onPlay />
   }
 }

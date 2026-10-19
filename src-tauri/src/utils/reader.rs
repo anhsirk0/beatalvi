@@ -38,7 +38,7 @@ fn get_probe_result(path: &Path) -> Result<ProbeResult, Box<dyn Error>> {
 pub fn get_cover_art_bytes_from_metadata(data: Metadata) -> Result<Vec<u8>, Box<dyn Error>> {
     if let Some(metadata_rev) = data.current() {
         for visual in metadata_rev.visuals() {
-            let buf = resize_bytes(&visual.data)?;
+            let buf = resize_image_bytes(&visual.data)?;
             return Ok(buf);
         }
     }
@@ -157,10 +157,10 @@ pub fn get_info_map(files: Vec<String>) -> Result<DashMap<String, TrackInfo>, Bo
     Ok(info_map)
 }
 
-fn resize_bytes(input: &[u8]) -> Result<Vec<u8>, ImageError> {
+fn resize_image_bytes(input: &[u8]) -> Result<Vec<u8>, ImageError> {
     let img = image::load_from_memory(input)?;
     let mut out = Vec::new();
-    img.resize(400, 400, image::imageops::FilterType::Lanczos3)
+    img.resize(350, 350, image::imageops::FilterType::Lanczos3)
         .write_to(&mut Cursor::new(&mut out), image::ImageFormat::Jpeg)?;
     Ok(out)
 }

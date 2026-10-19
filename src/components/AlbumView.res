@@ -35,16 +35,12 @@ module LoveBtn = {
 }
 
 @react.component
-let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
+let make = (~album: Shape.Album.t, ~onBack, ~onPlay) => {
   let id = `album-${album.id->Float.toString}`
   let hasManyArtists = album.artist->String.includes(", ")
   let _ = Hook.useFetch({
     fn: () => Invoke.getAlbumCoverArt({album: album.name}),
-    onSuccess: bytes => {
-      if bytes->Array.length > 0 {
-        bytes->Shape.Bytes.toImageUrl->Util.Dom.setImageSrc(id)
-      }
-    },
+    onSuccess: Shape.Bytes.setCover(_, id),
   })
   let tracks = Hook.useFetch({fn: () => Invoke.getTracksByAlbums({albumIds: [album.id]})})
 
@@ -76,8 +72,8 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
           </p>
         </div>
       </div>
-      <div className="flex flex-col gap-1">
-        <p className="text-3xl 2xl:text-5xl pl-1 font-semibold truncate">
+      <div className="flex flex-col 2xl:gap-1">
+        <p className="text-4xl 2xl:text-6xl pl-1 font-semibold truncate">
           {album.name->React.string}
         </p>
         <p className="text-xl 2xl:text-3xl pl-1 text-80 truncate font-medium">
@@ -86,7 +82,7 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
         {switch tracks {
         | Loading | Failed => React.null
         | Success(_) =>
-          <p className="text-lg 2xl:text-2xl pl-1 text-60">
+          <p className="text-lg 2xl:text-2xl pl-1 text-80">
             {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
             <span className="px-4"> {Constant.sep->React.string} </span>
             {trackDuration->Util.durationToTimeString->React.string}
@@ -95,7 +91,9 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
           </p>
         }}
         <div className="flex r-gap items-center mt-auto">
-          <button onClick=onPlayClick className="btn btn-lg 2xl:btn-xl btn-primary w-40">
+          <button
+            id="play-all" onClick=onPlayClick className="btn xl:btn-lg 2xl:btn-xl btn-primary w-40"
+          >
             <Icon.play className="r-icon pr-2" weight=Fill />
             <span className="font-medium"> {" Play"->React.string} </span>
           </button>
@@ -112,11 +110,7 @@ let make = (~album: Shape.Album.item, ~onBack, ~onPlay) => {
           {tracks
           ->Array.mapWithIndex((track, idx) =>
             <AlbumTrackItem
-              idx
-              track
-              key=track.uri
-              onPlay={() => onTrackPlay(idx)}
-              artist=?{hasManyArtists ? Some(track.artist) : None}
+              idx track key=track.uri onPlay={() => onTrackPlay(idx)} showArtist=hasManyArtists
             />
           )
           ->React.array}

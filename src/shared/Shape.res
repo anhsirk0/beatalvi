@@ -8,11 +8,16 @@ module Bytes = {
     return URL.createObjectURL(blob);
 }")
 
-  let toOpusUrl: t => objectUrl = %raw("function(bytes) {
-    const blob = new Blob([new Uint8Array(bytes)], { type: 'audio/opus' });
-    return URL.createObjectURL(blob);
+  let setImageSrc: (objectUrl, string) => unit = %raw("function(url, id) {
+    document.getElementById(id).src = url;
 }")
 
+  let setCover = (data: Nullable.t<t>, id) => {
+    switch data->Nullable.toOption {
+    | Some(bytes) => bytes->toImageUrl->setImageSrc(id)
+    | None => ignore()
+    }
+  }
   // let revokeObjectUrl = %todo
 }
 
@@ -39,9 +44,10 @@ module Track = {
   }
 
   type state = {
-    track: t,
+    track: Nullable.t<t>,
     isPlaying: bool,
     position: int,
+    queue: array<string>,
   }
 
   let totalDuration = arr =>
@@ -49,15 +55,27 @@ module Track = {
 }
 
 module Album = {
-  type item = {
+  type t = {
     id: float,
     name: string,
     year: int,
     artist: string,
-    // mutable loved: bool,
+  }
+  type item = {
+    id: float,
+    name: string,
+    year: int,
+    mtime: int,
   }
 }
 
 module Artist = {
   type t = {id: float, name: string}
+
+  type stats = {
+    id: float,
+    name: string,
+    albumCount: int,
+    trackCount: int,
+  }
 }

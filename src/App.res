@@ -9,16 +9,18 @@ let make = () => {
   let _ = Hook.useFetch({
     fn: Invoke.getTrackState,
     onSuccess: data => {
-      switch data->Nullable.toOption {
-      | Some(data) => {
-          update(SetTrack(data.track))
+      switch data.track->Nullable.toOption {
+      | Some(track) => {
+          update(SetTrack(track))
           update(SetState(data.isPlaying ? Playing : Paused))
           update(SetPosition(data.position))
         }
       | None => ignore()
       }
+      update(SetQueue(data.queue))
     },
   })
+
   let _ = Hook.useFetch({fn: () => Invoke.setVolume({volume: volume})})
 
   let setTrack = track => {

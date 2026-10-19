@@ -1,6 +1,6 @@
 pub mod models;
 mod utils;
-use models::{Artist, BasicAlbum, BasicTrack, Stats, Track, TrackState};
+use models::{Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, Stats, Track, TrackState};
 use tauri::{AppHandle, Emitter, Manager, State, Webview};
 use tokio::task;
 use utils::config;
@@ -18,6 +18,17 @@ async fn load_music() -> (usize, usize, usize) {
             importer::import_all(files).unwrap_or((0, 0, 0))
         } else {
             importer::import_and_update(files).unwrap_or((0, 0, 0))
+        }
+    })
+    .await
+    .unwrap()
+}
+
+#[tauri::command]
+async fn regenerate_cover_art_cache() {
+    task::spawn_blocking(move || {
+        if let Err(e) = importer::regenerate_cover_art_cache() {
+            eprintln!("Failed to regenerate album covers: {}", e);
         }
     })
     .await
@@ -99,6 +110,22 @@ async fn get_artist_cover_art(artist_id: i64) -> Option<Vec<u8>> {
     })
     .await
     .unwrap()
+}
+
+#[tauri::command]
+fn get_artist_stats(artist_id: i64) -> Option<ArtistStats> {
+    match database::get_artist_stats(artist_id) {
+        Ok(stats) => stats,
+        Err(e) => {
+            eprintln!("{:?}", e);
+            None
+        }
+    }
+}
+
+#[tauri::command]
+fn get_albums_by_artist_id(artist_id: i64) -> Vec<ArtistAlbum> {
+    database::get_albums_by_artist_id(artist_id).unwrap()
 }
 
 #[tauri::command]
@@ -259,7 +286,7 @@ fn peek_previous(state: State<AppState>) -> Option<BasicTrack> {
 }
 
 #[tauri::command]
-fn get_track_state(state: State<AppState>) -> Option<TrackState> {
+fn get_track_state(state: State<AppState>) -> TrackState {
     state.get_track_state()
 }
 
@@ -322,6 +349,7 @@ pub fn run() {
             reload_app,
             reload_window,
             load_music,
+            regenerate_cover_art_cache,
             get_stats,
             get_top_10_tracks,
             get_top_10_albums,
@@ -335,6 +363,8 @@ pub fn run() {
             get_album_cover_art,
             get_artist_cover_art,
             get_all_artists,
+            get_artist_stats,
+            get_albums_by_artist_id,
             play,
             pause,
             toggle,

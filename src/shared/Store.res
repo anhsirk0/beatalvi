@@ -27,7 +27,7 @@ module Config = {
   let store = Store.create(Store.persist(set => {
       config: defaultOptions,
       update: action => set(state => {...state, config: state.config->reducer(action)}),
-    }, {name: "beatalvi-config"}))
+    }, {name: "beatalvi-user-config"}))
 
   let use = _ => store->Store.use(state => state)
   let useShallow = selector => store->Store.use(Store.useShallow(selector))
@@ -49,6 +49,7 @@ module Player = {
     | SetTrack(Shape.Track.t)
     | RemoveTrack
     | SetPosition(int)
+    | SetQueue(array<string>)
     | QueueToggle(string)
     | QueueRemove(string)
 
@@ -58,6 +59,7 @@ module Player = {
     | SetTrack(track) => {...data, track: Some(track)}
     | RemoveTrack => {...data, track: None}
     | SetPosition(position) => {...data, position}
+    | SetQueue(queue) => {...data, queue}
     | QueueToggle(uri) => {...data, queue: data.queue->Util.Arr.toggle(uri)}
     | QueueRemove(uri) => {...data, queue: data.queue->Array.filter(u => u != uri)}
     }

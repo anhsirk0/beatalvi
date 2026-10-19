@@ -4,11 +4,7 @@ module Cover = {
     let id = `track-${track.id->Float.toString}`
     let _ = Hook.useFetch({
       fn: () => Invoke.getTrackCoverArt({album: track.album, trackUri: track.uri}),
-      onSuccess: bytes => {
-        if bytes->Array.length > 0 {
-          bytes->Shape.Bytes.toImageUrl->Util.Dom.setImageSrc(id)
-        }
-      },
+      onSuccess: Shape.Bytes.setCover(_, id),
     })
 
     <div
@@ -31,11 +27,7 @@ let make = (~track: Shape.Track.t, ~idx, ~onClick) => {
 
   let _ = Hook.useFetch({
     fn: () => Invoke.getTrackCoverArt({album: track.album, trackUri: track.uri}),
-    onSuccess: bytes => {
-      if bytes->Array.length > 0 {
-        bytes->Shape.Bytes.toImageUrl->Util.Dom.setImageSrc(id)
-      }
-    },
+    onSuccess: Shape.Bytes.setCover(_, id),
   })
 
   let onMouseDown = evt => {

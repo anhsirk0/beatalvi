@@ -1,16 +1,12 @@
 @react.component
-let make = (~album: Shape.Album.item, ~onClick, ~onPlay, ~width="w-full") => {
+let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
   let isActive = Store.Player.useShallow(s =>
     s.data.track->Option.map(t => t.album) == Some(album.name)
   )
   let id = `album-${album.id->Float.toString}`
   let _ = Hook.useFetch({
     fn: () => Invoke.getAlbumCoverArt({album: album.name}),
-    onSuccess: bytes => {
-      if bytes->Array.length > 0 {
-        bytes->Shape.Bytes.toImageUrl->Util.Dom.setImageSrc(id)
-      }
-    },
+    onSuccess: Shape.Bytes.setCover(_, id),
   })
 
   let onPlayClick = evt => {

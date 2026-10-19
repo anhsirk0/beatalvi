@@ -48,6 +48,7 @@ module Str = {
 module Arr = {
   let isEmpty = arr => arr->Array.length === 0
   let or = (arr, arr2) => arr->isEmpty ? arr2 : arr
+  let uniq = arr => arr->Set.fromArray->Set.toArray
   let toggle = (arr: array<'a>, item: 'a) =>
     arr->Array.some(i => i == item) ? arr->Array.filter(i => i != item) : arr->Array.concat([item])
   let rotate = (arr, item) => {
@@ -74,9 +75,4 @@ module Dom = {
     }
   }
   let targetValue = evt => ReactEvent.Form.target(evt)["value"]
-
-  // Todo: bind this, instead of raw js
-  let setImageSrc: (Shape.objectUrl, string) => unit = %raw("function(url, id) {
-    document.getElementById(id).src = url;
-}")
 }

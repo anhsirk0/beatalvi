@@ -1,5 +1,5 @@
 use serde::Serialize;
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 
 pub struct Album {
     pub id: i64,
@@ -15,6 +15,15 @@ pub struct Album {
 pub struct Artist {
     pub id: i64,
     pub name: String,
+}
+
+#[derive(Serialize, Clone, Debug)]
+#[serde(rename_all = "camelCase")]
+pub struct ArtistStats {
+    pub id: i64,
+    pub name: String,
+    pub album_count: i64,
+    pub track_count: i64,
 }
 
 #[derive(Serialize, Clone, Debug)]
@@ -44,6 +53,15 @@ pub struct BasicAlbum {
     pub name: String,
     pub year: i64,
     pub artist: String,
+}
+
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct ArtistAlbum {
+    pub id: i64,
+    pub name: String,
+    pub year: i64,
+    pub mtime: i64,
 }
 
 pub struct UriMtime {
@@ -85,9 +103,15 @@ pub struct Stats {
 #[derive(Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct TrackState {
-    pub track: Track,
+    pub track: Option<Track>,
     pub is_playing: bool,
     pub position: u64,
+    pub queue: VecDeque<String>,
+}
+
+pub struct AlbumTrack {
+    pub track_uri: String,
+    pub album_name: String,
 }
 
 pub enum Event {

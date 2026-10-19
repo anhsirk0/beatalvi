@@ -1,8 +1,8 @@
 use rusqlite::{Connection, Result, params, params_from_iter};
 extern crate dirs;
 use crate::models::{
-    AlbumInfo, Artist, BasicAlbum, BasicTrack, IdMtime, NameIdMap, Stats, Track, TrackInfo,
-    TracksMetaMap,
+    AlbumInfo, AlbumTrack, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, IdMtime,
+    NameIdMap, Stats, Track, TrackInfo, TracksMetaMap,
 };
 use crate::utils::config;
 
@@ -171,19 +171,19 @@ pub fn find_track_by_uri(uri: &str) -> Option<Track> {
     let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
     conn.query_one(
         "SELECT 
-  t.id,
-  t.name AS track_name,
-  t.uri,
-  t.duration,
-  t.popularity,
-  a.name AS album_name,
-  GROUP_CONCAT(ar.name, ', ') AS artists
-FROM tracks t
-JOIN albums a ON t.album_id = a.id
-LEFT JOIN track_artists ta ON t.id = ta.track_id
-LEFT JOIN artists ar ON ta.artist_id = ar.id
-WHERE t.uri = ?1
-GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name",
+               t.id,
+               t.name AS track_name,
+               t.uri,
+               t.duration,
+               t.popularity,
+               a.name AS album_name,
+             GROUP_CONCAT(ar.name, ', ') AS artists
+             FROM tracks t
+             JOIN albums a ON t.album_id = a.id
+             LEFT JOIN track_artists ta ON t.id = ta.track_id
+             LEFT JOIN artists ar ON ta.artist_id = ar.id
+             WHERE t.uri = ?1
+             GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name",
         params![uri],
         |row| {
             Ok(Track {
@@ -204,15 +204,15 @@ pub fn find_basic_track_by_uri(uri: &str) -> Option<BasicTrack> {
     let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
     conn.query_one(
         "SELECT 
-  t.name AS track_name,
-  a.name AS album_name,
-  GROUP_CONCAT(ar.name, ', ') AS artists
-FROM tracks t
-JOIN albums a ON t.album_id = a.id
-LEFT JOIN track_artists ta ON t.id = ta.track_id
-LEFT JOIN artists ar ON ta.artist_id = ar.id
-WHERE t.uri = ?1
-GROUP BY t.id, t.name, a.name;",
+               t.name AS track_name,
+               a.name AS album_name,
+             GROUP_CONCAT(ar.name, ', ') AS artists
+             FROM tracks t
+             JOIN albums a ON t.album_id = a.id
+             LEFT JOIN track_artists ta ON t.id = ta.track_id
+             LEFT JOIN artists ar ON ta.artist_id = ar.id
+             WHERE t.uri = ?1
+             GROUP BY t.id, t.name, a.name;",
         params![uri],
         |row| {
             Ok(BasicTrack {
@@ -266,9 +266,9 @@ pub fn get_stats() -> Result<Stats> {
     let conn = Connection::open(config::get_db_path())?;
     conn.query_row(
         "SELECT 
-  (SELECT COUNT(*) FROM tracks) AS track_count,
-  (SELECT COUNT(*) FROM albums) AS album_count,
-  (SELECT COUNT(*) FROM artists) AS artist_count",
+             (SELECT COUNT(*) FROM tracks) AS track_count,
+             (SELECT COUNT(*) FROM albums) AS album_count,
+             (SELECT COUNT(*) FROM artists) AS artist_count",
         [],
         |row| {
             Ok(Stats {
@@ -294,20 +294,20 @@ pub fn get_top_10_tracks() -> Result<Vec<Track>> {
     let conn = Connection::open(config::get_db_path())?;
     let mut stmt = conn.prepare(
         "SELECT 
-  t.id,
-  t.name AS track_name,
-  t.uri,
-  t.duration,
-  t.popularity,
-  a.name AS album_name,
-  GROUP_CONCAT(ar.name, ', ') AS artists
-FROM tracks t
-JOIN albums a ON t.album_id = a.id
-LEFT JOIN track_artists ta ON t.id = ta.track_id
-LEFT JOIN artists ar ON ta.artist_id = ar.id
-GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name
-ORDER BY t.popularity DESC
-LIMIT 10",
+               t.id,
+               t.name AS track_name,
+               t.uri,
+               t.duration,
+               t.popularity,
+               a.name AS album_name,
+             GROUP_CONCAT(ar.name, ', ') AS artists
+             FROM tracks t
+             JOIN albums a ON t.album_id = a.id
+             LEFT JOIN track_artists ta ON t.id = ta.track_id
+             LEFT JOIN artists ar ON ta.artist_id = ar.id
+             GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name
+             ORDER BY t.popularity DESC
+             LIMIT 10",
     )?;
     let tracks = stmt
         .query_map([], |row| {
@@ -330,20 +330,20 @@ fn albums_query(limit: Option<usize>, order: Option<String>) -> String {
     let limit = limit.map(|n| format!("\nLIMIT {}", n)).unwrap_or("".into());
     format!(
         "SELECT 
-  a.id,
-  a.name AS album_name,
-  a.year,
-  a.popularity,
-  (SELECT GROUP_CONCAT(ar.name, ', ')
-   FROM (
-     SELECT DISTINCT aa.artist_id
-     FROM album_artists aa
-     WHERE aa.album_id = a.id
-   ) AS unique_artists
-   JOIN artists ar ON unique_artists.artist_id = ar.id
-  ) AS artists
-FROM albums a
-ORDER BY {}{}",
+          a.id,
+          a.name AS album_name,
+          a.year,
+          a.popularity,
+          (SELECT GROUP_CONCAT(ar.name, ', ')
+          FROM (
+          SELECT DISTINCT aa.artist_id
+          FROM album_artists aa
+          WHERE aa.album_id = a.id
+          ) AS unique_artists
+          JOIN artists ar ON unique_artists.artist_id = ar.id
+          ) AS artists
+        FROM albums a
+        ORDER BY {}{}",
         order_by, limit
     )
 }
@@ -444,16 +444,16 @@ pub fn get_track_uris_by_albums(ids: Vec<i64>) -> Result<Vec<(String, i64)>> {
 
     let query = format!(
         r#"
-WITH album_order AS ({})
-SELECT 
-  t.uri,
-  t.album_id
-FROM albums a
-JOIN tracks t ON a.id = t.album_id
-JOIN album_order ao ON a.id = ao.id
-WHERE a.id IN ({})
-ORDER BY ao.sort_order, t.name;
-        "#,
+        WITH album_order AS ({})
+        SELECT 
+          t.uri,
+          t.album_id
+        FROM albums a
+        JOIN tracks t ON a.id = t.album_id
+        JOIN album_order ao ON a.id = ao.id
+        WHERE a.id IN ({})
+        ORDER BY ao.sort_order, t.name;
+"#,
         cte_rows, joined_ids
     );
 
@@ -479,29 +479,29 @@ pub fn get_tracks_by_albums(ids: Vec<i64>) -> Result<Vec<Track>> {
 
     let query = format!(
         r#"
-WITH album_order AS ({})
-SELECT 
-  a.id AS album_id,
-  a.name AS album_name,
-  t.id AS track_id,
-  t.name AS track_name,
-  t.uri,
-  t.duration,
-  t.popularity,
-  (SELECT GROUP_CONCAT(name, ', ')
-   FROM (
-     SELECT ar.name
-     FROM track_artists ta
-     JOIN artists ar ON ta.artist_id = ar.id
-     WHERE ta.track_id = t.id
-     GROUP BY ar.name
-   )
-  ) AS artists
-FROM albums a
-JOIN tracks t ON a.id = t.album_id
-JOIN album_order ao ON a.id = ao.id
-WHERE a.id IN ({})
-ORDER BY ao.sort_order, t.name;
+        WITH album_order AS ({})
+        SELECT 
+          a.id AS album_id,
+          a.name AS album_name,
+          t.id AS track_id,
+          t.name AS track_name,
+          t.uri,
+          t.duration,
+          t.popularity,
+          (SELECT GROUP_CONCAT(name, ', ')
+           FROM (
+             SELECT ar.name
+             FROM track_artists ta
+             JOIN artists ar ON ta.artist_id = ar.id
+             WHERE ta.track_id = t.id
+             GROUP BY ar.name
+           )
+          ) AS artists
+        FROM albums a
+        JOIN tracks t ON a.id = t.album_id
+        JOIN album_order ao ON a.id = ao.id
+        WHERE a.id IN ({})
+        ORDER BY ao.sort_order, t.name;
         "#,
         cte_rows, joined_ids
     );
@@ -560,6 +560,93 @@ pub fn get_random_album_name_by_artist_id(artist_id: i64) -> Result<Option<Strin
     Ok(name)
 }
 
+pub fn get_artist_stats(artist_id: i64) -> Result<Option<ArtistStats>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let mut stmt = conn.prepare(
+        "SELECT 
+          ar.id,
+          ar.name,
+          (SELECT COUNT(DISTINCT aa.album_id)
+           FROM album_artists aa
+           WHERE aa.artist_id = ar.id
+          ) AS album_count,
+          (SELECT COUNT(DISTINCT ta.track_id)
+           FROM track_artists ta
+           WHERE ta.artist_id = ar.id
+          ) AS track_count
+        FROM artists ar
+        WHERE ar.id = ?",
+    )?;
+
+    let artist = stmt
+        .query_row([artist_id], |row| {
+            Ok(ArtistStats {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                album_count: row.get(2)?,
+                track_count: row.get(3)?,
+            })
+        })
+        .ok();
+
+    Ok(artist)
+}
+
+pub fn get_one_track_per_album() -> Result<Vec<AlbumTrack>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let mut stmt = conn.prepare(
+        "SELECT 
+          a.name,
+          t.uri
+        FROM albums a
+        JOIN tracks t ON a.id = t.album_id
+        WHERE t.id = (
+          SELECT id FROM tracks 
+          WHERE album_id = a.id 
+          LIMIT 1
+        )",
+    )?;
+
+    let tracks = stmt
+        .query_map([], |row| {
+            Ok(AlbumTrack {
+                album_name: row.get(0)?,
+                track_uri: row.get(1)?,
+            })
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+
+    Ok(tracks)
+}
+
+pub fn get_albums_by_artist_id(artist_id: i64) -> Result<Vec<ArtistAlbum>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let mut stmt = conn.prepare(
+        "SELECT DISTINCT
+          a.id,
+          a.name,
+          a.year,
+          a.mtime
+        FROM albums a
+        JOIN album_artists aa ON a.id = aa.album_id
+        WHERE aa.artist_id = ?
+        ORDER BY a.year DESC, a.mtime DESC",
+    )?;
+
+    let albums = stmt
+        .query_map([artist_id], |row| {
+            Ok(ArtistAlbum {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                year: row.get(2)?,
+                mtime: row.get(3)?,
+            })
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+
+    Ok(albums)
+}
+
 /* ───────────────────────────── DB Updates ───────────────────────────── */
 pub fn update_track_by_id(
     conn: &Connection,
@@ -589,12 +676,12 @@ pub fn increment_track_and_album_popularity_by_uri(uri: &str) -> Result<()> {
     )?;
     conn.execute(
         "UPDATE albums 
-SET popularity = popularity + (
-  SELECT CAST(1.0 / COUNT(*) * 30 AS INTEGER)
-  FROM tracks
-  WHERE album_id = albums.id
-)
-WHERE id = (SELECT album_id FROM tracks WHERE uri = ?);",
+        SET popularity = popularity + (
+          SELECT ROUND(1.0 / COUNT(*) * 25 + 0.5)
+          FROM tracks
+          WHERE album_id = albums.id
+        )
+        WHERE id = (SELECT album_id FROM tracks WHERE uri = ?);",
         params![uri],
     )?;
     Ok(())

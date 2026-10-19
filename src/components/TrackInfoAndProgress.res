@@ -11,11 +11,7 @@ let make = (~track: Shape.Track.t) => {
 
   let _ = Hook.useFetch({
     fn: () => Invoke.getTrackCoverArt({album: track.album, trackUri: track.uri}),
-    onSuccess: bytes => {
-      if bytes->Array.length > 0 {
-        bytes->Shape.Bytes.toImageUrl->Util.Dom.setImageSrc(id)
-      }
-    },
+    onSuccess: Shape.Bytes.setCover(_, id),
   })
 
   Event.useListen(Event.listenPosition, pos => update(SetPosition(pos)))

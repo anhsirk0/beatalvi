@@ -215,7 +215,7 @@ impl AppState {
         self.play_previous()
     }
 
-    pub fn get_track_state(&self) -> Option<TrackState> {
+    pub fn get_track_state(&self) -> TrackState {
         let track = self
             .player
             .lock()
@@ -224,10 +224,12 @@ impl AppState {
             .and_then(|uri| database::find_track_by_uri(&uri));
         let is_playing = self.player.lock().unwrap().is_playing().unwrap_or(false);
         let position = self.player.lock().unwrap().get_position().unwrap_or(0);
-        track.map(|track| TrackState {
+        let queue = self.queue.lock().unwrap().clone();
+        TrackState {
             track,
             is_playing,
             position,
-        })
+            queue,
+        }
     }
 }

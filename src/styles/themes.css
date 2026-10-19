@@ -150,8 +150,8 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.25 0.0621 339.51);
-  --color-accent-content: oklch(0.25 0.0621 339.51);
+  --color-accent: oklch(0.35 0.0621 339.51);
+  --color-accent-content: oklch(0.35 0.0621 339.51);
   --color-neutral: oklch(0.2187 0.0536 339.97);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);
   --color-info: oklch(70% 0.2 220);
@@ -235,8 +235,8 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.25 0.0457 248.01);
-  --color-accent-content: oklch(0.25 0.0457 248.01);
+  --color-accent: oklch(0.35 0.0457 248.01);
+  --color-accent-content: oklch(0.35 0.0457 248.01);
   --color-neutral: oklch(0.2171 0.0385 250.01);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);
   --color-info: oklch(70% 0.2 220);
@@ -277,8 +277,8 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.25 0.0732 291.91);
-  --color-accent-content: oklch(0.25 0.0732 291.91);
+  --color-accent: oklch(0.35 0.0732 291.91);
+  --color-accent-content: oklch(0.35 0.0732 291.91);
   --color-neutral: oklch(0.2103 0.0592 290.82);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);
   --color-info: oklch(70% 0.2 220);
@@ -320,8 +320,8 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.25 0.0732 291.91);
-  --color-accent-content: oklch(0.25 0.0732 291.91);
+  --color-accent: oklch(0.35 0.0732 291.91);
+  --color-accent-content: oklch(0.35 0.0732 291.91);
   --color-neutral: oklch(0.2103 0.0592 290.82);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);
   --color-info: oklch(70% 0.2 220);
@@ -362,8 +362,8 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.25 0.0467 156.2);
-  --color-accent-content: oklch(0.25 0.0467 156.2);
+  --color-accent: oklch(0.35 0.0467 156.2);
+  --color-accent-content: oklch(0.35 0.0467 156.2);
   --color-neutral: oklch(0.2378 0.0367 158.06);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);
   --color-info: oklch(70% 0.2 220);
@@ -405,8 +405,8 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.25 0.0467 156.2);
-  --color-accent-content: oklch(0.25 0.0467 156.2);
+  --color-accent: oklch(0.35 0.0467 156.2);
+  --color-accent-content: oklch(0.35 0.0467 156.2);
   --color-neutral: oklch(0.2378 0.0367 158.06);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);
   --color-info: oklch(70% 0.2 220);
@@ -447,8 +447,8 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.25 0.0584 30.99);
-  --color-accent-content: oklch(0.25 0.0584 30.99);
+  --color-accent: oklch(0.35 0.0584 30.99);
+  --color-accent-content: oklch(0.35 0.0584 30.99);
   --color-neutral: oklch(0.2256 0.0398 25.71);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);
   --color-info: oklch(70% 0.2 220);
@@ -490,8 +490,8 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.2 0.0584 30.99);
-  --color-accent-content: oklch(0.2 0.0584 30.99);
+  --color-accent: oklch(0.35 0.0584 30.99);
+  --color-accent-content: oklch(0.35 0.0584 30.99);
   --color-neutral: oklch(0.2256 0.0398 25.71);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);
   --color-info: oklch(70% 0.2 220);
@@ -575,8 +575,8 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.25 0.0632 96.48);
-  --color-accent-content: oklch(0.25 0.0632 96.48);
+  --color-accent: oklch(0.3869 0.0632 96.48);
+  --color-accent-content: oklch(0.3869 0.0632 96.48);
   --color-neutral: oklch(0.2249 0.0363 91.2);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);
   --color-info: oklch(70% 0.2 220);
@@ -660,7 +660,7 @@ Borders -> accent (black in light, grey in dark)
   --color-primary-content: oklch(0 0 0);
   --color-secondary: oklch(0.834747 0.145258 211.6771);
   --color-secondary-content: oklch(0 0 0);
-  --color-accent: oklch(0.25 0.072 359.96);
+  --color-accent: oklch(0.35 0.072 359.96);
   --color-accent-content: oklch(0.25 0.072 359.96);
   --color-neutral: oklch(0.203 0.0509 6.2);
   --color-neutral-content: oklch(0.9695 0.0067 97.35);

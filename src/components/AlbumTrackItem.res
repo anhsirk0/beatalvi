@@ -1,5 +1,5 @@
 @react.component
-let make = (~track: Shape.Track.t, ~idx, ~onPlay, ~artist=?) => {
+let make = (~track: Shape.Track.t, ~idx, ~onPlay, ~showArtist=false) => {
   let currentTrack = Store.Player.useShallow(s => s.data.track)
   let isPlaying = Some(track.id) == currentTrack->Option.map(t => t.id)
   let bg = isPlaying ? "bg-primary text-primary-content nb-active" : "bg-base-100"
@@ -19,11 +19,11 @@ let make = (~track: Shape.Track.t, ~idx, ~onPlay, ~artist=?) => {
   >
     <TrackIndex uri=track.uri idx />
     <p className="r-text-lg font-medium grow truncate py-2"> {track.name->React.string} </p>
-    {artist->Util.renderSome(artist => {
-      <p className={`r-text font-medium ${isPlaying ? "text-primary-content/90" : "text-80"}`}>
-        {artist->React.string}
-      </p>
-    })}
+    {showArtist
+      ? <p className={`r-text font-medium ${isPlaying ? "text-primary-content/90" : "text-80"}`}>
+          {track.artist->React.string}
+        </p>
+      : React.null}
     <p className="text-lg"> {track.duration->Util.durationToString->React.string} </p>
   </div>
 }
