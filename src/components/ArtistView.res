@@ -76,8 +76,10 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
     | Success(albums) =>
       <div className="grid grid-cols-2 gap-4 w-full px-1 pt-2 border-t-2 border-accent">
         {albums
-        ->Array.map(album =>
-          <ArtistAlbumItem album artistId=artist.id key={album.id->Float.toString} onPlay />
+        ->Array.mapWithIndex((album, i) =>
+          <Delay key={album.id->Float.toString} timeout={i * 40}>
+            <ArtistAlbumItem album key={album.id->Float.toString} onPlay />
+          </Delay>
         )
         ->React.array}
       </div>

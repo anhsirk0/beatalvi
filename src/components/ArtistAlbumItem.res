@@ -1,5 +1,5 @@
 @react.component
-let make = (~album: Shape.Album.item, ~artistId: float, ~onPlay) => {
+let make = (~album: Shape.Album.item, ~onPlay) => {
   let id = `album-${album.id->Float.toString}`
   let _ = Hook.useFetch({
     fn: () => Invoke.getAlbumCoverArt({album: album.name}),
@@ -17,7 +17,7 @@ let make = (~album: Shape.Album.item, ~artistId: float, ~onPlay) => {
 
   let onTrackPlay = index => onPlay(album.id, ~index)
 
-  <div className={trackCount > 1 ? "col-span-2" : "col-span-1"}>
+  <div className={trackCount > 1 ? "col-span-2 animate-slide-up" : "col-span-1 animate-slide-up"}>
     <div className="flex gap-4 2xl:gap-8 pt-4">
       <div
         className="w-20 2xl:w-28 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb-outline"
