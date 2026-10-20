@@ -1,4 +1,5 @@
 use serde::Serialize;
+use std::cmp::Ordering;
 use std::collections::{HashMap, VecDeque};
 
 pub struct Album {
@@ -44,6 +45,23 @@ pub struct BasicTrack {
     pub name: String,
     pub album: String,
     pub artist: String,
+}
+
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct TrackItem {
+    pub name: String,
+    pub uri: String,
+    pub duration: i64,
+}
+#[derive(Serialize, Clone)]
+pub struct AlbumGroup {
+    pub id: i64,
+    pub name: String,
+    pub year: i64,
+    pub mtime: i64,
+    pub artists: String,
+    pub tracks: Vec<TrackItem>,
 }
 
 #[derive(Serialize, Clone)]
@@ -120,4 +138,83 @@ pub enum Event {
     Toggle,
     Stop,
     Position,
+}
+
+impl AlbumGroup {
+    // Sort by match priority: tracks first, then album, then artists
+    pub fn cmp_by_query(query: &str, a: &Self, b: &Self) -> Ordering {
+        let query_lower = query.to_lowercase();
+
+        // Count track matches: starts_with gets priority (weight 2), contains gets (weight 1)
+        let a_track_score: i32 = a
+            .tracks
+            .iter()
+            .map(|t| {
+                let name_lower = t.name.to_lowercase();
+                if name_lower.starts_with(&query_lower) {
+                    2
+                } else if name_lower.contains(&query_lower) {
+                    1
+                } else {
+                    0
+                }
+            })
+            .sum();
+        let b_track_score: i32 = b
+            .tracks
+            .iter()
+            .map(|t| {
+                let name_lower = t.name.to_lowercase();
+                if name_lower.starts_with(&query_lower) {
+                    2
+                } else if name_lower.contains(&query_lower) {
+                    1
+                } else {
+                    0
+                }
+            })
+            .sum();
+
+        if a_track_score != b_track_score {
+            return b_track_score.cmp(&a_track_score); // Descending
+        }
+
+        // Album match (starts_with first, then contains)
+        let a_album_match = if a.name.to_lowercase().starts_with(&query_lower) {
+            2
+        } else if a.name.to_lowercase().contains(&query_lower) {
+            1
+        } else {
+            0
+        };
+        let b_album_match = if b.name.to_lowercase().starts_with(&query_lower) {
+            2
+        } else if b.name.to_lowercase().contains(&query_lower) {
+            1
+        } else {
+            0
+        };
+
+        if a_album_match != b_album_match {
+            return b_album_match.cmp(&a_album_match); // Descending
+        }
+
+        // Artist match (starts_with first, then contains)
+        let a_artist_match = if a.artists.to_lowercase().starts_with(&query_lower) {
+            2
+        } else if a.artists.to_lowercase().contains(&query_lower) {
+            1
+        } else {
+            0
+        };
+        let b_artist_match = if b.artists.to_lowercase().starts_with(&query_lower) {
+            2
+        } else if b.artists.to_lowercase().contains(&query_lower) {
+            1
+        } else {
+            0
+        };
+
+        b_artist_match.cmp(&a_artist_match) // Descending
+    }
 }

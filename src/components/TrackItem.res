@@ -8,7 +8,7 @@ module Cover = {
     })
 
     <div
-      className="size-12 lg:size-12 2xl:size-14 bg-base-content/30 rounded-box flex shrink-0 overflow-hidden nb-outline relative isolate"
+      className="size-12 2xl:size-14 bg-base-content/30 rounded-box flex shrink-0 overflow-hidden nb-outline relative isolate"
     >
       <img key=id id className="object-cover h-full z-10" />
       <div className="center p-4 absolute inset-0">

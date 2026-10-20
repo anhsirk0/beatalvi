@@ -31,14 +31,20 @@ module Stats = {
 }
 
 module Track = {
-  type item = {
+  type basic = {
     name: string,
     album: string,
     artist: string,
   }
   type t = {
-    ...item,
+    ...basic,
     id: float,
+    uri: string,
+    duration: int,
+  }
+
+  type item = {
+    name: string,
     uri: string,
     duration: int,
   }
@@ -50,7 +56,7 @@ module Track = {
     queue: array<string>,
   }
 
-  let totalDuration = arr =>
+  let totalDuration = (arr: array<t>) =>
     arr->Array.map(t => t.duration)->Array.reduce(0, (acc, num) => acc + num)
 }
 
@@ -66,6 +72,15 @@ module Album = {
     name: string,
     year: int,
     mtime: int,
+  }
+
+  type group = {
+    id: float,
+    name: string,
+    year: int,
+    mtime: int,
+    artists: string,
+    tracks: array<Track.item>,
   }
 }
 

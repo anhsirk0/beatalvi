@@ -1,6 +1,8 @@
+type modal = Keybindings | Search | Nope
+
 @react.component
 let make = () => {
-  let (isKeybindingsOpen, setIsKeybindingsOpen) = React.useState(_ => false)
+  let (modal, setModal) = React.useState(_ => Nope)
 
   let track = Store.Player.useShallow(s => s.data.track)
   let popoverId = "settings-menu"
@@ -16,12 +18,14 @@ let make = () => {
       </Delay>
     }}
     <div className="flex justify-end r-gap ml-auto shrink-0 min-w-40">
-      <button className="btn bg-base-100 btn-square btn-ghost r-btn nb-box active:nb-box">
+      <button
+        id="search-modal"
+        onClick={_ => setModal(_ => Search)}
+        className="btn bg-base-100 btn-square btn-ghost r-btn nb-box active:nb-box"
+      >
         <Icon.magnifyingGlass className="r-icon" />
       </button>
-      <button
-        onClick={_ => setIsKeybindingsOpen(_ => true)} id="keybindings-modal" className="hidden"
-      >
+      <button onClick={_ => setModal(_ => Keybindings)} id="keybindings-modal" className="hidden">
       </button>
       <Popover.Btn target=popoverId anchor="settings-btn">
         <button className="btn bg-base-100 btn-square btn-ghost r-btn nb-box active:nb-plain">
@@ -47,15 +51,18 @@ let make = () => {
         </div>
       </Popover.Menu>
     </div>
-    {isKeybindingsOpen
-      ? <Modal
-          title={<p className="text-4xl font-bold"> {"Keybindings"->React.string} </p>}
-          onClose={() => setIsKeybindingsOpen(_ => false)}
-          classes="min-w-[60vw]"
-        >
-          <div className="divider divider-accent -mt-1"></div>
-          <SettingsKeybinding />
-        </Modal>
-      : React.null}
+    {switch modal {
+    | Keybindings =>
+      <Modal
+        title={<p className="text-4xl font-bold"> {"Keybindings"->React.string} </p>}
+        onClose={() => setModal(_ => Nope)}
+        classes="min-w-[60vw]"
+      >
+        <div className="divider divider-accent -mt-1"></div>
+        <SettingsKeybinding />
+      </Modal>
+    | Search => <SearchModal onClose={() => setModal(_ => Nope)} />
+    | Nope => React.null
+    }}
   </div>
 }

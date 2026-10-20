@@ -4,7 +4,7 @@ let make = (~setAlbum, ~albums: array<Shape.Album.t>, ~onPlay) => {
     Invoke.playTracksByAlbums({albumIds: albums->Array.map(a => a.id)})->ignore
   }
 
-  <div className="flex flex-col w-full min-w-0">
+  <div className="flex flex-col w-full min-w-0 animate-slide-up">
     <div className="flex justify-between">
       <p className="r-text-2xl font-serif"> {"Top Albums"->React.string} </p>
       <button onClick=onPlayAll className="btn btn-ghost bg-base-100 nb-box active:nb-box r-btn">
@@ -20,7 +20,7 @@ let make = (~setAlbum, ~albums: array<Shape.Album.t>, ~onPlay) => {
           album
           onClick={_ => setAlbum(album)}
           onPlay
-          width="w-40 2xl:w-52"
+          width="w-40 2xl:w-52 animate-slide-left"
         />
       )
       ->React.array}

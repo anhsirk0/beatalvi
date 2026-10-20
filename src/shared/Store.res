@@ -82,6 +82,7 @@ module Player = {
   let use = _ => store->Store.use(state => state)
   let useShallow = selector => store->Store.use(Store.useShallow(selector))
 
+  let isStopped = () => (store->Store.getState).data.state == Stopped
   let isPlaying = () => (store->Store.getState).data.state == Playing
   let getPosition = () => (store->Store.getState).data.position
 }

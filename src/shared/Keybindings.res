@@ -23,6 +23,9 @@ let useKeys = () => {
       "#close-btn"->Util.Dom.querySelectAndThen(Util.Dom.click)
     } else if key == "?" {
       "#keybindings-modal"->Util.Dom.querySelectAndThen(Util.Dom.click)
+    } else if key == "/" {
+      "#search-modal"->Util.Dom.querySelectAndThen(Util.Dom.click)
+      setTimeout(() => "#search-input"->Util.Dom.querySelectAndThen(Util.Dom.focus), 200)->ignore
     } else if key == "," {
       Route.Settings->Route.toPath->RescriptReactRouter.push
     } else if key == "." {

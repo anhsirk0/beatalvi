@@ -37,6 +37,11 @@ type getAlbumsByArtistIdArgs = {artistId: float}
 let getAlbumsByArtistId: fn<getAlbumsByArtistIdArgs, array<Shape.Album.item>> = make(
   "get_albums_by_artist_id",
 )
+type searchTracksGroupedArgs = {query: string}
+let searchTracksGrouped: fn<searchTracksGroupedArgs, array<Shape.Album.group>> = make(
+  "search_tracks_grouped",
+)
+
 type playArgs = {trackUri: string}
 let play: fn<playArgs, unit> = make("play")
 
@@ -58,9 +63,9 @@ let seek10Seconds: fn<unit, unit> = make("seek_10_seconds")
 let rewind10Seconds: fn<unit, unit> = make("rewind_10_seconds")
 
 let playNext: fn<unit, unit> = make("play_next")
-let peekNext: fn<unit, Nullable.t<Shape.Track.item>> = make("peek_next")
+let peekNext: fn<unit, Nullable.t<Shape.Track.basic>> = make("peek_next")
 let playPrevious: fn<unit, unit> = make("play_previous")
-let peekPrevious: fn<unit, Nullable.t<Shape.Track.item>> = make("peek_previous")
+let peekPrevious: fn<unit, Nullable.t<Shape.Track.basic>> = make("peek_previous")
 
 type playTracksByAlbumsArgs = {albumIds: array<float>}
 let playTracksByAlbums: fn<playTracksByAlbumsArgs, unit> = make("play_tracks_by_albums")

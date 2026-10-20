@@ -1,6 +1,8 @@
 pub mod models;
 mod utils;
-use models::{Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, Stats, Track, TrackState};
+use models::{
+    AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, Stats, Track, TrackState,
+};
 use tauri::{AppHandle, Emitter, Manager, State, Webview};
 use tokio::task;
 use utils::config;
@@ -126,6 +128,11 @@ fn get_artist_stats(artist_id: i64) -> Option<ArtistStats> {
 #[tauri::command]
 fn get_albums_by_artist_id(artist_id: i64) -> Vec<ArtistAlbum> {
     database::get_albums_by_artist_id(artist_id).unwrap()
+}
+
+#[tauri::command]
+fn search_tracks_grouped(query: String) -> Vec<AlbumGroup> {
+    database::search_tracks_grouped(&query).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
@@ -365,6 +372,7 @@ pub fn run() {
             get_all_artists,
             get_artist_stats,
             get_albums_by_artist_id,
+            search_tracks_grouped,
             play,
             pause,
             toggle,

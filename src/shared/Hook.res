@@ -3,6 +3,15 @@ let useToggle = (~init: bool=false) => {
   let toggleOpen = () => setIsOpen(val => !val)
   (isOpen, toggleOpen, setIsOpen)
 }
+let useDebounce = (value, delay) => {
+  let (debounced, setDebounced) = React.useState(_ => value)
+  React.useEffect2(() => {
+    let id = setTimeout(() => setDebounced(_ => value), delay)
+    Some(() => clearTimeout(id))
+  }, (value, delay))
+
+  debounced
+}
 
 type fetchOption<'a, 'b> = {
   fn: unit => promise<'a>,
@@ -30,7 +39,6 @@ let useFetch = (opts: fetchOption<'a, 'b>) => {
       | _ => setState(_ => Failed)
       }
     }
-
     None
   })
 

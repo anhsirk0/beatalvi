@@ -20,7 +20,7 @@ let make = () => {
   | Loading => React.null
   | Failed => React.null
   | Success(tracks) =>
-    <div className="flex flex-col w-full min-w-0">
+    <div className="flex flex-col w-full min-w-0 animate-slide-up">
       <div className="flex justify-between">
         <p className="r-text-2xl font-serif"> {"Top Tracks"->React.string} </p>
         <button

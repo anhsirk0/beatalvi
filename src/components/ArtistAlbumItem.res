@@ -16,15 +16,16 @@ let make = (~album: Shape.Album.item, ~onPlay) => {
   }
 
   let onTrackPlay = index => onPlay(album.id, ~index)
+  let className = `animate-slide-up col-span-2 ${trackCount > 1 ? "" : "xl:col-span-1"}`
 
-  <div className={trackCount > 1 ? "col-span-2 animate-slide-up" : "col-span-1 animate-slide-up"}>
+  <div className>
     <div className="flex gap-4 2xl:gap-8 pt-4">
       <div
         className="w-20 2xl:w-28 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb-outline"
       >
         <img id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
-          <p className="text-6xl 2xl:text-8xl text-center text-base-content font-serif">
+          <p className="text-4xl 2xl:text-6xl text-center text-base-content font-serif">
             {"?"->React.string}
           </p>
         </div>
@@ -49,7 +50,9 @@ let make = (~album: Shape.Album.item, ~onPlay) => {
     | Loading | Failed => React.null
     | Success(tracks) =>
       <div
-        className={`grid ${trackCount > 1 ? "grid-cols-2" : "grid-cols-1"} gap-4 w-full px-1 pt-4`}
+        className={`grid grid-cols-1 ${trackCount > 1
+            ? "xl:grid-cols-2"
+            : ""} gap-4 w-full px-1 pt-4`}
       >
         {tracks
         ->Array.mapWithIndex((track, idx) =>

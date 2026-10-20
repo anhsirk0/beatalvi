@@ -1,8 +1,8 @@
 use rusqlite::{Connection, Result, params, params_from_iter};
 extern crate dirs;
 use crate::models::{
-    AlbumInfo, AlbumTrack, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, IdMtime,
-    NameIdMap, Stats, Track, TrackInfo, TracksMetaMap,
+    AlbumGroup, AlbumInfo, AlbumTrack, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack,
+    IdMtime, NameIdMap, Stats, Track, TrackInfo, TrackItem, TracksMetaMap,
 };
 use crate::utils::config;
 
@@ -645,6 +645,68 @@ pub fn get_albums_by_artist_id(artist_id: i64) -> Result<Vec<ArtistAlbum>> {
         .collect::<Result<Vec<_>, _>>()?;
 
     Ok(albums)
+}
+
+pub fn search_tracks_grouped(query: &str) -> Result<Vec<AlbumGroup>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let search_pattern = format!("%{}%", query);
+
+    let mut stmt = conn.prepare(
+        "SELECT a.id, a.name, a.year, a.mtime,
+                (SELECT GROUP_CONCAT(ar.name, ', ')
+                 FROM (SELECT DISTINCT aa.artist_id FROM album_artists aa WHERE aa.album_id = a.id)
+                 JOIN artists ar ON ar.id = artist_id),
+                GROUP_CONCAT(t.uri || '|' || t.name || '|' || t.duration, ';;')
+        FROM tracks t
+        JOIN albums a ON t.album_id = a.id
+        WHERE t.name LIKE ?
+           OR a.name LIKE ?
+           OR EXISTS (SELECT 1 FROM track_artists ta 
+                      JOIN artists ar ON ar.id = ta.artist_id 
+                      WHERE ta.track_id = t.id AND ar.name LIKE ?)
+        GROUP BY a.id, a.name, a.year, a.mtime
+        ORDER BY a.year DESC, a.mtime DESC",
+    )?;
+
+    let mut results = stmt
+        .query_map([&search_pattern, &search_pattern, &search_pattern], |row| {
+            let album_name: String = row.get(1)?;
+            let tracks_str: String = row.get(5)?;
+            let tracks = tracks_str
+                .split(";;")
+                .map(|pair| {
+                    let parts: Vec<&str> = pair.split('|').collect();
+                    TrackItem {
+                        uri: parts.get(0).unwrap_or(&"").to_string(),
+                        name: parts.get(1).unwrap_or(&"").to_string(),
+                        duration: parts
+                            .get(2)
+                            .unwrap_or(&"")
+                            .to_string()
+                            .parse::<i64>()
+                            .unwrap_or(0),
+                    }
+                })
+                // .filter(|t| {
+                //     let query_lower = query.to_lowercase();
+                //     album_name.to_lowercase().contains(&query_lower)
+                //         || t.name.to_lowercase().contains(&query_lower)
+                // })
+                .collect();
+
+            Ok(AlbumGroup {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                year: row.get(2)?,
+                mtime: row.get(3)?,
+                artists: row.get(4)?,
+                tracks,
+            })
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+
+    results.sort_by(|a, b| AlbumGroup::cmp_by_query(query, a, b));
+    Ok(results)
 }
 
 /* ───────────────────────────── DB Updates ───────────────────────────── */

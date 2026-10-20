@@ -1,0 +1,59 @@
+module Content = {
+  @react.component
+  let make = (~query) => {
+    let data = Hook.useFetch({
+      fn: () => Invoke.searchTracksGrouped({query: query}),
+      onSuccess: Console.log,
+    })
+
+    <div className="flex flex-col r-gap overflow-y-auto min-h-0 max-h-[60vh] grow">
+      {switch data {
+      | Loading => <div className="loading loading-spinner"></div>
+      | Failed => React.null
+      | Success(groups) =>
+        groups->Array.length > 0
+          ? groups
+            ->Array.mapWithIndex((group, i) =>
+              <Delay key={group.id->Float.toString} timeout={i * 20}>
+                <AlbumGroupItem group />
+              </Delay>
+            )
+            ->React.array
+          : <div className="center grow">
+              <p className="font-fraunces r-text-2xl font-semibold text-0 italic">
+                {"Not every word finds its tune."->React.string}
+              </p>
+            </div>
+      }}
+    </div>
+  }
+}
+
+@react.component
+let make = (~onClose) => {
+  let (value, setValue) = React.useState(_ => "")
+
+  let onChange = evt => {
+    evt->ReactEvent.Form.stopPropagation
+    setValue(_ => evt->Util.Dom.targetValue)
+  }
+
+  let query = Hook.useDebounce(value, 500)
+
+  <Modal onClose classes="min-w-[50vw] min-h-[60vh] transitional">
+    <button onClick={_ => onClose()} id="close-btn" className="hidden"></button>
+    <label
+      className="input input-xl bg-base-200 outline-none nb-box active:nb-active has-focus:nb-active w-full mb-4"
+    >
+      <Icon.magnifyingGlass className="r-icon" />
+      <InputBase id="search-input" value onChange type_="text" className="grow" />
+    </label>
+    {query->String.length > 2
+      ? <Content query key=query />
+      : <div className="center grow">
+          <p className="r-text-xl text-80">
+            {"Search for tracks, albums and artists"->React.string}
+          </p>
+        </div>}
+  </Modal>
+}

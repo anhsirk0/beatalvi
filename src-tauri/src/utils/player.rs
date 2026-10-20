@@ -88,7 +88,7 @@ impl Player {
 
     pub fn rewind_10_seconds(&self) -> Result<u64, Box<dyn Error>> {
         if let Some(pos) = self.get_position() {
-            Ok(self.seek(pos - 10)?)
+            Ok(self.seek(pos.saturating_sub(10))?)
         } else {
             Ok(0)
         }

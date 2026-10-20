@@ -15,7 +15,7 @@ let make = (~track: Shape.Track.t, ~idx, ~onPlay, ~showArtist=false) => {
     role="button"
     onClick={_ => onPlay()}
     onMouseDown
-    className={`flex flex-row items-center cursor-pointer p-4 py-0 nb nb-box active:nb-plain gap-4 border-2 ${bg}`}
+    className={`flex flex-row items-center cursor-pointer px-4 nb nb-box active:nb-plain gap-4 border-2 ${bg}`}
   >
     <TrackIndex uri=track.uri idx />
     <p className="r-text-lg font-medium grow truncate py-2"> {track.name->React.string} </p>
