@@ -3,7 +3,6 @@ module Content = {
   let make = (~query) => {
     let data = Hook.useFetch({
       fn: () => Invoke.searchTracksGrouped({query: query}),
-      onSuccess: Console.log,
     })
 
     <div className="flex flex-col r-gap overflow-y-auto min-h-0 max-h-[60vh] grow">

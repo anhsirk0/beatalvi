@@ -48,6 +48,9 @@ let make = () => {
     <div className="grid grid-cols-1 gap-8 2xl:gap-16">
       <div className="flex flex-col">
         <p className="r-text-xl font-semibold"> {"Navigation"->React.string} </p>
+        <Item title="Search / focus search input">
+          <Kbd k="/" />
+        </Item>
         <Item title="Sidebar item (s)">
           <Kbd k="ctrl" />
           <p className="px-2 text-2xl 2xl:text-3xl"> {"+"->React.string} </p>
