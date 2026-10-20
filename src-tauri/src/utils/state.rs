@@ -1,4 +1,4 @@
-use crate::models::TrackState;
+use crate::models::{AlbumGroup, Track, TrackItem, TrackState};
 use crate::utils::database;
 use crate::utils::event;
 use crate::utils::player::Player;
@@ -231,5 +231,58 @@ impl AppState {
             position,
             queue,
         }
+    }
+
+    pub fn get_playing_album_groups(&self) -> Vec<AlbumGroup> {
+        if self.playlist.lock().unwrap().remaining().is_empty() {
+            return Vec::new();
+        }
+        let uris = self.playlist.lock().unwrap().all().clone();
+        let tracks = database::get_tracks_by_uris(uris).unwrap();
+        let mut groups: Vec<AlbumGroup> = Vec::new();
+        let mut group_tracks: Vec<Track> = Vec::new();
+
+        for track in tracks {
+            if let Some(last_track) = group_tracks.last() {
+                if last_track.album == track.album {
+                    group_tracks.push(track);
+                } else {
+                    groups.push(AlbumGroup {
+                        id: last_track.id.clone(), // should be album id, but its fine
+                        name: last_track.album.clone(),
+                        artists: last_track.artist.clone(),
+                        tracks: group_tracks
+                            .iter()
+                            .map(|t| TrackItem {
+                                name: t.name.clone(),
+                                uri: t.uri.clone(),
+                                duration: t.duration.clone(),
+                            })
+                            .collect(),
+                    });
+                    group_tracks.clear();
+                    group_tracks.push(track);
+                }
+            } else {
+                group_tracks.push(track);
+            }
+        }
+        if let Some(last_track) = group_tracks.last() {
+            groups.push(AlbumGroup {
+                id: last_track.id.clone(), // should be album id, but its fine/uniq
+                name: last_track.album.clone(),
+                artists: last_track.artist.clone(),
+                tracks: group_tracks
+                    .iter()
+                    .map(|t| TrackItem {
+                        name: t.name.clone(),
+                        uri: t.uri.clone(),
+                        duration: t.duration.clone(),
+                    })
+                    .collect(),
+            });
+            // group_tracks.clear();
+        }
+        groups
     }
 }

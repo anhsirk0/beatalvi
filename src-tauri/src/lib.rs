@@ -136,6 +136,11 @@ fn search_tracks_grouped(query: String) -> Vec<AlbumGroup> {
 }
 
 #[tauri::command]
+fn get_playing_album_groups(state: State<AppState>) -> Vec<AlbumGroup> {
+    state.get_playing_album_groups()
+}
+
+#[tauri::command]
 fn play(track_uri: String, app_handle: AppHandle, state: State<AppState>) {
     let mut player = state.player.lock().unwrap();
     if !player.is_stopped().unwrap() {
@@ -373,6 +378,7 @@ pub fn run() {
             get_artist_stats,
             get_albums_by_artist_id,
             search_tracks_grouped,
+            get_playing_album_groups,
             play,
             pause,
             toggle,

@@ -325,6 +325,53 @@ pub fn get_top_10_tracks() -> Result<Vec<Track>> {
     Ok(tracks)
 }
 
+pub fn get_tracks_by_uris(uris: Vec<String>) -> Result<Vec<Track>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let joined_ids = make_query_ids(uris.len());
+    let case_parts: Vec<String> = (0..uris.len())
+        .map(|i| format!("WHEN t.uri = ? THEN {}", i))
+        .collect();
+    let cte = format!("CASE {} ELSE {} END", case_parts.join(" "), uris.len());
+    let query = format!(
+        "SELECT 
+               t.id,
+               t.name AS track_name,
+               t.uri,
+               t.duration,
+               t.popularity,
+               a.name AS album_name,
+             GROUP_CONCAT(ar.name, ', ') AS artists
+             FROM tracks t
+             JOIN albums a ON t.album_id = a.id
+             LEFT JOIN track_artists ta ON t.id = ta.track_id
+             LEFT JOIN artists ar ON ta.artist_id = ar.id
+             WHERE t.uri in ({})
+             GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name
+             ORDER BY {}",
+        joined_ids, cte
+    );
+
+    // Bind uris twice: once for WHERE IN, once for CASE WHEN
+    let mut params: Vec<&str> = uris.iter().map(|s| s.as_str()).collect();
+    params.extend(params.clone());
+
+    let mut stmt = conn.prepare(&query)?;
+    let tracks = stmt
+        .query_map(params_from_iter(params), |row| {
+            Ok(Track {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                uri: row.get(2)?,
+                duration: row.get(3)?,
+                popularity: row.get(4)?,
+                album: row.get(5)?,
+                artist: row.get(6)?,
+            })
+        })?
+        .collect::<Result<Vec<Track>, _>>()?;
+    Ok(tracks)
+}
+
 fn albums_query(limit: Option<usize>, order: Option<String>) -> String {
     let order_by = order.unwrap_or("a.popularity DESC".into());
     let limit = limit.map(|n| format!("\nLIMIT {}", n)).unwrap_or("".into());
@@ -687,18 +734,11 @@ pub fn search_tracks_grouped(query: &str) -> Result<Vec<AlbumGroup>> {
                             .unwrap_or(0),
                     }
                 })
-                // .filter(|t| {
-                //     let query_lower = query.to_lowercase();
-                //     album_name.to_lowercase().contains(&query_lower)
-                //         || t.name.to_lowercase().contains(&query_lower)
-                // })
                 .collect();
 
             Ok(AlbumGroup {
                 id: row.get(0)?,
-                name: row.get(1)?,
-                year: row.get(2)?,
-                mtime: row.get(3)?,
+                name: album_name,
                 artists: row.get(4)?,
                 tracks,
             })

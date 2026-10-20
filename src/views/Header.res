@@ -1,7 +1,7 @@
 type modal = Keybindings | Search | Nope
 
 @react.component
-let make = () => {
+let make = (~toggleOpen) => {
   let (modal, setModal) = React.useState(_ => Nope)
 
   let track = Store.Player.useShallow(s => s.data.track)
@@ -25,6 +25,13 @@ let make = () => {
       >
         <Icon.magnifyingGlass className="r-icon" />
       </button>
+      <label
+        id="queue-sidebar"
+        onClick={_ => toggleOpen()}
+        className="btn bg-base-100 btn-square btn-ghost r-btn nb-box active:nb-box"
+      >
+        <Icon.listBullets className="r-icon" />
+      </label>
       <button onClick={_ => setModal(_ => Keybindings)} id="keybindings-modal" className="hidden">
       </button>
       <Popover.Btn target=popoverId anchor="settings-btn">

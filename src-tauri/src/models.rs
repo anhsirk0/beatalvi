@@ -58,8 +58,6 @@ pub struct TrackItem {
 pub struct AlbumGroup {
     pub id: i64,
     pub name: String,
-    pub year: i64,
-    pub mtime: i64,
     pub artists: String,
     pub tracks: Vec<TrackItem>,
 }

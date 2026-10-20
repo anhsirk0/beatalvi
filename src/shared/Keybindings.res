@@ -39,6 +39,8 @@ let useKeys = () => {
       Invoke.playNext()->ignore
     } else if key == "p" {
       Invoke.playPrevious()->ignore
+    } else if key == "q" {
+      "#queue-sidebar"->Util.Dom.querySelectAndThen(Util.Dom.click)
     } else if key == "s" {
       "#play-all"->Util.Dom.querySelectAndThen(Util.Dom.click)
     } else if key == "ArrowLeft" || key == "h" {

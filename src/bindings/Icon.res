@@ -18,6 +18,7 @@ type t = React.component<props>
 @module("@phosphor-icons/react") external arrowLeft: t = "ArrowLeftIcon"
 @module("@phosphor-icons/react") external arrowRight: t = "ArrowRightIcon"
 @module("@phosphor-icons/react") external caretUp: t = "CaretUpIcon"
+@module("@phosphor-icons/react") external caretDown: t = "CaretDownIcon"
 @module("@phosphor-icons/react") external caretLeft: t = "CaretLeftIcon"
 
 @module("@phosphor-icons/react") external house: t = "HouseIcon"
@@ -27,6 +28,7 @@ type t = React.component<props>
 @module("@phosphor-icons/react") external checkCircle: t = "CheckCircleIcon"
 @module("@phosphor-icons/react") external stackSimple: t = "StackSimpleIcon"
 @module("@phosphor-icons/react") external stack: t = "StackIcon"
+@module("@phosphor-icons/react") external listBullets: t = "ListBulletsIcon"
 @module("@phosphor-icons/react") external empty: t = "EmptyIcon"
 @module("@phosphor-icons/react") external plus: t = "PlusIcon"
 @module("@phosphor-icons/react") external pencil: t = "PencilIcon"

@@ -41,13 +41,10 @@ type searchTracksGroupedArgs = {query: string}
 let searchTracksGrouped: fn<searchTracksGroupedArgs, array<Shape.Album.group>> = make(
   "search_tracks_grouped",
 )
+let getPlayingAlbumGroups: fn<unit, array<Shape.Album.group>> = make("get_playing_album_groups")
 
 type playArgs = {trackUri: string}
 let play: fn<playArgs, unit> = make("play")
-
-type switchArgs = {trackUri: string}
-let switchTrack: fn<switchArgs, unit> = make("switch")
-
 let stop: fn<unit, unit> = make("stop")
 let pause: fn<unit, unit> = make("pause")
 let toggle: fn<unit, unit> = make("toggle")

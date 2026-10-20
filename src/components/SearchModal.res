@@ -4,8 +4,9 @@ module Content = {
     let data = Hook.useFetch({
       fn: () => Invoke.searchTracksGrouped({query: query}),
     })
-
-    <div className="flex flex-col r-gap overflow-y-auto min-h-0 max-h-[60vh] grow">
+    <div
+      className="flex flex-col gap-4 2xl:gap-8 overflow-y-auto min-h-0 max-h-[60vh] grow @container"
+    >
       {switch data {
       | Loading => <div className="loading loading-spinner"></div>
       | Failed => React.null
@@ -19,7 +20,7 @@ module Content = {
             )
             ->React.array
           : <div className="center grow">
-              <p className="font-fraunces r-text-2xl font-semibold text-0 italic">
+              <p className="font-fraunces r-text-2xl font-light italic">
                 {"Not every word finds its tune."->React.string}
               </p>
             </div>
