@@ -17,7 +17,7 @@ module Item = {
 @react.component
 let make = (~showCli=false) => {
   <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 2xl:gap-16 overflow-y-auto min-h-0">
-    <div className="grid grid-cols-1 gap-8 2xl:gap-16">
+    <div className="grid grid-cols-1 gap-8">
       <div className="flex flex-col">
         <p className="r-text-xl font-semibold"> {"Playback"->React.string} </p>
         <Item title="Play / pause">
@@ -67,7 +67,7 @@ let make = (~showCli=false) => {
           </div>
         : React.null}
     </div>
-    <div className="grid grid-cols-1 gap-8 2xl:gap-16">
+    <div className="grid grid-cols-1 gap-8">
       <div className="flex flex-col">
         <p className="r-text-xl font-semibold"> {"Navigation"->React.string} </p>
         <Item title="Search / focus search input">

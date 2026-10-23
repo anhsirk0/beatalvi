@@ -18,6 +18,7 @@ use symphonia::core::{
 use url::Url;
 
 const IMG_SIZE: u32 = 300;
+const IMG_SIZE_SM: u32 = 100;
 
 fn get_probe_result(path: &Path) -> Result<ProbeResult, Box<dyn Error>> {
     let file = File::open(path)?;
@@ -36,20 +37,26 @@ fn get_probe_result(path: &Path) -> Result<ProbeResult, Box<dyn Error>> {
     )?;
     Ok(probe)
 }
-pub fn get_cover_art_bytes_from_metadata(data: Metadata) -> Result<Vec<u8>, Box<dyn Error>> {
+pub fn get_cover_art_bytes_from_metadata(
+    data: Metadata,
+    is_small: bool,
+) -> Result<Vec<u8>, Box<dyn Error>> {
     if let Some(metadata_rev) = data.current() {
         for visual in metadata_rev.visuals() {
-            let buf = resize_image_bytes(&visual.data)?;
+            let buf = resize_image_bytes(&visual.data, is_small)?;
             return Ok(buf);
         }
     }
     Err("No cover art found")?
 }
 
-pub fn get_cover_art_bytes_from_path(path: &Path) -> Result<Vec<u8>, Box<dyn Error>> {
+pub fn get_cover_art_bytes_from_path(
+    path: &Path,
+    is_small: bool,
+) -> Result<Vec<u8>, Box<dyn Error>> {
     let probe = get_probe_result(path)?;
     let mut format = probe.format;
-    get_cover_art_bytes_from_metadata(format.metadata())
+    get_cover_art_bytes_from_metadata(format.metadata(), is_small)
 }
 
 pub fn get_track_meta<P: AsRef<Path>>(path: &P) -> Result<UriMtime, Box<dyn Error>> {
@@ -121,18 +128,6 @@ fn get_track_info<P: AsRef<Path>>(path: P) -> Result<TrackInfo, Box<dyn Error>> 
         }
     }
 
-    // Set cover art cache
-    // let album_cover_name = format!("{}.jpg", album.clone());
-    // let album_cover_path = config::get_cache_dir().join(album_cover_name);
-
-    // if !(Path::new(&album_cover_path).exists()) {
-    //     let mut out_file = File::create(&album_cover_path)?;
-    //     match get_cover_art_bytes_from_metadata(format.metadata()) {
-    //         Ok(buf) => out_file.write_all(&buf)?,
-    //         Err(e) => eprintln!("Err: {}", e),
-    //     }
-    // }
-
     Ok(TrackInfo {
         name,
         duration,
@@ -159,19 +154,11 @@ pub fn get_info_map(files: Vec<String>) -> Result<DashMap<String, TrackInfo>, Bo
     Ok(info_map)
 }
 
-fn resize_image_bytes(input: &[u8]) -> Result<Vec<u8>, ImageError> {
+fn resize_image_bytes(input: &[u8], is_small: bool) -> Result<Vec<u8>, ImageError> {
     let img = image::load_from_memory(input)?;
     let mut out = Vec::new();
-    img.resize(IMG_SIZE, IMG_SIZE, image::imageops::FilterType::Lanczos3)
+    let size = if is_small { IMG_SIZE_SM } else { IMG_SIZE };
+    img.resize(size, size, image::imageops::FilterType::Lanczos3)
         .write_to(&mut Cursor::new(&mut out), image::ImageFormat::Jpeg)?;
     Ok(out)
 }
-
-// pub fn uri_to_path_str(uri: &str) -> Result<String, Box<dyn Error>> {
-//     let path_string = Url::parse(uri)?
-//         .to_file_path()
-//         .unwrap()
-//         .to_string_lossy()
-//         .to_string();
-//     Ok(path_string)
-// }

@@ -57,6 +57,15 @@ fn delete_tracks_and_related_stuff(conn: &Connection, ids: &[i64]) -> Result<()>
     Ok(())
 }
 
+fn get_album_cover_art_path(album: &str, is_small: bool) -> PathBuf {
+    let name = if is_small {
+        format!("{}_sm.jpg", slugify(album))
+    } else {
+        format!("{}.jpg", slugify(album))
+    };
+    config::get_cache_dir().join(name)
+}
+
 pub fn get_new_or_updated_tracks_files(
     conn: &Connection,
     files: Vec<String>,
@@ -196,10 +205,11 @@ pub fn remove_deleted_tracks(
 fn store_album_cover_from_uri(
     track_uri: &str,
     album_path: &Path,
+    is_small: bool,
 ) -> Result<Vec<u8>, Box<dyn Error>> {
     let uri = Url::parse(&track_uri).unwrap();
     let track_path = uri.to_file_path().expect("Failed to get path from uri");
-    match reader::get_cover_art_bytes_from_path(&track_path) {
+    match reader::get_cover_art_bytes_from_path(&track_path, is_small) {
         Ok(buf) => {
             let mut out_file = File::create(&album_path).unwrap();
             out_file.write_all(&buf).unwrap();
@@ -209,18 +219,22 @@ fn store_album_cover_from_uri(
     }
 }
 
-pub fn get_and_set_cover_art(album: &str, track_uri: &str) -> Result<Vec<u8>, Box<dyn Error>> {
-    let path = config::get_cache_dir().join(format!("{}.jpg", album));
+pub fn get_and_set_cover_art(
+    album: &str,
+    track_uri: &str,
+    is_small: bool,
+) -> Result<Vec<u8>, Box<dyn Error>> {
+    let path = get_album_cover_art_path(album, is_small);
     if path.exists() {
         Ok(std::fs::read(&path).expect("Failed to read"))
     } else {
-        let buf = store_album_cover_from_uri(&track_uri, &path)?;
+        let buf = store_album_cover_from_uri(&track_uri, &path, is_small)?;
         Ok(buf)
     }
 }
 
-pub fn get_cover_art(album: &str) -> Result<Vec<u8>, Box<dyn Error>> {
-    let path = config::get_cache_dir().join(format!("{}.jpg", album));
+pub fn get_cover_art(album: &str, is_small: bool) -> Result<Vec<u8>, Box<dyn Error>> {
+    let path = get_album_cover_art_path(album, is_small);
     Ok(std::fs::read(&path)?)
 }
 
@@ -228,11 +242,18 @@ pub fn generate_cover_art_cache() -> Result<(), Box<dyn Error>> {
     let album_tracks = database::get_one_track_per_album()?;
 
     album_tracks.par_iter().for_each(|item| {
-        let cover_name = format!("{}-{}.jpg", slugify(&item.album_name), item.album_id);
+        let cover_name = format!("{}.jpg", slugify(&item.album_name));
         let path = config::get_cache_dir().join(cover_name);
         if !path.exists() {
-            if let Err(e) = store_album_cover_from_uri(&item.track_uri, &path) {
+            if let Err(e) = store_album_cover_from_uri(&item.track_uri, &path, false) {
                 eprintln!("Failed to store album cover: {}", e);
+            }
+        }
+        let cover_name_sm = format!("{}_sm.jpg", slugify(&item.album_name));
+        let path = config::get_cache_dir().join(cover_name_sm);
+        if !path.exists() {
+            if let Err(e) = store_album_cover_from_uri(&item.track_uri, &path, true) {
+                eprintln!("Failed to store sm album cover: {}", e);
             }
         }
     });

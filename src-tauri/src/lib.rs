@@ -94,14 +94,16 @@ fn get_all_artists() -> Vec<Artist> {
 
 #[tauri::command]
 async fn get_track_cover_art(album: String, track_uri: String) -> Option<Vec<u8>> {
-    tokio::task::spawn_blocking(move || importer::get_and_set_cover_art(&album, &track_uri).ok())
-        .await
-        .unwrap()
+    tokio::task::spawn_blocking(move || {
+        importer::get_and_set_cover_art(&album, &track_uri, true).ok()
+    })
+    .await
+    .unwrap()
 }
 
 #[tauri::command]
-async fn get_album_cover_art(album: String) -> Option<Vec<u8>> {
-    tokio::task::spawn_blocking(move || importer::get_cover_art(&album).ok())
+async fn get_album_cover_art(album: String, is_small: bool) -> Option<Vec<u8>> {
+    tokio::task::spawn_blocking(move || importer::get_cover_art(&album, is_small).ok())
         .await
         .unwrap()
 }
@@ -110,7 +112,7 @@ async fn get_album_cover_art(album: String) -> Option<Vec<u8>> {
 async fn get_artist_cover_art(artist_id: i64) -> Option<Vec<u8>> {
     tokio::task::spawn_blocking(move || {
         if let Ok(Some(album)) = database::get_random_album_name_by_artist_id(artist_id) {
-            importer::get_cover_art(&album).ok()
+            importer::get_cover_art(&album, false).ok()
         } else {
             None
         }

@@ -39,7 +39,7 @@ let make = (~album: Shape.Album.t, ~onBack, ~onPlay) => {
   let id = `album-${album.id->Float.toString}`
   let hasManyArtists = album.artist->String.includes(", ")
   let _ = Hook.useFetch({
-    fn: () => Invoke.getAlbumCoverArt({album: album.name}),
+    fn: () => Invoke.getAlbumCoverArt({album: album.name, isSmall: false}),
     onSuccess: Shape.Bytes.setCover(_, id),
   })
   let tracks = Hook.useFetch({fn: () => Invoke.getTracksByAlbums({albumIds: [album.id]})})

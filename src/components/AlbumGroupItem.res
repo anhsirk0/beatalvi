@@ -34,7 +34,7 @@ let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false) => 
 
   let id = `group-${group.id->Float.toString}`
   let _ = Hook.useFetch({
-    fn: () => Invoke.getAlbumCoverArt({album: group.name}),
+    fn: () => Invoke.getAlbumCoverArt({album: group.name, isSmall: true}),
     onSuccess: Shape.Bytes.setCover(_, id),
   })
 

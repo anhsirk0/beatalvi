@@ -18,7 +18,7 @@ let make = () => {
   }
 
   <div className="size-full flex flex-col xl:flex-row p-8 py-4 2xl:py-8 gap-4 2xl:gap-8 min-h-0">
-    <div className="flex flex-row xl:min-w-64 xl:flex-col p-2 r-gap overflow-x-auto shrink">
+    <div className="flex flex-row xl:min-w-72 xl:flex-col p-2 r-gap overflow-x-auto shrink">
       <p className="r-text-4xl font-bold xl:mb-4 mr-auto"> {"Settings"->React.string} </p>
       {Appearance->makeTab}
       {Keybindings->makeTab}

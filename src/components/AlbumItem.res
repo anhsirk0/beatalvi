@@ -5,7 +5,7 @@ let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
   )
   let id = `album-${album.id->Float.toString}`
   let _ = Hook.useFetch({
-    fn: () => Invoke.getAlbumCoverArt({album: album.name}),
+    fn: () => Invoke.getAlbumCoverArt({album: album.name, isSmall: false}),
     onSuccess: Shape.Bytes.setCover(_, id),
   })
 

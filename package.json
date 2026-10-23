@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "rescript && vite build",
     "preview": "vite preview",
     "build:res": "rescript",
     "dev:res": "rescript watch",
