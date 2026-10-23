@@ -2,10 +2,16 @@ type modal = Keybindings | Search | Nope
 
 @react.component
 let make = (~toggleOpen) => {
+  let handleKeys = Keybindings.useKeys()
   let (modal, setModal) = React.useState(_ => Nope)
 
   let track = Store.Player.useShallow(s => s.data.track)
   let popoverId = "settings-menu"
+
+  React.useEffect0(() => {
+    Document.addKeyListener("keydown", handleKeys)
+    Some(() => Document.removeKeyListener("keydown", handleKeys))
+  })
 
   <div
     className={`${Constant.headerHeight} border-b-2 border-accent px-8 w-full flex items-center r-gap`}

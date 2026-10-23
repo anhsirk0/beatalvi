@@ -22,15 +22,15 @@ module TrackItem = {
       className={`flex flex-row items-center cursor-pointer px-4 nb nb-box active:nb-plain gap-4 border-2 ${bg} shrink-0 animate-slide-up`}
     >
       <TrackIndex uri=track.uri idx />
-      <p className="r-text-lg font-medium grow truncate py-2"> {track.name->React.string} </p>
+      <p className="r-text-lg font-medium w-full truncate py-2"> {track.name->React.string} </p>
       <p className="text-lg"> {track.duration->Util.durationToString->React.string} </p>
     </div>
   }
 }
 
 @react.component
-let make = (~group: Shape.Album.group) => {
-  let (collapsed, toggleCollapsed, _) = Hook.useToggle()
+let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false) => {
+  let (collapsed, toggleCollapsed, _) = Hook.useToggle(~init=closed)
 
   let id = `group-${group.id->Float.toString}`
   let _ = Hook.useFetch({
@@ -41,26 +41,31 @@ let make = (~group: Shape.Album.group) => {
   <div className="animate-slide-up flex flex-col r-gap px-1">
     <div
       onClick={_ => toggleCollapsed()}
-      className="flex gap-4 r-gap cursor-pointer hover:bg-primary-content/10 rounded-box"
+      className="flex gap-4 r-gap cursor-pointer hover:bg-primary/10 rounded-box"
     >
       <div
-        className="w-16 @2xl:w-20 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb-outline"
+        className="size-12 2xl:size-14 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb-outline"
       >
         <img id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
-          <p className="text-4xl @2xl:text-6xl text-center text-base-content font-serif">
+          <p className="text-4xl 2xl:text-6xl text-center text-base-content font-serif">
             {"?"->React.string}
           </p>
         </div>
       </div>
-      <div className="flex flex-col 2xl:gap-1">
-        <p className="text-2xl @xl:text-3xl pl-1 font-medium truncate">
-          {group.name->React.string}
-        </p>
-        <p className="text-xl @xl:text-2xl pl-1 text-80"> {group.artists->React.string} </p>
+      <div className="flex flex-col w-full min-w-0">
+        <p className="r-text-lg pl-1 -mt-1 font-medium truncate"> {group.name->React.string} </p>
+        <p className="r-text pl-1 -mt-1 text-80"> {group.artists->React.string} </p>
       </div>
-      <div className="center h-full ml-auto p-4">
-        {collapsed ? <Icon.caretDown className="r-icon" /> : <Icon.caretUp className="r-icon" />}
+      <div className="h-full ml-auto flex flex-col items-end">
+        {collapsed
+          ? <Icon.caretDown className="r-icon" weight=Bold />
+          : <Icon.caretUp className="r-icon" weight=Bold />}
+        {showTrackCount
+          ? <div className="r-text-sm whitespace-nowrap">
+              {group.tracks->Array.length->Util.toAmountLabel("Track")->React.string}
+            </div>
+          : React.null}
       </div>
     </div>
     {!collapsed

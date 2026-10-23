@@ -63,7 +63,7 @@ let make = (~album: Shape.Album.t, ~onBack, ~onPlay) => {
     </button>
     <div className="flex gap-4 2xl:gap-8">
       <div
-        className="w-40 2xl:w-56 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
+        className="size-40 2xl:size-48 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
       >
         <img id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
@@ -72,17 +72,13 @@ let make = (~album: Shape.Album.t, ~onBack, ~onPlay) => {
           </p>
         </div>
       </div>
-      <div className="flex flex-col 2xl:gap-1">
-        <p className="text-4xl 2xl:text-6xl pl-1 font-semibold truncate">
-          {album.name->React.string}
-        </p>
-        <p className="text-xl 2xl:text-3xl pl-1 text-80 truncate font-medium">
-          {album.artist->React.string}
-        </p>
+      <div className="flex flex-col">
+        <p className="r-text-3xl pl-1 font-semibold truncate"> {album.name->React.string} </p>
+        <p className="r-text-lg pl-1 text-80 truncate"> {album.artist->React.string} </p>
         {switch tracks {
         | Loading | Failed => React.null
         | Success(_) =>
-          <p className="text-lg 2xl:text-2xl pl-1 text-80">
+          <p className="r-text pl-1 text-60">
             {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
             <span className="px-4"> {Constant.sep->React.string} </span>
             {trackDuration->Util.durationToTimeString->React.string}
@@ -91,9 +87,7 @@ let make = (~album: Shape.Album.t, ~onBack, ~onPlay) => {
           </p>
         }}
         <div className="flex r-gap items-center mt-auto">
-          <button
-            id="play-all" onClick=onPlayClick className="btn xl:btn-lg 2xl:btn-xl btn-primary w-40"
-          >
+          <button id="play-all" onClick=onPlayClick className="btn 3xl:btn-xl btn-primary w-40">
             <Icon.play className="r-icon pr-2" weight=Fill />
             <span className="font-medium"> {" Play"->React.string} </span>
           </button>

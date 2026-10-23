@@ -1,12 +1,11 @@
 use crate::models::{TrackInfo, UriMtime};
-use crate::utils::config;
 use dashmap::DashMap;
 use image::ImageError;
 use rayon::prelude::*;
 use std::{
     error::Error,
     fs::{File, metadata},
-    io::{Cursor, Write},
+    io::Cursor,
     path::{Path, PathBuf},
     time::UNIX_EPOCH,
 };
@@ -17,6 +16,8 @@ use symphonia::core::{
     probe::{Hint, ProbeResult},
 };
 use url::Url;
+
+const IMG_SIZE: u32 = 300;
 
 fn get_probe_result(path: &Path) -> Result<ProbeResult, Box<dyn Error>> {
     let file = File::open(path)?;
@@ -120,16 +121,17 @@ fn get_track_info<P: AsRef<Path>>(path: P) -> Result<TrackInfo, Box<dyn Error>> 
         }
     }
 
-    let album_cover_name = format!("{}.jpg", album.clone());
-    let album_cover_path = config::get_cache_dir().join(album_cover_name);
+    // Set cover art cache
+    // let album_cover_name = format!("{}.jpg", album.clone());
+    // let album_cover_path = config::get_cache_dir().join(album_cover_name);
 
-    if !(Path::new(&album_cover_path).exists()) {
-        let mut out_file = File::create(&album_cover_path)?;
-        match get_cover_art_bytes_from_metadata(format.metadata()) {
-            Ok(buf) => out_file.write_all(&buf)?,
-            Err(e) => eprintln!("Err: {}", e),
-        }
-    }
+    // if !(Path::new(&album_cover_path).exists()) {
+    //     let mut out_file = File::create(&album_cover_path)?;
+    //     match get_cover_art_bytes_from_metadata(format.metadata()) {
+    //         Ok(buf) => out_file.write_all(&buf)?,
+    //         Err(e) => eprintln!("Err: {}", e),
+    //     }
+    // }
 
     Ok(TrackInfo {
         name,
@@ -141,7 +143,7 @@ fn get_track_info<P: AsRef<Path>>(path: P) -> Result<TrackInfo, Box<dyn Error>> 
     })
 }
 
-// { uri: TrackInfo } // also set cover art cache
+// { uri: TrackInfo }
 pub fn get_info_map(files: Vec<String>) -> Result<DashMap<String, TrackInfo>, Box<dyn Error>> {
     let info_map = DashMap::new();
 
@@ -160,7 +162,7 @@ pub fn get_info_map(files: Vec<String>) -> Result<DashMap<String, TrackInfo>, Bo
 fn resize_image_bytes(input: &[u8]) -> Result<Vec<u8>, ImageError> {
     let img = image::load_from_memory(input)?;
     let mut out = Vec::new();
-    img.resize(350, 350, image::imageops::FilterType::Lanczos3)
+    img.resize(IMG_SIZE, IMG_SIZE, image::imageops::FilterType::Lanczos3)
         .write_to(&mut Cursor::new(&mut out), image::ImageFormat::Jpeg)?;
     Ok(out)
 }

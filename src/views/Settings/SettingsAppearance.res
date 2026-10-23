@@ -79,8 +79,7 @@ let make = () => {
   }
 
   <React.Fragment>
-    <p className="r-text-2xl font-bold"> {"Appearance"->React.string} </p>
-    <p className="mt-4 text-80 uppercase font-medium"> {"Mode"->React.string} </p>
+    <p className="xl:mt-4 text-80 uppercase font-medium"> {"Mode"->React.string} </p>
     <ModeBtns onChange isDark current />
     <p className="mt-4 text-80 uppercase font-medium"> {"Theme"->React.string} </p>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

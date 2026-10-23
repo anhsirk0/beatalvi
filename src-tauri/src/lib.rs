@@ -16,21 +16,24 @@ use utils::state::AppState;
 async fn load_music() -> (usize, usize, usize) {
     task::spawn_blocking(move || {
         let files = scanner::get_audio_files(config::get_music_dir().to_str().unwrap());
+        let data;
         if database::tracks_is_empty().unwrap() {
-            importer::import_all(files).unwrap_or((0, 0, 0))
+            data = importer::import_all(files).unwrap_or((0, 0, 0));
         } else {
-            importer::import_and_update(files).unwrap_or((0, 0, 0))
+            data = importer::import_and_update(files).unwrap_or((0, 0, 0));
         }
+        let _ = importer::generate_cover_art_cache();
+        data
     })
     .await
     .unwrap()
 }
 
 #[tauri::command]
-async fn regenerate_cover_art_cache() {
+async fn generate_cover_art_cache() {
     task::spawn_blocking(move || {
-        if let Err(e) = importer::regenerate_cover_art_cache() {
-            eprintln!("Failed to regenerate album covers: {}", e);
+        if let Err(e) = importer::generate_cover_art_cache() {
+            eprintln!("Failed to generate album covers: {}", e);
         }
     })
     .await
@@ -138,6 +141,16 @@ fn search_tracks_grouped(query: String) -> Vec<AlbumGroup> {
 #[tauri::command]
 fn get_playing_album_groups(state: State<AppState>) -> Vec<AlbumGroup> {
     state.get_playing_album_groups()
+}
+
+#[tauri::command]
+fn get_queued_tracks(state: State<AppState>) -> Vec<Track> {
+    state.get_queued_tracks()
+}
+
+#[tauri::command]
+fn get_queued_album_groups(state: State<AppState>) -> Vec<AlbumGroup> {
+    state.get_queued_album_groups()
 }
 
 #[tauri::command]
@@ -355,13 +368,20 @@ pub fn run() {
             app.manage(state);
             Ok(())
         })
+        .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
+            println!("{:?}", args);
+            // Bring existing window to front
+            // if let Some(window) = app.get_webview_window("main") {
+            //     let _ = window.set_focus();
+            // }
+        }))
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             reload_app,
             reload_window,
             load_music,
-            regenerate_cover_art_cache,
+            generate_cover_art_cache,
             get_stats,
             get_top_10_tracks,
             get_top_10_albums,
@@ -379,6 +399,8 @@ pub fn run() {
             get_albums_by_artist_id,
             search_tracks_grouped,
             get_playing_album_groups,
+            get_queued_album_groups,
+            get_queued_tracks,
             play,
             pause,
             toggle,

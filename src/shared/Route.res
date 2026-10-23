@@ -9,6 +9,8 @@ type t =
   | Playlists
   | Settings
   | NotFound
+// Todo: add routes for Album/Artist etc
+// | Album(float)
 
 let all = [
   Home,
@@ -34,6 +36,7 @@ let useRoute: unit => t = () => {
   | list{"all-artists"} => AllArtists
   | list{"playlists"} => Playlists
   | list{"settings"} => Settings
+  // | list{"album", id} => Album(id)
   | _ => NotFound
   }
 }

@@ -224,11 +224,12 @@ pub fn get_cover_art(album: &str) -> Result<Vec<u8>, Box<dyn Error>> {
     Ok(std::fs::read(&path)?)
 }
 
-pub fn regenerate_cover_art_cache() -> Result<(), Box<dyn Error>> {
+pub fn generate_cover_art_cache() -> Result<(), Box<dyn Error>> {
     let album_tracks = database::get_one_track_per_album()?;
 
     album_tracks.par_iter().for_each(|item| {
-        let path = config::get_cache_dir().join(format!("{}.jpg", item.album_name));
+        let cover_name = format!("{}-{}.jpg", slugify(&item.album_name), item.album_id);
+        let path = config::get_cache_dir().join(cover_name);
         if !path.exists() {
             if let Err(e) = store_album_cover_from_uri(&item.track_uri, &path) {
                 eprintln!("Failed to store album cover: {}", e);
@@ -237,4 +238,18 @@ pub fn regenerate_cover_art_cache() -> Result<(), Box<dyn Error>> {
     });
 
     Ok(())
+}
+
+fn slugify(s: &str) -> String {
+    s.to_lowercase()
+        .chars()
+        .map(|c| match c {
+            'a'..='z' | '0'..='9' => c,
+            ' ' | '-' | '_' => '-',
+            _ => ' ', // Replace special chars with space
+        })
+        .collect::<String>()
+        .split_whitespace()
+        .collect::<Vec<&str>>()
+        .join("-")
 }

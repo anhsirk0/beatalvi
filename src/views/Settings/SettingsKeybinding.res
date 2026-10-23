@@ -44,6 +44,9 @@ let make = () => {
       <Item title="Add track to queue">
         <Kbd k="middle click" />
       </Item>
+      <Item title="Open playing albums sidebar">
+        <Kbd k="q" />
+      </Item>
     </div>
     <div className="grid grid-cols-1 gap-8 2xl:gap-16">
       <div className="flex flex-col">

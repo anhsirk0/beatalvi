@@ -5,7 +5,7 @@ module Item = {
     let (title, icon) = (route->Route.toTitle, route->Route.toIcon)
 
     let bg = isSelected ? "bg-primary text-primary-content" : "hover:bg-primary/20"
-    let className = `flex flex-row p-2 2xl:p-4 px-4 gap-4 ${bg} rounded-box relative isolate overflow-hidden items-center cursor-pointer shrink-0 transitional duration-300`
+    let className = `flex flex-row p-2 2xl:py-3 px-4 gap-3 ${bg} rounded-box relative isolate overflow-hidden items-center cursor-pointer shrink-0 transitional duration-300`
     let iconClassname = isSelected
       ? "r-icon text-primary-content"
       : "r-icon text-neutral-content/80"

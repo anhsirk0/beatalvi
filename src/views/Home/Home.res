@@ -30,7 +30,7 @@ module Empty = {
         <div className="mockup-code w-full mt-4">
           <pre>
             <code className="r-text-lg">
-              {"ln -s /path/to/your/music/* ~/Music/"->React.string}
+              {"ln -s /path/to/your/music ~/Music"->React.string}
             </code>
           </pre>
         </div>

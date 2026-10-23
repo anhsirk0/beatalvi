@@ -643,6 +643,7 @@ pub fn get_one_track_per_album() -> Result<Vec<AlbumTrack>> {
     let conn = Connection::open(config::get_db_path())?;
     let mut stmt = conn.prepare(
         "SELECT 
+          a.id,
           a.name,
           t.uri
         FROM albums a
@@ -657,8 +658,9 @@ pub fn get_one_track_per_album() -> Result<Vec<AlbumTrack>> {
     let tracks = stmt
         .query_map([], |row| {
             Ok(AlbumTrack {
-                album_name: row.get(0)?,
-                track_uri: row.get(1)?,
+                album_id: row.get(0)?,
+                album_name: row.get(1)?,
+                track_uri: row.get(2)?,
             })
         })?
         .collect::<Result<Vec<_>, _>>()?;
@@ -747,6 +749,55 @@ pub fn search_tracks_grouped(query: &str) -> Result<Vec<AlbumGroup>> {
 
     results.sort_by(|a, b| AlbumGroup::cmp_by_query(query, a, b));
     Ok(results)
+}
+
+pub fn get_album_groups_from_uris(uris: Vec<String>) -> Vec<AlbumGroup> {
+    let tracks = get_tracks_by_uris(uris).unwrap();
+    let mut groups: Vec<AlbumGroup> = Vec::new();
+    let mut group_tracks: Vec<Track> = Vec::new();
+
+    for track in tracks {
+        if let Some(last_track) = group_tracks.last() {
+            if last_track.album == track.album {
+                group_tracks.push(track);
+            } else {
+                groups.push(AlbumGroup {
+                    id: last_track.id.clone(), // should be album id, but its fine
+                    name: last_track.album.clone(),
+                    artists: last_track.artist.clone(),
+                    tracks: group_tracks
+                        .iter()
+                        .map(|t| TrackItem {
+                            name: t.name.clone(),
+                            uri: t.uri.clone(),
+                            duration: t.duration.clone(),
+                        })
+                        .collect(),
+                });
+                group_tracks.clear();
+                group_tracks.push(track);
+            }
+        } else {
+            group_tracks.push(track);
+        }
+    }
+    if let Some(last_track) = group_tracks.last() {
+        groups.push(AlbumGroup {
+            id: last_track.id.clone(), // should be album id, but its fine/uniq
+            name: last_track.album.clone(),
+            artists: last_track.artist.clone(),
+            tracks: group_tracks
+                .iter()
+                .map(|t| TrackItem {
+                    name: t.name.clone(),
+                    uri: t.uri.clone(),
+                    duration: t.duration.clone(),
+                })
+                .collect(),
+        });
+        // group_tracks.clear();
+    }
+    groups
 }
 
 /* ───────────────────────────── DB Updates ───────────────────────────── */

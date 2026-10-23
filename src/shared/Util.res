@@ -9,6 +9,7 @@ let toInitials = name =>
   ->Array.map(String.toUpperCase)
   ->Array.join("")
 
+let toAmountText = (count, label) => count == 1 ? label : label ++ "s"
 let toAmountLabel = (count, label) => `${count->Int.toString} ${label}${count == 1 ? "" : "s"}`
 
 let renderSome = (data, fn) =>

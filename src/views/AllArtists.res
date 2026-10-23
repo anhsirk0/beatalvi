@@ -21,7 +21,7 @@ module ArtistItem = {
           <Icon.userCircle className="size-24" weight=Thin />
         </div>
       </div>
-      <p className="r-text text-center"> {artist.name->React.string} </p>
+      <p className="r-text text-center truncate"> {artist.name->React.string} </p>
     </div>
   }
 }
@@ -35,7 +35,7 @@ module ArtistsGrid = {
     | One(artist) => <ArtistView artist onBack={() => setView(_ => All)} />
     | All =>
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 gap-8 w-full p-8 overflow-y-auto min-h-0"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-8 w-full p-8 overflow-y-auto min-h-0"
       >
         {artists
         ->Array.mapWithIndex((artist, i) =>

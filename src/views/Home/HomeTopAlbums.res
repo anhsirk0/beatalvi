@@ -20,7 +20,7 @@ let make = (~setAlbum, ~albums: array<Shape.Album.t>, ~onPlay) => {
           album
           onClick={_ => setAlbum(album)}
           onPlay
-          width="w-40 2xl:w-52 animate-slide-left"
+          width="w-40 2xl:w-48 animate-slide-left"
         />
       )
       ->React.array}

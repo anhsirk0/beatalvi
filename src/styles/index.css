@@ -192,11 +192,15 @@ body {
 }
 
 .r-text-xl {
-  @apply text-xl md:text-2xl 2xl:text-3xl;
+  @apply text-xl md:text-2xl 2xl:text-2xl;
 }
 
 .r-text-2xl {
   @apply text-2xl md:text-3xl 2xl:text-4xl;
+}
+
+.r-text-3xl {
+  @apply text-3xl md:text-4xl 2xl:text-5xl;
 }
 
 .r-text-4xl {
@@ -204,15 +208,15 @@ body {
 }
 
 .r-title {
-  @apply text-base 2xl:text-xl;
+  @apply text-base 2xl:text-lg;
 }
 
 .r-btn {
-  @apply btn-sm lg:btn-md 2xl:btn-lg;
+  @apply btn-sm lg:btn-md 2xl:btn-md;
 }
 
 .r-icon {
-  @apply size-4 lg:size-5 2xl:size-6;
+  @apply size-4 lg:size-5 2xl:size-5;
 }
 
 .r-gap {
@@ -247,4 +251,8 @@ body {
 
 [popover]:not(:popover-open) {
   pointer-events: none;
+}
+
+img:broken {
+  display: none;
 }

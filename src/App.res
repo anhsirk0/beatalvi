@@ -1,10 +1,14 @@
 @react.component
 let make = () => {
   let (isOpen, toggleOpen, _) = Hook.useToggle()
+  let onClose = _ => {
+    if isOpen {
+      toggleOpen()
+    }
+  }
   let route = Route.useRoute()
   let (theme, volume) = Store.Config.useShallow(s => (s.config.theme, s.config.volume))
   let update = Store.Player.useShallow(s => s.update)
-  let handleKeys = Keybindings.useKeys()
 
   let state = Hook.useFetch({fn: Invoke.loadMusic})
   let _ = Hook.useFetch({
@@ -50,11 +54,6 @@ let make = () => {
     update(SetPosition(0))
   })
 
-  React.useEffect0(() => {
-    Document.addKeyListener("keydown", handleKeys)
-    Some(() => Document.removeKeyListener("keydown", handleKeys))
-  })
-
   <React.Fragment>
     <Toast.Toaster />
     <div className="drawer drawer-end size-full">
@@ -83,19 +82,10 @@ let make = () => {
           </div>
         }}
       </div>
-      <div className="drawer-side">
-        <label
-          id="close-btn"
-          onClick={_ =>
-            if isOpen {
-              toggleOpen()
-            }}
-          ariaLabel="close sidebar"
-          className="drawer-overlay"
-        >
+      <div className="drawer-side min-h-0">
+        <label id="close-btn" onClick=onClose ariaLabel="close sidebar" className="drawer-overlay">
         </label>
-        <div className="bg-base-200 min-h-full r-gap p-4">
-          <p className="text-60 r-text uppercase"> {"Playing Albums"->React.string} </p>
+        <div className="bg-base-100 min-h-full w-120 flex flex-col r-gap p-4">
           {isOpen ? <QueueSidebar /> : React.null}
         </div>
       </div>

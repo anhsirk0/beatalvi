@@ -13,7 +13,7 @@ type coverArt = Nullable.t<Shape.Bytes.t>
 let reloadApp: fn<unit, unit> = make("reload_app")
 let reloadWindow: fn<unit, unit> = make("reload_window")
 let loadMusic: fn<unit, string> = make("load_music")
-let regenerateCoverArtCache: fn<unit, unit> = make("regenerate_cover_art_cache")
+let regenerateCoverArtCache: fn<unit, unit> = make("generate_cover_art_cache")
 let getStats: fn<unit, Shape.Stats.t> = make("get_stats")
 let getTop10Tracks: fn<unit, tracks> = make("get_top_10_tracks")
 let getTop10Albums: fn<unit, albums> = make("get_top_10_albums")
@@ -42,7 +42,8 @@ let searchTracksGrouped: fn<searchTracksGroupedArgs, array<Shape.Album.group>> =
   "search_tracks_grouped",
 )
 let getPlayingAlbumGroups: fn<unit, array<Shape.Album.group>> = make("get_playing_album_groups")
-
+let getQueuedAlbumGroups: fn<unit, array<Shape.Album.group>> = make("get_queued_album_groups")
+let getQueuedTracks: fn<unit, tracks> = make("get_queued_tracks")
 type playArgs = {trackUri: string}
 let play: fn<playArgs, unit> = make("play")
 let stop: fn<unit, unit> = make("stop")

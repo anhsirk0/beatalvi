@@ -24,7 +24,7 @@ let make = (~albums: array<Shape.Album.t>) => {
     <React.Fragment>
       <button onClick=onStartPlay id="play-all" className="hidden"></button>
       <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 gap-8 w-full p-8 overflow-y-auto"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-8 w-full p-8 overflow-y-auto animate-slide-up"
       >
         {albums
         ->Array.mapWithIndex((album, i) =>

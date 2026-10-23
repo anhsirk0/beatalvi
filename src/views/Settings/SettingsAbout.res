@@ -10,7 +10,9 @@ module Item = {
 
 @react.component
 let make = () => {
-  <div className="flex flex-col 2xl:gap-8 max-w-[80%] lg:max-w-[60%] 2xl:max-w-[50%] self-center">
+  let data = Hook.useFetch({fn: Invoke.getStats})
+
+  <div className="flex flex-col 2xl:gap-8 max-w-[90%] lg:max-w-[70%] 2xl:max-w-[50%] self-center">
     <div className="center flex-col width-fit">
       <p className="text-4xl xl:text-5xl 2xl:text-6xl font-fraunces font-bold">
         {"Beatalvi"->React.string}
@@ -26,9 +28,21 @@ let make = () => {
     <div className="flex-col w-full">
       <Item title="Version" info="0.0.0" />
       <Item title="Made By" info="Anhsirk0" />
+      {switch data {
+      | Loading | Failed => React.null
+      | Success(stats) => {
+          let info = `${stats.tracks->Util.toAmountLabel(
+              "Track",
+            )}, ${stats.albums->Util.toAmountLabel("Album")}, ${stats.artists->Util.toAmountLabel(
+              "Artist",
+            )}`
+
+          <Item title="Library" info />
+        }
+      }}
     </div>
 
-    <div className="nb-box nb-active bg-base-100 p-4 flex flex-col r-gap">
+    <div className="nb-box nb-active bg-base-100 p-4 flex flex-col r-gap mt-4">
       <p className="text-80 r-text"> {"ABOUT THE NAME"->React.string} </p>
       <p className="text-3xl font-semibold">
         {"Beat"->React.string}
@@ -44,7 +58,7 @@ let make = () => {
       </p>
       <div className="p-4 bg-primary/10 flex gap-4 rounded-box mt-4">
         <div
-          className="center text-2xl 2xl:text-4xl w-8 2xl:w-14 aspect-square bg-primary text-primary-content font-baloo font-semibold shrink-0 nb-box"
+          className="center text-2xl 2xl:text-4xl size-8 2xl:size-14 aspect-square bg-primary text-primary-content font-baloo font-semibold shrink-0 nb-box"
         >
           {Constant.logo->React.string}
         </div>

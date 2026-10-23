@@ -4,9 +4,7 @@ module Content = {
     let data = Hook.useFetch({
       fn: () => Invoke.searchTracksGrouped({query: query}),
     })
-    <div
-      className="flex flex-col gap-4 2xl:gap-8 overflow-y-auto min-h-0 max-h-[60vh] grow @container"
-    >
+    <div className="flex flex-col gap-4 2xl:gap-8 overflow-y-auto min-h-0 max-h-[60vh] grow">
       {switch data {
       | Loading => <div className="loading loading-spinner"></div>
       | Failed => React.null

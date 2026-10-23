@@ -15,8 +15,7 @@ let make = () => {
   let data = Hook.useFetch({fn: Invoke.getStats})
 
   switch data {
-  | Loading => React.null
-  | Failed => React.null
+  | Loading | Failed => React.null
   | Success(stats) =>
     <div className="flex flex-row items-center ">
       // <Icon.vinylRecord className="size-14" />

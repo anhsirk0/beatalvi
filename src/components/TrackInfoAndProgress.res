@@ -36,7 +36,7 @@ let make = (~track: Shape.Track.t) => {
   <React.Fragment>
     <div className="flex r-gap shrink-0 min-w-72 2xl:min-w-88">
       <div
-        className="size-12 lg:size-12 2xl:size-16 bg-primary/40 rounded-box flex shrink-0 overflow-hidden nb-outline relative isolate"
+        className="size-12 lg:size-12 2xl:size-14 bg-primary/40 rounded-box flex shrink-0 overflow-hidden nb-outline relative isolate"
       >
         <img key=id id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">

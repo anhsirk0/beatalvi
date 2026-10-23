@@ -14,7 +14,10 @@ module Bytes = {
 
   let setCover = (data: Nullable.t<t>, id) => {
     switch data->Nullable.toOption {
-    | Some(bytes) => bytes->toImageUrl->setImageSrc(id)
+    | Some(bytes) =>
+      if bytes->Array.length > 0 {
+        bytes->toImageUrl->setImageSrc(id)
+      }
     | None => ignore()
     }
   }

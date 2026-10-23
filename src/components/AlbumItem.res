@@ -28,7 +28,8 @@ let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
         className="flex items-center transitional translate-y-14 group-hover:translate-y-0 h-14 w-full z-20 absolute -bottom-0 p-2"
       >
         <button
-          onClick=onPlayClick className="btn btn-ghost btn-square bg-primary text-primary-content"
+          onClick=onPlayClick
+          className="btn btn-ghost btn-square bg-primary text-primary-content hover:nb-plain"
         >
           <Icon.play className="r-icon" weight=Fill />
         </button>
@@ -41,7 +42,7 @@ let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
         // </button>
       </div>
     </div>
-    <p className="r-text pl-1 pt-2 font-medium truncate"> {album.name->React.string} </p>
-    <p className="r-text-sm pl-1 text-80 truncate"> {album.artist->React.string} </p>
+    <p className="r-text pl-1 pt-2 font-medium line-clamp-1"> {album.name->React.string} </p>
+    <p className="r-text-sm pl-1 text-80 line-clamp-1"> {album.artist->React.string} </p>
   </div>
 }

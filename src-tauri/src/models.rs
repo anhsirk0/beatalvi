@@ -127,6 +127,7 @@ pub struct TrackState {
 
 pub struct AlbumTrack {
     pub track_uri: String,
+    pub album_id: i64,
     pub album_name: String,
 }
 
