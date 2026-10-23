@@ -15,38 +15,54 @@ module Item = {
 }
 
 @react.component
-let make = () => {
+let make = (~showCli=false) => {
   <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 2xl:gap-16 overflow-y-auto min-h-0">
-    <div className="flex flex-col">
-      <p className="r-text-xl font-semibold"> {"Playback"->React.string} </p>
-      <Item title="Play / pause">
-        <Kbd k="Space" />
-      </Item>
-      <Item title="Next track">
-        <Kbd k="n" />
-      </Item>
-      <Item title="Previous track">
-        <Kbd k="p" />
-      </Item>
-      <Item title="Skip forward 10 seconds">
-        <Kbd k="🡆" />
-        <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
-        <Kbd k="l︎" />
-      </Item>
-      <Item title="Skip backward 10 seconds">
-        <Kbd k="🡄" />
-        <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
-        <Kbd k="h︎" />
-      </Item>
-      <Item title="Start playback / play all">
-        <Kbd k="s" />
-      </Item>
-      <Item title="Add track to queue">
-        <Kbd k="middle click" />
-      </Item>
-      <Item title="Open playing albums sidebar">
-        <Kbd k="q" />
-      </Item>
+    <div className="grid grid-cols-1 gap-8 2xl:gap-16">
+      <div className="flex flex-col">
+        <p className="r-text-xl font-semibold"> {"Playback"->React.string} </p>
+        <Item title="Play / pause">
+          <Kbd k="Space" />
+        </Item>
+        <Item title="Next track">
+          <Kbd k="n" />
+        </Item>
+        <Item title="Previous track">
+          <Kbd k="p" />
+        </Item>
+        <Item title="Skip forward 10 seconds">
+          <Kbd k="🡆" />
+          <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
+          <Kbd k="l︎" />
+        </Item>
+        <Item title="Skip backward 10 seconds">
+          <Kbd k="🡄" />
+          <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
+          <Kbd k="h︎" />
+        </Item>
+        <Item title="Start playback / play all">
+          <Kbd k="s" />
+        </Item>
+        <Item title="Add track to queue">
+          <Kbd k="middle click" />
+        </Item>
+        <Item title="Open playing albums sidebar">
+          <Kbd k="q" />
+        </Item>
+      </div>
+      {showCli
+        ? <div className="flex flex-col">
+            <p className="r-text-xl font-semibold"> {"Command line args"->React.string} </p>
+            <Item title="Play / pause">
+              <Kbd k="--toggle" />
+            </Item>
+            <Item title="Next track">
+              <Kbd k="--next" />
+            </Item>
+            <Item title="Previous track">
+              <Kbd k="--previous" />
+            </Item>
+          </div>
+        : React.null}
     </div>
     <div className="grid grid-cols-1 gap-8 2xl:gap-16">
       <div className="flex flex-col">

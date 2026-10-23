@@ -27,7 +27,7 @@ let make = () => {
     <div className="flex flex-col grow p-2 xl:pt-4 r-gap min-h-0 overflow-y-auto size-full">
       {switch view {
       | Appearance => <SettingsAppearance />
-      | Keybindings => <SettingsKeybinding />
+      | Keybindings => <SettingsKeybinding showCli=true />
       | About => <SettingsAbout />
       }}
     </div>

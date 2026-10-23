@@ -85,6 +85,8 @@ module Album = {
     artists: string,
     tracks: array<Track.item>,
   }
+
+  // let toString = (album: t) => `${album.id->Float.toString}%%%${album.name}`
 }
 
 module Artist = {

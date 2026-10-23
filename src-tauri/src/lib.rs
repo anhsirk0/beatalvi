@@ -1,10 +1,12 @@
 pub mod models;
 mod utils;
+use clap::Parser;
 use models::{
     AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, Stats, Track, TrackState,
 };
 use tauri::{AppHandle, Emitter, Manager, State, Webview};
 use tokio::task;
+use utils::args::Args;
 use utils::config;
 use utils::database;
 use utils::event;
@@ -368,8 +370,19 @@ pub fn run() {
             app.manage(state);
             Ok(())
         })
-        .plugin(tauri_plugin_single_instance::init(|app, args, _cwd| {
-            println!("{:?}", args);
+        .plugin(tauri_plugin_single_instance::init(|app, args_vec, _cwd| {
+            match Args::try_parse_from(args_vec) {
+                Err(e) => eprintln!("Parse error: {}", e),
+                Ok(args) => {
+                    if args.toggle {
+                        toggle(app.app_handle().clone(), app.state());
+                    } else if args.next {
+                        play_next(app.state());
+                    } else if args.previous {
+                        play_previous(app.state());
+                    }
+                }
+            }
             // Bring existing window to front
             // if let Some(window) = app.get_webview_window("main") {
             //     let _ = window.set_focus();
