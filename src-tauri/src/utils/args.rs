@@ -13,4 +13,8 @@ pub struct Args {
     /// Rewind to previous track
     #[arg(short, long)]
     pub previous: bool,
+
+    /// Queue toggle track by track id
+    #[arg(short, long)]
+    pub queue: Option<i64>,
 }

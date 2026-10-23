@@ -193,9 +193,12 @@ fn stop(app_handle: AppHandle, state: State<AppState>) {
 }
 
 #[tauri::command]
-fn queue_toggle_track(uri: String, app_handle: AppHandle, state: State<AppState>) {
+fn queue_toggle_track(uri: String, state: State<AppState>) {
     state.queue_toggle_track(&uri);
-    app_handle.emit(event::QUEUE_TOGGLE, uri).unwrap();
+}
+
+fn queue_toggle_track_by_id(id: i64, state: State<AppState>) {
+    state.queue_toggle_track_by_id(id);
 }
 
 #[tauri::command]
@@ -380,6 +383,8 @@ pub fn run() {
                         play_next(app.state());
                     } else if args.previous {
                         play_previous(app.state());
+                    } else if let Some(id) = args.queue {
+                        queue_toggle_track_by_id(id, app.state());
                     }
                 }
             }

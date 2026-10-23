@@ -61,6 +61,9 @@ let make = (~showCli=false) => {
             <Item title="Previous track">
               <Kbd k="--previous" />
             </Item>
+            <Item title="Queue track by track id">
+              <Kbd k="--queue <INT>" />
+            </Item>
           </div>
         : React.null}
     </div>

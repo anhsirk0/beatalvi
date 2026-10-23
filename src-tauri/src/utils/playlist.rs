@@ -85,11 +85,11 @@ impl Playlist {
     }
 
     /// Get played tracks (before current)
-    pub fn history(&self) -> Vec<String> {
-        self.current_index
-            .map(|i| self.tracks[..i].to_vec())
-            .unwrap_or_default()
-    }
+    // pub fn history(&self) -> Vec<String> {
+    //     self.current_index
+    //         .map(|i| self.tracks[..i].to_vec())
+    //         .unwrap_or_default()
+    // }
 
     /// Jump to specific index
     pub fn jump_to(&mut self, index: usize) -> Result<Option<&String>, String> {
@@ -141,11 +141,11 @@ impl Playlist {
         self.current_index = None;
     }
 
-    pub fn len(&self) -> usize {
-        self.tracks.len()
-    }
+    // pub fn len(&self) -> usize {
+    //     self.tracks.len()
+    // }
 
-    pub fn is_empty(&self) -> bool {
-        self.tracks.is_empty()
-    }
+    // pub fn is_empty(&self) -> bool {
+    //     self.tracks.is_empty()
+    // }
 }

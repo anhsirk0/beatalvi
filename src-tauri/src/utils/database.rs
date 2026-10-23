@@ -225,6 +225,14 @@ pub fn find_basic_track_by_uri(uri: &str) -> Option<BasicTrack> {
     .ok()
 }
 
+pub fn find_track_uri_by_id(id: i64) -> Option<String> {
+    let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
+    conn.query_one("SELECT uri FROM tracks WHERE id = ?1", params![id], |row| {
+        Ok(row.get(0)?)
+    })
+    .ok()
+}
+
 // pub fn find_artist_id_by_name(name: &str) -> Option<i64> {
 //     let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
 //     conn.query_row(

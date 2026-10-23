@@ -92,16 +92,19 @@ impl AppState {
         });
     }
 
-    // pub fn queue_track(&self, uri: &str) {
-    //     self.queue.lock().unwrap().push_back(uri.to_string());
-    // }
-
     pub fn queue_toggle_track(&self, uri: &str) {
         let mut queue = self.queue.lock().unwrap();
         if let Some(pos) = queue.iter().position(|s| uri == s) {
             queue.remove(pos);
         } else {
             queue.push_back(uri.to_string());
+        }
+        self.app_handle.emit(event::QUEUE_TOGGLE, uri).unwrap();
+    }
+    pub fn queue_toggle_track_by_id(&self, id: i64) {
+        match database::find_track_uri_by_id(id) {
+            Some(uri) => self.queue_toggle_track(&uri),
+            None => eprintln!("Cannot find track uri by id: {}", id),
         }
     }
 
