@@ -10,15 +10,15 @@ pub fn get_cache_dir() -> PathBuf {
 }
 
 pub fn get_db_path() -> PathBuf {
-    get_config_dir().join("beatalvi-dev.db")
-    // get_config_dir().join("beatalvi.db")
+    // get_config_dir().join("beatalvi-dev.db")
+    get_config_dir().join("beatalvi.db")
 }
 
 pub fn get_music_dir() -> PathBuf {
     dirs::home_dir()
         .expect("failed to get home dir")
-        // .join("Music")
-        .join("test")
+        .join("Music")
+    // .join("test")
 }
 
 pub fn create_config_dir_if_not_exists() -> PathBuf {

@@ -49,32 +49,32 @@ fn get_stats() -> Stats {
 
 #[tauri::command]
 fn get_top_10_tracks() -> Vec<Track> {
-    database::get_top_10_tracks().unwrap()
+    database::get_top_10_tracks().unwrap_or(Vec::new())
 }
 
 #[tauri::command]
 fn get_top_10_albums() -> Vec<BasicAlbum> {
-    database::get_top_n_albums(10).unwrap()
+    database::get_top_n_albums(10).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
 fn get_top_100_albums() -> Vec<BasicAlbum> {
-    database::get_top_n_albums(100).unwrap()
+    database::get_top_n_albums(100).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
 fn get_random_100_albums() -> Vec<BasicAlbum> {
-    database::get_random_n_albums(100).unwrap()
+    database::get_random_n_albums(100).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
 fn get_recent_100_albums() -> Vec<BasicAlbum> {
-    database::get_recent_n_albums(100).unwrap()
+    database::get_recent_n_albums(100).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
 fn get_all_albums() -> Vec<BasicAlbum> {
-    database::get_all_albums().unwrap()
+    database::get_all_albums().unwrap_or(Vec::new())
 }
 
 #[tauri::command]

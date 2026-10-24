@@ -265,7 +265,7 @@ fn slugify(s: &str) -> String {
     s.to_lowercase()
         .chars()
         .map(|c| match c {
-            'a'..='z' | '0'..='9' => c,
+            'a'..='z' | '0'..='9' | 'A'..='Z' => c,
             ' ' | '-' | '_' => '-',
             _ => ' ', // Replace special chars with space
         })

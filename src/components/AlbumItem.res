@@ -16,7 +16,11 @@ let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
 
   let border = isActive ? "nb-active" : ""
 
-  <div role="button" onClick={_ => onClick()} className="flex flex-col animate-fade cursor-pointer">
+  <div
+    role="button"
+    onClick={_ => onClick()}
+    className={`flex flex-col animate-fade cursor-pointer ${width}`}
+  >
     <div
       className={`${width} aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain ${border}`}
     >
@@ -42,7 +46,7 @@ let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
         // </button>
       </div>
     </div>
-    <p className="r-text pl-1 pt-2 font-medium line-clamp-1"> {album.name->React.string} </p>
-    <p className="r-text-sm pl-1 text-80 line-clamp-1"> {album.artist->React.string} </p>
+    <p className="r-text pl-1 pt-2 font-medium truncate"> {album.name->React.string} </p>
+    <p className="r-text-sm pl-1 text-80 truncate"> {album.artist->React.string} </p>
   </div>
 }

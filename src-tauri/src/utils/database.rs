@@ -259,9 +259,10 @@ pub fn find_albums_without_tracks(conn: &Connection) -> Result<Vec<i64>> {
 /// Artist that does not belong to any track
 pub fn find_artists_without_tracks(conn: &Connection) -> Result<Vec<i64>> {
     let mut stmt = conn.prepare(
-        "SELECT a.id FROM artists a
-             JOIN track_artists ta ON a.id = ta.artist_id
-             WHERE ta.track_id NOT IN (SELECT id FROM tracks);",
+        "SELECT ar.id
+                 FROM artists ar
+                 WHERE ar.id NOT IN (SELECT DISTINCT artist_id FROM track_artists)
+                 ORDER BY ar.name ASC",
     )?;
     let artist_ids = stmt
         .query_map([], |row| row.get(0))?
