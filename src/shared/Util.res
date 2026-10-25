@@ -19,6 +19,7 @@ let renderSome = (data, fn) =>
   }
 
 let padInt = num => num->Int.toString->String.padStart(2, "0")
+let padInt3 = num => num->Int.toString->String.padStart(3, "0")
 let durationToString = seconds => {
   let hrs = seconds / 3600
   let mins = (seconds % 3600 / 60)->padInt

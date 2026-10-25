@@ -2,7 +2,8 @@ pub mod models;
 mod utils;
 use clap::Parser;
 use models::{
-    AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, Stats, Track, TrackState,
+    AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, PlaylistWithTracks,
+    Stats, Track, TrackState,
 };
 use tauri::{AppHandle, Emitter, Manager, State, Webview};
 use tokio::task;
@@ -11,6 +12,7 @@ use utils::config;
 use utils::database;
 use utils::event;
 use utils::importer;
+use utils::playlist_database;
 use utils::scanner;
 use utils::state::AppState;
 
@@ -45,6 +47,11 @@ async fn generate_cover_art_cache() {
 #[tauri::command]
 fn get_stats() -> Stats {
     database::get_stats().unwrap()
+}
+
+#[tauri::command]
+fn get_all_tracks_grouped_by_album() -> Vec<Track> {
+    database::get_all_tracks_grouped_by_album().unwrap_or(Vec::new())
 }
 
 #[tauri::command]
@@ -329,9 +336,10 @@ fn get_volume(state: State<AppState>) -> i32 {
 
 #[tauri::command]
 fn set_volume(volume: i32, app_handle: AppHandle, state: State<AppState>) {
-    match state.player.lock().unwrap().set_volume(volume) {
+    let vol = ((volume as f64) / 100.).max(0.).min(1.);
+    match state.player.lock().unwrap().set_volume(vol) {
         Ok(_) => {
-            let _ = app_handle.emit(event::VOLUME, volume);
+            let _ = app_handle.emit(event::VOLUME, (vol * 100.) as i8);
         }
         Err(e) => eprintln!("{:?}", e),
     }
@@ -353,6 +361,17 @@ fn set_album_loved_by_id(album_id: i64, loved: bool, app_handle: AppHandle) {
 }
 
 #[tauri::command]
+fn create_playlist_with_track_uris(name: String, uris: Vec<String>) -> Result<i64, String> {
+    playlist_database::create_playlist_with_track_uris(&name, uris)
+        .map_err(|_| "failed to create playlist".into())
+}
+
+#[tauri::command]
+fn get_playlists_with_tracks() -> Vec<PlaylistWithTracks> {
+    playlist_database::get_playlists_with_tracks().unwrap_or(Vec::new())
+}
+
+#[tauri::command]
 fn reload_app(app_handle: AppHandle) {
     app_handle.restart()
 }
@@ -366,7 +385,8 @@ fn reload_window(webview: Webview) {
 pub fn run() {
     let _ = config::create_config_dir_if_not_exists();
     let _ = config::create_cache_dir_if_not_exists();
-    let _ = database::initialize().expect("Could not initialize database");
+    let _ = database::initialize().expect("Could not initialize db");
+    let _ = playlist_database::initialize().expect("Could not initialize playlist db");
     tauri::Builder::default()
         .setup(|app| {
             let app_handle = app.app_handle();
@@ -403,6 +423,7 @@ pub fn run() {
             load_music,
             generate_cover_art_cache,
             get_stats,
+            get_all_tracks_grouped_by_album,
             get_top_10_tracks,
             get_top_10_albums,
             get_top_100_albums,
@@ -442,7 +463,9 @@ pub fn run() {
             get_volume,
             set_volume,
             is_album_loved,
-            set_album_loved_by_id
+            set_album_loved_by_id,
+            create_playlist_with_track_uris,
+            get_playlists_with_tracks
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -90,17 +90,17 @@ let make = () => {
     <p className="mt-4 text-80 uppercase font-medium"> {"Cover art"->React.string} </p>
     {switch state {
     | Idle =>
-      <button onClick=onRegenCover className="btn r-btn w-96">
+      <button onClick=onRegenCover className="btn xl:btn-lg 3xl:btn-xl w-96">
         {"Regenerate cover art cache"->React.string}
       </button>
     | Done =>
-      <button onClick=onRegenCover className="btn btn-success r-btn w-96">
+      <button onClick=onRegenCover className="btn xl:btn-lg 3xl:btn-xl btn-success w-100">
         {"Cover art cache regenerated"->React.string}
       </button>
     | Loading =>
-      <button disabled=true className="btn r-btn w-96">
+      <button disabled=true className="btn xl:btn-lg 3xl:btn-xl w-96">
         <span className="loading loading-spinner"></span>
-        {"Generating cover art cache ..."->React.string}
+        {"Generating cover art cache"->React.string}
       </button>
     }}
   </React.Fragment>

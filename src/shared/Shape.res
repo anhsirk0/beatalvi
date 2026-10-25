@@ -59,6 +59,17 @@ module Track = {
     queue: array<string>,
   }
 
+  let eq = (one, other) => one.id == other.id
+  let ne = (one, other) => one.id != other.id
+  let filterQuery = (track: t, query) =>
+    track.name->Util.Str.contains(query) ||
+    track.artist->Util.Str.contains(query) ||
+    track.album->Util.Str.contains(query)
+
+  let hasOne = (arr, item) => arr->Array.some(eq(item, _))
+  let addOne = (arr, item) => arr->hasOne(item) ? arr : arr->Array.concat([item])
+  let removeOne = (arr, item) => arr->hasOne(item) ? arr->Array.filter(ne(item, _)) : arr
+
   let totalDuration = (arr: array<t>) =>
     arr->Array.map(t => t.duration)->Array.reduce(0, (acc, num) => acc + num)
 }
@@ -97,5 +108,28 @@ module Artist = {
     name: string,
     albumCount: int,
     trackCount: int,
+  }
+}
+
+module Playlist = {
+  type kind = Regular | Smart
+  // type data = Regular(array<string>) | Smart(string)
+  // type t = {
+  //   id: float,
+  //   name: string,
+  //   data: data,
+  // }
+
+  type playlist = {
+    id: float,
+    name: string,
+    mtime: int,
+    smartEnabled: bool,
+    smartSql: string,
+  }
+
+  type t = {
+    playlist: playlist,
+    tracks: array<string>,
   }
 }

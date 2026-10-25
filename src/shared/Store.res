@@ -33,6 +33,7 @@ module Config = {
   let useShallow = selector => store->Store.use(Store.useShallow(selector))
 
   let getTheme = () => (store->Store.getState).config.theme
+  let getVolume = () => (store->Store.getState).config.volume
 }
 
 module Player = {

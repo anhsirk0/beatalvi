@@ -23,7 +23,7 @@ let make = (~album: Shape.Album.item, ~onPlay) => {
       <div
         className="w-20 2xl:w-28 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb-outline"
       >
-        <img id className="object-cover h-full z-10" />
+        <img alt="" id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
           <p className="text-4xl 2xl:text-6xl text-center text-base-content font-serif">
             {"?"->React.string}
@@ -36,7 +36,7 @@ let make = (~album: Shape.Album.item, ~onPlay) => {
         </p>
         {trackCount > 0
           ? <p className="text-lg 2xl:text-2xl pl-1 text-80">
-              {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
+              {`${trackCount->Int.toString} song${trackCount == 1 ? "" : "s"}`->React.string}
               <span className="px-4"> {Constant.sep->React.string} </span>
               {trackDuration->Util.durationToTimeString->React.string}
             </p>

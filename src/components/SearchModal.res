@@ -18,7 +18,7 @@ module Content = {
             )
             ->React.array
           : <div className="center grow">
-              <p className="font-fraunces r-text-2xl font-light italic">
+              <p className="font-instrument r-text-3xl font-light italic">
                 {"Not every word finds its tune."->React.string}
               </p>
             </div>

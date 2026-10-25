@@ -33,6 +33,7 @@ type t = React.component<props>
 @module("@phosphor-icons/react") external plus: t = "PlusIcon"
 @module("@phosphor-icons/react") external pencil: t = "PencilIcon"
 @module("@phosphor-icons/react") external sliders: t = "SlidersIcon"
+@module("@phosphor-icons/react") external slidersHorizontal: t = "SlidersHorizontalIcon"
 @module("@phosphor-icons/react") external sparkle: t = "SparkleIcon"
 @module("@phosphor-icons/react") external palette: t = "PaletteIcon"
 @module("@phosphor-icons/react") external musicNote: t = "MusicNoteIcon"

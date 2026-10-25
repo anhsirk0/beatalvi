@@ -5,6 +5,7 @@ pub mod event;
 pub mod importer;
 pub mod player;
 pub mod playlist;
+pub mod playlist_database;
 pub mod reader;
 pub mod scanner;
 pub mod state;

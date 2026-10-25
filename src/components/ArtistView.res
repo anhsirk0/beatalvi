@@ -43,7 +43,7 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
       <div
         className="w-40 2xl:w-48 aspect-square bg-primary/40 rounded-full flex shrink-0 overflow-hidden relative isolate group nb-outline"
       >
-        <img id className="object-cover h-full z-10" />
+        <img alt="" id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
           <Icon.userCircle className="size-24" weight=Thin />
         </div>
@@ -56,7 +56,7 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
         | Loading | Failed => React.null
         | Success({trackCount, albumCount}) =>
           <p className="text-lg 2xl:text-2xl pl-1 text-60">
-            {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
+            {`${trackCount->Int.toString} song${trackCount == 1 ? "" : "s"}`->React.string}
             <span className="px-4"> {Constant.sep->React.string} </span>
             {`${albumCount->Int.toString} album${albumCount == 1 ? "" : "s"}`->React.string}
           </p>

@@ -65,7 +65,7 @@ let make = (~album: Shape.Album.t, ~onBack, ~onPlay) => {
       <div
         className="size-40 2xl:size-48 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
       >
-        <img id className="object-cover h-full z-10" />
+        <img alt="" id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0">
           <p className="text-6xl 2xl:text-8xl text-center text-base-content font-serif">
             {"?"->React.string}
@@ -99,7 +99,7 @@ let make = (~album: Shape.Album.t, ~onBack, ~onPlay) => {
     | Loading | Failed => React.null
     | Success(tracks) =>
       <React.Fragment>
-        // <p className="r-text text-80 border-b-2 border-accent"> {"Tracks"->React.string} </p>
+        // <p className="r-text text-80 border-b-2 border-accent"> {"Songs"->React.string} </p>
         <div className="grid grid-cols-2 gap-4 w-full px-1 pt-2">
           {tracks
           ->Array.mapWithIndex((track, idx) =>

@@ -15,6 +15,7 @@ let reloadWindow: fn<unit, unit> = make("reload_window")
 let loadMusic: fn<unit, string> = make("load_music")
 let regenerateCoverArtCache: fn<unit, unit> = make("generate_cover_art_cache")
 let getStats: fn<unit, Shape.Stats.t> = make("get_stats")
+let getAllTracksGroupedByAlbum: fn<unit, tracks> = make("get_all_tracks_grouped_by_album")
 let getTop10Tracks: fn<unit, tracks> = make("get_top_10_tracks")
 let getTop10Albums: fn<unit, albums> = make("get_top_10_albums")
 let getTop100Albums: fn<unit, albums> = make("get_top_100_albums")
@@ -85,3 +86,9 @@ type isAlbumLovedArgs = {albumId: float}
 let isAlbumLoved: fn<isAlbumLovedArgs, bool> = make("is_album_loved")
 type setAlbumLovedByIdArgs = {albumId: float, loved: bool}
 let setAlbumLovedById: fn<setAlbumLovedByIdArgs, unit> = make("set_album_loved_by_id")
+
+type createPlaylistWithTrackUrisArgs = {name: string, uris: array<string>}
+let createPlaylistWithTrackUris: fn<createPlaylistWithTrackUrisArgs, unit> = make(
+  "create_playlist_with_track_uris",
+)
+let getPlaylistsWithTracks: fn<unit, array<Shape.Playlist.t>> = make("get_playlists_with_tracks")

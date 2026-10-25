@@ -77,6 +77,7 @@ let make = () => {
             | AllAlbums => <AllAlbums />
             | AllArtists => <AllArtists />
             | Settings => <Settings />
+            | Playlists => <Playlists />
             | _ => <ErrorPage />
             }}
           </div>

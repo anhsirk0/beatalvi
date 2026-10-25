@@ -32,7 +32,7 @@ let make = () => {
       | Loading | Failed => React.null
       | Success(stats) => {
           let info = `${stats.tracks->Util.toAmountLabel(
-              "Track",
+              "Song",
             )}, ${stats.albums->Util.toAmountLabel("Album")}, ${stats.artists->Util.toAmountLabel(
               "Artist",
             )}`

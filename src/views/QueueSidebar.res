@@ -52,7 +52,7 @@ let make = () => {
           ? groups
             ->Array.mapWithIndex((group, idx) => <Item group idx key={idx->Int.toString} />)
             ->React.array
-          : <p className="font-fraunces r-text-2xl font-light text-center italic mt-[100%]">
+          : <p className="font-instrument r-text-2xl font-light text-center italic mt-[100%]">
               {"The night is quiet."->React.string}
               <br />
               {"Play something"->React.string}

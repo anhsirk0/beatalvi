@@ -47,6 +47,12 @@ let useKeys = () => {
       Invoke.rewind10Seconds()->ignore
     } else if key == "ArrowRight" || key == "l" {
       Invoke.seek10Seconds()->ignore
+    } else if key == "ArrowUp" || key == "j" {
+      // Todo: show a toast
+      Invoke.setVolume({volume: Store.Config.getVolume() + 10})->ignore
+    } else if key == "ArrowDown" || key == "k" {
+      // Todo: show a toast
+      Invoke.setVolume({volume: Store.Config.getVolume() - 10})->ignore
     } else if isCtrl && key == "r" {
       Invoke.reloadWindow()->ignore
     } else if isCtrl && digit->Option.isSome {

@@ -9,7 +9,7 @@ let make = () => {
     albums->Array.length > 0
       ? <AllAlbumsGrid albums />
       : <div className="center r-gap flex-col">
-          <p className="font-fraunces r-text-2xl font-light text-center italic mt-[25%]">
+          <p className="font-instrument r-text-3xl font-light text-center italic mt-[25%]">
             {"Your heart hasn't chosen an album yet."->React.string}
           </p>
           <p className="r-text-lg text-center text-60">

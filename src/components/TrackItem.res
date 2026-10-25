@@ -1,7 +1,7 @@
 module Cover = {
   @react.component
   let make = (~track: Shape.Track.t) => {
-    let id = `track-${track.id->Float.toString}`
+    let id = `song-${track.id->Float.toString}`
     let _ = Hook.useFetch({
       fn: () => Invoke.getTrackCoverArt({album: track.album, trackUri: track.uri}),
       onSuccess: Shape.Bytes.setCover(_, id),
@@ -10,7 +10,7 @@ module Cover = {
     <div
       className="size-12 2xl:size-14 bg-base-content/30 rounded-box flex shrink-0 overflow-hidden nb-outline relative isolate"
     >
-      <img key=id id className="object-cover h-full z-10" />
+      <img alt="" key=id id className="object-cover h-full z-10" />
       <div className="center p-4 absolute inset-0">
         <p className="text-4xl text-center text-base-content font-serif"> {"?"->React.string} </p>
       </div>
@@ -21,14 +21,8 @@ module Cover = {
 @react.component
 let make = (~track: Shape.Track.t, ~idx, ~onClick) => {
   let currentTrack = Store.Player.useShallow(s => s.data.track)
-  let id = `track-${track.id->Float.toString}`
   let isPlaying = Some(track.id) == currentTrack->Option.map(t => t.id)
   let bg = isPlaying ? "bg-primary text-primary-content nb-active" : "bg-base-100"
-
-  let _ = Hook.useFetch({
-    fn: () => Invoke.getTrackCoverArt({album: track.album, trackUri: track.uri}),
-    onSuccess: Shape.Bytes.setCover(_, id),
-  })
 
   let onMouseDown = evt => {
     if evt->ReactEvent.Mouse.button == 1 {

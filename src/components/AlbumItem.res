@@ -24,7 +24,7 @@ let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
     <div
       className={`${width} aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain ${border}`}
     >
-      <img id className="object-cover h-full z-10" />
+      <img alt="" id className="object-cover h-full z-10" />
       <div className="center p-4 absolute inset-0">
         <p className="text-9xl text-center text-base-content font-serif"> {"?"->React.string} </p>
       </div>

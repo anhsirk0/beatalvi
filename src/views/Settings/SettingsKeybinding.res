@@ -7,8 +7,8 @@ module Kbd = {
 module Item = {
   @react.component
   let make = (~title, ~children) => {
-    <div className="flex py-2 2xl:py-4 px-1 items-center border-b border-accent">
-      <p className="r-text-lg grow"> {title->React.string} </p>
+    <div className="flex py-2 px-1 items-center border-b border-accent">
+      <p className="r-text grow"> {title->React.string} </p>
       {children}
     </div>
   }
@@ -23,10 +23,10 @@ let make = (~showCli=false) => {
         <Item title="Play / pause">
           <Kbd k="Space" />
         </Item>
-        <Item title="Next track">
+        <Item title="Next song">
           <Kbd k="n" />
         </Item>
-        <Item title="Previous track">
+        <Item title="Previous song">
           <Kbd k="p" />
         </Item>
         <Item title="Skip forward 10 seconds">
@@ -39,10 +39,20 @@ let make = (~showCli=false) => {
           <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
           <Kbd k="h︎" />
         </Item>
+        <Item title="Volume + 10">
+          <Kbd k="🡅" />
+          <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
+          <Kbd k="j︎" />
+        </Item>
+        <Item title="Volume - 10">
+          <Kbd k="🡇" />
+          <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
+          <Kbd k="k︎" />
+        </Item>
         <Item title="Start playback / play all">
           <Kbd k="s" />
         </Item>
-        <Item title="Add track to queue">
+        <Item title="Add song to queue">
           <Kbd k="middle click" />
         </Item>
         <Item title="Open playing albums sidebar">
@@ -55,19 +65,36 @@ let make = (~showCli=false) => {
             <Item title="Play / pause">
               <Kbd k="--toggle" />
             </Item>
-            <Item title="Next track">
+            <Item title="Next song">
               <Kbd k="--next" />
             </Item>
-            <Item title="Previous track">
+            <Item title="Previous song">
               <Kbd k="--previous" />
             </Item>
-            <Item title="Queue track by track id">
+            <Item title="Queue song by song id">
               <Kbd k="--queue <INT>" />
             </Item>
           </div>
         : React.null}
     </div>
     <div className="grid grid-cols-1 gap-8">
+      <div className="flex flex-col">
+        <p className="r-text-xl font-semibold"> {"App"->React.string} </p>
+        <Item title="Reload window">
+          <Kbd k="ctrl" />
+          <p className="px-2 text-3xl"> {"+"->React.string} </p>
+          <Kbd k="r" />
+        </Item>
+        <Item title="Rotate theme">
+          <Kbd k="." />
+        </Item>
+        <Item title="Toggle dark mode">
+          <Kbd k="d" />
+        </Item>
+        <Item title="Show this list">
+          <Kbd k="?" />
+        </Item>
+      </div>
       <div className="flex flex-col">
         <p className="r-text-xl font-semibold"> {"Navigation"->React.string} </p>
         <Item title="Search / focus search input">
@@ -85,23 +112,6 @@ let make = (~showCli=false) => {
         </Item>
         <Item title="Settings">
           <Kbd k="," />
-        </Item>
-      </div>
-      <div className="flex flex-col">
-        <p className="r-text-xl font-semibold"> {"App"->React.string} </p>
-        <Item title="Reload window">
-          <Kbd k="ctrl" />
-          <p className="px-2 text-3xl"> {"+"->React.string} </p>
-          <Kbd k="r" />
-        </Item>
-        <Item title="Rotate theme">
-          <Kbd k="." />
-        </Item>
-        <Item title="Toggle dark mode">
-          <Kbd k="d" />
-        </Item>
-        <Item title="Show this list">
-          <Kbd k="?" />
         </Item>
       </div>
     </div>

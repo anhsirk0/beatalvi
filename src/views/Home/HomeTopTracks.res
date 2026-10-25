@@ -8,7 +8,7 @@ let make = (~tracks: array<Shape.Track.t>) => {
 
   <div className="flex flex-col w-full min-w-0 animate-slide-up">
     <div className="flex justify-between">
-      <p className="r-text-2xl font-serif"> {"Top Tracks"->React.string} </p>
+      <p className="r-text-2xl font-serif"> {"Top Songs"->React.string} </p>
       <button
         id="play-all"
         onClick=onPlayAll

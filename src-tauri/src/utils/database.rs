@@ -299,6 +299,41 @@ pub fn is_album_loved(album_id: i64) -> Result<bool> {
     Ok(loved)
 }
 
+pub fn get_all_tracks_grouped_by_album() -> Result<Vec<Track>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let query = "SELECT 
+                   t.id,
+                   t.name AS track_name,
+                   t.uri,
+                   t.duration,
+                   t.popularity,
+                   a.name AS album_name,
+                   GROUP_CONCAT(ar.name, ', ') AS artists
+             FROM tracks t
+             JOIN albums a ON t.album_id = a.id
+             LEFT JOIN track_artists ta ON t.id = ta.track_id
+             LEFT JOIN artists ar ON ta.artist_id = ar.id
+             GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name, a.id
+             ORDER BY a.name ASC, t.name ASC";
+
+    let mut stmt = conn.prepare(query)?;
+    let tracks = stmt
+        .query_map([], |row| {
+            Ok(Track {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                uri: row.get(2)?,
+                duration: row.get(3)?,
+                popularity: row.get(4)?,
+                album: row.get(5)?,
+                artist: row.get(6)?,
+            })
+        })?
+        .collect::<Result<Vec<Track>, _>>()?;
+
+    Ok(tracks)
+}
+
 pub fn get_top_10_tracks() -> Result<Vec<Track>> {
     let conn = Connection::open(config::get_db_path())?;
     let mut stmt = conn.prepare(

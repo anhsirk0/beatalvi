@@ -19,7 +19,7 @@ let make = () => {
   | Success(stats) =>
     <div className="flex flex-row items-center ">
       // <Icon.vinylRecord className="size-14" />
-      <Item title="Track" count=stats.tracks hideBorder=true />
+      <Item title="Song" count=stats.tracks hideBorder=true />
       <Item title="Album" count=stats.albums />
       <Item title="Artist" count=stats.artists />
       <Item title="Playlist" count=0 />
