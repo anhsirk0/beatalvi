@@ -15,7 +15,7 @@ let make = (~album: Shape.Album.item, ~onPlay) => {
   | _ => (0, 0, false)
   }
 
-  let onTrackPlay = index => onPlay(album.id, ~index)
+  let onTrackPlay = index => onPlay(album.id, ~index, ~shuffle=false)
   let className = `animate-slide-up col-span-2 ${trackCount > 1 ? "" : "xl:col-span-1"}`
 
   <div className>
@@ -48,20 +48,18 @@ let make = (~album: Shape.Album.item, ~onPlay) => {
     </div>
     {switch tracks {
     | Loading | Failed => React.null
-    | Success(tracks) =>
-      <div
-        className={`grid grid-cols-1 ${trackCount > 1
-            ? "xl:grid-cols-2"
-            : ""} gap-4 w-full px-1 pt-4`}
-      >
-        {tracks
-        ->Array.mapWithIndex((track, idx) =>
-          <AlbumTrackItem
-            idx track key=track.uri onPlay={() => onTrackPlay(idx)} showArtist=hasManyArtists
-          />
-        )
-        ->React.array}
-      </div>
+    | Success(tracks) => {
+        let cols = trackCount > 1 ? "xl:grid-cols-2" : ""
+        <div className={`grid grid-cols-1 ${cols} gap-4 w-full px-1 pt-4`}>
+          {tracks
+          ->Array.mapWithIndex((track, idx) =>
+            <AlbumTrackItem
+              idx track key=track.uri onPlay={() => onTrackPlay(idx)} showArtist=hasManyArtists
+            />
+          )
+          ->React.array}
+        </div>
+      }
     }}
   </div>
 }

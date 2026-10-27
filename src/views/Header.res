@@ -67,7 +67,7 @@ let make = (~toggleOpen) => {
     {switch modal {
     | Keybindings =>
       <Modal
-        title={<p className="text-4xl font-bold"> {"Keybindings"->React.string} </p>}
+        title={<p className="r-text-2xl font-semibold"> {"Keybindings"->React.string} </p>}
         onClose={() => setModal(_ => Nope)}
         classes="min-w-[60vw]"
       >

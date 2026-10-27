@@ -78,7 +78,10 @@ let make = () => {
             | AllArtists => <AllArtists />
             | Settings => <Settings />
             | Playlists => <Playlists />
-            | _ => <ErrorPage />
+            | Playlist(id) => <PlaylistView id />
+            | NewPlaylist(kind) => <NewPlaylist kind />
+            | EditPlaylist(id) => <EditPlaylist id />
+            | NotFound => <ErrorPage />
             }}
           </div>
         }}

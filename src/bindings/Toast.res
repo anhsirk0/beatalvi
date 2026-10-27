@@ -12,8 +12,7 @@ module Toaster = {
 
 %%private(
   @module("react-hot-toast") external toast: (string, Options.t) => unit = "toast"
-  let classes = " !font-medium !text-2xl !max-w-xl !border-2 !border-accent nb-shadow"
-  let makeIcon = (icon: Icon.t) => React.createElement(icon, {className: "size-6", width: "bold"})
+  let makeIcon = (icon: Icon.t) => React.createElement(icon, {className: "size-8"})
 
   let make = (options, msg) => toast(msg, options)
 )
@@ -21,7 +20,7 @@ module Toaster = {
 let success = make(
   Options.fromObj({
     "icon": makeIcon(Icon.checkCircle),
-    "className": "!alert !alert-success" ++ classes,
+    "className": "alert alert-success",
   }),
   _,
 )
@@ -29,7 +28,7 @@ let success = make(
 let error = make(
   Options.fromObj({
     "icon": makeIcon(Icon.warning),
-    "className": "!alert !alert-error" ++ classes,
+    "className": "alert alert-error",
   }),
   _,
 )
@@ -37,7 +36,14 @@ let error = make(
 let warn = make(
   Options.fromObj({
     "icon": makeIcon(Icon.warningCircle),
-    "className": "!alert !alert-warning" ++ classes,
+    "className": "alert alert-warning",
+  }),
+  _,
+)
+let info = make(
+  Options.fromObj({
+    "icon": makeIcon(Icon.info),
+    "className": "alert alert-info",
   }),
   _,
 )

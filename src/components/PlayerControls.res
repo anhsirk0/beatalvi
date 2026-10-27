@@ -14,7 +14,9 @@ module PreviousBtn = {
     }
 
     let btn =
-      <button disabled onClick className="btn btn-ghost btn-square btn-lg hover:bg-base-200/10">
+      <button
+        disabled onClick className="btn btn-ghost btn-square btn-lg hover:bg-base-200/10 border-0"
+      >
         <Icon.skipBack className="size-8 text-neutral-content" weight=Fill />
       </button>
 
@@ -49,7 +51,9 @@ module NextBtn = {
     }
 
     let btn =
-      <button disabled onClick className="btn btn-ghost btn-square btn-lg hover:bg-base-200/10">
+      <button
+        disabled onClick className="btn btn-ghost btn-square btn-lg hover:bg-base-200/10 border-0"
+      >
         <Icon.skipForward className="size-8 text-neutral-content" weight=Fill />
       </button>
 
@@ -82,7 +86,8 @@ let make = () => {
   >
     <PreviousBtn />
     <button
-      onClick=onToggle className="btn btn-ghost btn-square btn-lg bg-primary text-primary-content"
+      onClick=onToggle
+      className="btn btn-ghost btn-square btn-lg bg-primary text-primary-content border-0"
     >
       {state == Playing
         ? <Icon.pause className="size-8" weight=Fill />

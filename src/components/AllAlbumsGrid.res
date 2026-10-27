@@ -8,6 +8,7 @@ let make = (~albums: array<Shape.Album.t>) => {
     Invoke.playTracksByAlbumsFromAlbumId({
       albumIds: albums->Array.map(a => a.id),
       albumId: id,
+      shuffle: false,
       index,
     })->ignore
   }

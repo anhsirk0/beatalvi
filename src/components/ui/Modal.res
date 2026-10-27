@@ -4,9 +4,7 @@ module CloseBtn = {
   @react.component
   let make = (~onClick) => {
     <button
-      id="close-btn"
-      onClick
-      className="btn r-btn btn-circle btn-ghost nb-box active:nb-box bg-base-100 -mt-2"
+      id="close-btn" onClick className="btn r-btn btn-square btn-ghost nb-ghost bg-base-100 -mt-2"
     >
       <Icon.x className="r-icon" weight=Bold />
     </button>

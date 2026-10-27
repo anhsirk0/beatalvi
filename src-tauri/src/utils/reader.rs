@@ -1,6 +1,6 @@
 use crate::models::{TrackInfo, UriMtime};
 use dashmap::DashMap;
-use image::ImageError;
+use image::{ImageError, imageops};
 use rayon::prelude::*;
 use std::{
     error::Error,
@@ -156,9 +156,19 @@ pub fn get_info_map(files: Vec<String>) -> Result<DashMap<String, TrackInfo>, Bo
 
 fn resize_image_bytes(input: &[u8], is_small: bool) -> Result<Vec<u8>, ImageError> {
     let img = image::load_from_memory(input)?;
-    let mut out = Vec::new();
+
+    // Crop to centered square
+    let width = img.width();
+    let height = img.height();
+    let square_size = width.min(height);
+    let x = (width - square_size) / 2;
+    let y = (height - square_size) / 2;
+
+    let cropped = imageops::crop(&mut img.to_rgb8(), x, y, square_size, square_size).to_image();
+
     let size = if is_small { IMG_SIZE_SM } else { IMG_SIZE };
-    img.resize(size, size, image::imageops::FilterType::Lanczos3)
-        .write_to(&mut Cursor::new(&mut out), image::ImageFormat::Jpeg)?;
+    let resized = imageops::resize(&cropped, size, size, imageops::FilterType::Lanczos3);
+    let mut out = Vec::new();
+    resized.write_to(&mut Cursor::new(&mut out), image::ImageFormat::Jpeg)?;
     Ok(out)
 }

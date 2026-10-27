@@ -9,7 +9,7 @@ module Item = {
     let iconClassname = isSelected
       ? "r-icon text-primary-content"
       : "r-icon text-neutral-content/80"
-    <Route.Link to=route className id={`side-item-${idx->Int.toString}`}>
+    <Route.Link to=route className id={`side-item-${idx->Int.toString}`} replace=true>
       {React.createElement(icon, {className: iconClassname, weight: Bold})}
       <span className="truncate grow r-title font-medium"> {title->React.string} </span>
     </Route.Link>

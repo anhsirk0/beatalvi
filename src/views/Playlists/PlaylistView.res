@@ -1,0 +1,83 @@
+module Content = {
+  @react.component
+  let make = (~playlist: Shape.Playlist.t, ~tracks) => {
+    let (trackCount, trackDuration) = (tracks->Array.length, tracks->Shape.Track.totalDuration)
+
+    let onPlay = (~shuffle) =>
+      Invoke.playMany({uris: tracks->Array.map(t => t.uri), shuffle})->ignore
+    let onStartPlay = _ => onPlay(~shuffle=false)
+    let onStartRandomPlay = _ => onPlay(~shuffle=true)
+
+    <React.Fragment>
+      <div className="flex gap-4 items-end">
+        <div className="flex flex-col">
+          <p className="text-3xl 2xl:text-5xl pl-1 font-semibold truncate">
+            {playlist.playlist.name->React.string}
+          </p>
+          <p className="r-text pl-2 text-60">
+            {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
+            <span className="px-4"> {Constant.sep->React.string} </span>
+            {trackDuration->Util.durationToTimeString->React.string}
+          </p>
+        </div>
+        <button
+          onClick=onStartPlay
+          id="play-all"
+          className="btn xl:btn-lg 2xl:btn-xl btn-primary w-40 ml-4 mb-1"
+        >
+          <Icon.play className="r-icon-lg pr-2" weight=Fill />
+          <span className="font-medium"> {" Play"->React.string} </span>
+        </button>
+        <button onClick=onStartRandomPlay id="play-all" className="btn r-btn-lg btn-square mb-1">
+          <Icon.shuffle className="r-icon-lg" weight=Bold />
+        </button>
+        <Route.Link
+          to=EditPlaylist(playlist.playlist.id) className="btn xl:btn-lg 2xl:btn-xl btn-square mb-1"
+        >
+          <Icon.pencilSimple className="r-icon-lg" />
+        </Route.Link>
+      </div>
+      <div className="grid grid-cols-2 gap-4 w-full px-1 pt-4 border-t-2 border-accent">
+        {tracks
+        ->Array.mapWithIndex((track, idx) =>
+          <TrackItem idx track key=track.uri onClick={() => Console.log(idx)} />
+        )
+        ->React.array}
+      </div>
+    </React.Fragment>
+  }
+}
+module Main = {
+  @react.component
+  let make = (~playlist: Shape.Playlist.t) => {
+    let tracks = Hook.useFetch({
+      fn: () => Invoke.getTracksByUris({uris: playlist.tracks}),
+    })
+
+    <div className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative">
+      <button
+        id="close-btn"
+        onClick={_ => Route.goBack()}
+        className="btn bg-base-100 btn-ghost r-btn nb-box active:nb-box absolute top-4 right-4 2xl:top-8 2xl:right-8"
+      >
+        <Icon.arrowLeft className="r-icon" weight=Bold />
+        {"Go back"->React.string}
+      </button>
+      {switch tracks {
+      | Loading | Failed => React.null
+      | Success(tracks) => <Content playlist tracks />
+      }}
+    </div>
+  }
+}
+
+@react.component
+let make = (~id) => {
+  let playlist = Hook.useFetch({fn: () => Invoke.findPlaylistById({id: id})})
+
+  switch playlist {
+  | Loading | Failed => React.null
+  | Success(Value(playlist)) => <Main playlist />
+  | Success(_) => React.null
+  }
+}

@@ -873,10 +873,13 @@ pub fn increment_track_and_album_popularity_by_uri(uri: &str) -> Result<()> {
     )?;
     conn.execute(
         "UPDATE albums 
-        SET popularity = popularity + (
-          SELECT ROUND(1.0 / COUNT(*) * 25 + 0.5)
-          FROM tracks
-          WHERE album_id = albums.id
+         SET popularity = popularity + (
+         SELECT CASE 
+           WHEN COUNT(*) > 2 THEN ROUND(1.0 / COUNT(*) * 50 + 0.5)
+           ELSE ROUND(1.0 / COUNT(*) * 25 + 0.5)
+         END
+         FROM tracks
+         WHERE album_id = albums.id
         )
         WHERE id = (SELECT album_id FROM tracks WHERE uri = ?);",
         params![uri],
@@ -928,6 +931,10 @@ pub fn delete_many_tracks(conn: &Connection, track_ids: &[i64]) -> Result<usize>
 
 pub fn delete_many_albums(conn: &Connection, album_ids: &[i64]) -> Result<usize> {
     delete_many_via_id(&conn, "albums", album_ids)
+}
+
+pub fn delete_many_album_artist_ids(conn: &Connection, ids: &[i64]) -> Result<usize> {
+    delete_many(&conn, "album_artists", "album_id", ids)
 }
 
 pub fn delete_many_artists(conn: &Connection, artist_ids: &[i64]) -> Result<usize> {

@@ -16,6 +16,8 @@ let loadMusic: fn<unit, string> = make("load_music")
 let regenerateCoverArtCache: fn<unit, unit> = make("generate_cover_art_cache")
 let getStats: fn<unit, Shape.Stats.t> = make("get_stats")
 let getAllTracksGroupedByAlbum: fn<unit, tracks> = make("get_all_tracks_grouped_by_album")
+type getTracksByUrisArgs = {uris: array<string>}
+let getTracksByUris: fn<getTracksByUrisArgs, tracks> = make("get_tracks_by_uris")
 let getTop10Tracks: fn<unit, tracks> = make("get_top_10_tracks")
 let getTop10Albums: fn<unit, albums> = make("get_top_10_albums")
 let getTop100Albums: fn<unit, albums> = make("get_top_100_albums")
@@ -51,7 +53,7 @@ let stop: fn<unit, unit> = make("stop")
 let pause: fn<unit, unit> = make("pause")
 let toggle: fn<unit, unit> = make("toggle")
 
-type playManyArgs = {uris: array<string>}
+type playManyArgs = {uris: array<string>, shuffle: bool}
 let playMany: fn<playManyArgs, unit> = make("play_many")
 
 let getPosition: fn<unit, Nullable.t<int>> = make("get_position")
@@ -72,7 +74,12 @@ let playTracksByAlbums: fn<playTracksByAlbumsArgs, unit> = make("play_tracks_by_
 type playManyFromIndexArgs = {uris: array<string>, index: int}
 let playManyFromIndex: fn<playManyFromIndexArgs, unit> = make("play_many_from_index")
 
-type playTracksByAlbumsFromAlbumIdArgs = {albumIds: array<float>, albumId: float, index: int}
+type playTracksByAlbumsFromAlbumIdArgs = {
+  albumIds: array<float>,
+  albumId: float,
+  index: int,
+  shuffle: bool,
+}
 let playTracksByAlbumsFromAlbumId: fn<playTracksByAlbumsFromAlbumIdArgs, unit> = make(
   "play_tracks_by_albums_from_album_id",
 )
@@ -87,8 +94,14 @@ let isAlbumLoved: fn<isAlbumLovedArgs, bool> = make("is_album_loved")
 type setAlbumLovedByIdArgs = {albumId: float, loved: bool}
 let setAlbumLovedById: fn<setAlbumLovedByIdArgs, unit> = make("set_album_loved_by_id")
 
-type createPlaylistWithTrackUrisArgs = {name: string, uris: array<string>}
-let createPlaylistWithTrackUris: fn<createPlaylistWithTrackUrisArgs, unit> = make(
-  "create_playlist_with_track_uris",
-)
+type createPlaylistArgs = {name: string, uris: array<string>}
+let createPlaylist: fn<createPlaylistArgs, float> = make("create_playlist_with_track_uris")
+type updatePlaylistArgs = {id: float, name: string, uris: array<string>}
+let updatePlaylist: fn<updatePlaylistArgs, float> = make("update_playlist_with_track_uris")
 let getPlaylistsWithTracks: fn<unit, array<Shape.Playlist.t>> = make("get_playlists_with_tracks")
+type findPlaylistByIdArgs = {id: float}
+let findPlaylistById: fn<findPlaylistByIdArgs, Nullable.t<Shape.Playlist.t>> = make(
+  "find_playlist_with_tracks_by_id",
+)
+type deletePlaylistByIdArgs = {id: float}
+let deletePlaylistById: fn<deletePlaylistByIdArgs, float> = make("delete_playlist_by_id")

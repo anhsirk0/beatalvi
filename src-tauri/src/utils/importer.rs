@@ -51,6 +51,7 @@ fn delete_tracks_and_related_stuff(conn: &Connection, ids: &[i64]) -> Result<()>
     let _ = database::delete_many_tracks(&conn, &ids)?;
     let album_ids = database::find_albums_without_tracks(&conn)?;
     let _ = database::delete_many_albums(&conn, &album_ids)?;
+    let _ = database::delete_many_album_artist_ids(&conn, &album_ids)?;
     let artist_ids = database::find_artists_without_tracks(&conn)?;
     let _ = database::delete_many_artists(&conn, &artist_ids)?;
     let _ = database::delete_many_track_artist_ids(&conn, &ids)?;

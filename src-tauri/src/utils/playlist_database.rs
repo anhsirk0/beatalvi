@@ -1,6 +1,6 @@
 use crate::models::{PlaylistWithTracks, UserPlaylist};
 use crate::utils::config;
-use rusqlite::{Connection, Result, params, params_from_iter};
+use rusqlite::{Connection, Result, params};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /* ─────────────────────────── DB Initialize ─────────────────────────── */
@@ -44,6 +44,41 @@ pub fn create_playlist_with_track_uris(name: &str, uris: Vec<String>) -> Result<
     Ok(playlist_id)
 }
 
+pub fn update_playlist_with_track_uris(id: i64, name: &str, uris: Vec<String>) -> Result<i64> {
+    let mut conn = Connection::open(config::get_playlist_db_path())?;
+    let mtime = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_millis() as i64;
+    let tx = conn.transaction()?;
+    tx.execute(
+        "UPDATE playlists SET name = ?1, mtime = ?2 WHERE id = ?3",
+        params![name, mtime, id],
+    )?;
+    // Delete existing tracks
+    tx.execute("DELETE FROM tracks WHERE playlist_id = ?1", params![id])?;
+
+    // Insert new tracks
+    {
+        let mut stmt = tx.prepare("INSERT INTO tracks (playlist_id, uri) VALUES (?1, ?2)")?;
+
+        for track_uri in uris {
+            stmt.execute(params![id, track_uri])?;
+        }
+    }
+    tx.commit()?;
+    Ok(id)
+}
+
+pub fn delete_playlist_by_id(id: i64) -> Result<i64> {
+    let mut conn = Connection::open(config::get_playlist_db_path())?;
+    let tx = conn.transaction()?;
+    tx.execute("DELETE FROM tracks WHERE playlist_id = ?1", params![id])?;
+    tx.execute("DELETE FROM playlists WHERE id = ?1", params![id])?;
+    tx.commit()?;
+    Ok(id)
+}
+
 pub fn get_playlists_with_tracks() -> Result<Vec<PlaylistWithTracks>> {
     let conn = Connection::open(config::get_playlist_db_path())?;
     let mut stmt =
@@ -73,4 +108,27 @@ pub fn get_playlists_with_tracks() -> Result<Vec<PlaylistWithTracks>> {
     }
 
     Ok(result)
+}
+
+pub fn find_playlist_with_tracks_by_id(id: i64) -> Result<PlaylistWithTracks> {
+    let conn = Connection::open(config::get_playlist_db_path())?;
+    let mut stmt = conn
+        .prepare("SELECT id, name, smart_enabled, smart_sql, mtime FROM playlists WHERE id = ?1")?;
+
+    let playlist = stmt.query_row([id], |row| {
+        Ok(UserPlaylist {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            smart_enabled: row.get::<_, i32>(2)? != 0,
+            smart_sql: row.get(3)?,
+            mtime: row.get(4)?,
+        })
+    })?;
+
+    let mut track_stmt = conn.prepare("SELECT uri FROM tracks WHERE playlist_id = ?1")?;
+    let tracks: Vec<String> = track_stmt
+        .query_map([playlist.id], |row| row.get(0))?
+        .collect::<Result<Vec<_>, _>>()?;
+
+    Ok(PlaylistWithTracks { playlist, tracks })
 }

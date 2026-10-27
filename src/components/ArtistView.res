@@ -8,13 +8,14 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
   let stats = Hook.useFetch({fn: () => Invoke.getArtistStats({artistId: artist.id})})
   let albums = Hook.useFetch({fn: () => Invoke.getAlbumsByArtistId({artistId: artist.id})})
 
-  let onPlay = (id, ~index) => {
+  let onPlay = (id, ~index, ~shuffle) => {
     switch albums {
     | Loading | Failed => ignore()
     | Success(albums) =>
       Invoke.playTracksByAlbumsFromAlbumId({
         albumIds: albums->Array.map(a => a.id),
         albumId: id,
+        shuffle,
         index,
       })->ignore
     }
@@ -25,7 +26,17 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
     | Loading | Failed => ignore()
     | Success(albums) =>
       switch albums[0] {
-      | Some(a) => onPlay(a.id, ~index=0)
+      | Some(a) => onPlay(a.id, ~index=0, ~shuffle=false)
+      | None => ignore()
+      }
+    }
+
+  let onStartRandomPlay = _ =>
+    switch albums {
+    | Loading | Failed => ignore()
+    | Success(albums) =>
+      switch albums[0] {
+      | Some(a) => onPlay(a.id, ~index=0, ~shuffle=true)
       | None => ignore()
       }
     }
@@ -61,14 +72,15 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
             {`${albumCount->Int.toString} album${albumCount == 1 ? "" : "s"}`->React.string}
           </p>
         }}
-        <button
-          onClick=onStartPlay
-          id="play-all"
-          className="btn xl:btn-lg 2xl:btn-xl btn-primary w-40 mt-auto"
-        >
-          <Icon.play className="r-icon pr-2" weight=Fill />
-          <span className="font-medium"> {" Play"->React.string} </span>
-        </button>
+        <div className="flex gap-4 mt-auto">
+          <button onClick=onStartPlay id="play-all" className="btn r-btn-lg btn-primary w-40">
+            <Icon.play className="r-icon-lg pr-2" weight=Fill />
+            <span className="font-medium"> {" Play"->React.string} </span>
+          </button>
+          <button onClick=onStartRandomPlay id="play-all" className="btn r-btn-lg btn-square">
+            <Icon.shuffle className="r-icon-lg" weight=Bold />
+          </button>
+        </div>
       </div>
     </div>
     {switch albums {

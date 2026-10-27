@@ -1,10 +1,13 @@
 pub mod models;
 mod utils;
+extern crate rand;
 use clap::Parser;
 use models::{
     AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, PlaylistWithTracks,
     Stats, Track, TrackState,
 };
+use rand::prelude::SliceRandom;
+use rusqlite::OptionalExtension;
 use tauri::{AppHandle, Emitter, Manager, State, Webview};
 use tokio::task;
 use utils::args::Args;
@@ -52,6 +55,11 @@ fn get_stats() -> Stats {
 #[tauri::command]
 fn get_all_tracks_grouped_by_album() -> Vec<Track> {
     database::get_all_tracks_grouped_by_album().unwrap_or(Vec::new())
+}
+
+#[tauri::command]
+fn get_tracks_by_uris(uris: Vec<String>) -> Vec<Track> {
+    database::get_tracks_by_uris(uris).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
@@ -211,7 +219,13 @@ fn queue_toggle_track_by_id(id: i64, state: State<AppState>) {
 }
 
 #[tauri::command]
-fn play_many(uris: Vec<String>, state: State<AppState>) {
+fn play_many(uris: Vec<String>, shuffle: bool, state: State<AppState>) {
+    let mut uris = uris;
+    if shuffle {
+        let mut rng = rand::thread_rng();
+        uris.shuffle(&mut rng);
+    }
+
     state.playlist.lock().unwrap().clear();
     state.playlist.lock().unwrap().add_many(uris);
 
@@ -255,10 +269,16 @@ fn play_tracks_by_albums_from_album_id(
     album_ids: Vec<i64>,
     album_id: i64,
     index: usize,
+    shuffle: bool,
     state: State<AppState>,
 ) {
     let tracks = database::get_track_uris_by_albums(album_ids).unwrap();
-    let uris = tracks.iter().map(|(uri, _)| uri.clone()).collect();
+    let mut uris: Vec<String> = tracks.iter().map(|(uri, _)| uri.clone()).collect();
+
+    if shuffle {
+        let mut rng = rand::thread_rng();
+        uris.shuffle(&mut rng);
+    }
 
     if let Some(idx) = tracks.iter().position(|(_, id)| id == &album_id) {
         state.player.lock().unwrap().stop().unwrap();
@@ -367,8 +387,29 @@ fn create_playlist_with_track_uris(name: String, uris: Vec<String>) -> Result<i6
 }
 
 #[tauri::command]
+fn update_playlist_with_track_uris(
+    id: i64,
+    name: String,
+    uris: Vec<String>,
+) -> Result<i64, String> {
+    playlist_database::update_playlist_with_track_uris(id, &name, uris)
+        .map_err(|_| "failed to update playlist".into())
+}
+#[tauri::command]
+fn delete_playlist_by_id(id: i64) -> Result<i64, String> {
+    playlist_database::delete_playlist_by_id(id).map_err(|_| "failed to delete playlist".into())
+}
+
+#[tauri::command]
 fn get_playlists_with_tracks() -> Vec<PlaylistWithTracks> {
     playlist_database::get_playlists_with_tracks().unwrap_or(Vec::new())
+}
+
+#[tauri::command]
+fn find_playlist_with_tracks_by_id(id: i64) -> Option<PlaylistWithTracks> {
+    playlist_database::find_playlist_with_tracks_by_id(id)
+        .optional()
+        .unwrap_or(None)
 }
 
 #[tauri::command]
@@ -424,6 +465,7 @@ pub fn run() {
             generate_cover_art_cache,
             get_stats,
             get_all_tracks_grouped_by_album,
+            get_tracks_by_uris,
             get_top_10_tracks,
             get_top_10_albums,
             get_top_100_albums,
@@ -465,7 +507,10 @@ pub fn run() {
             is_album_loved,
             set_album_loved_by_id,
             create_playlist_with_track_uris,
-            get_playlists_with_tracks
+            update_playlist_with_track_uris,
+            get_playlists_with_tracks,
+            find_playlist_with_tracks_by_id,
+            delete_playlist_by_id
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

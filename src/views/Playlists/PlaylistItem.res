@@ -1,6 +1,6 @@
 @react.component
-let make = (~playlist: Shape.Playlist.t, ~onClick) => {
-  <div role="button" onClick={_ => onClick()} className="flex flex-col animate-fade cursor-pointer">
+let make = (~playlist: Shape.Playlist.playlist) => {
+  <Route.Link to=Playlist(playlist.id) className="flex flex-col animate-fade cursor-pointer">
     <div
       className="aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain"
     >
@@ -9,6 +9,6 @@ let make = (~playlist: Shape.Playlist.t, ~onClick) => {
         <Icon.playlist className="size-24" weight=Thin />
       </div>
     </div>
-    <p className="r-text text-center truncate"> {playlist.playlist.name->React.string} </p>
-  </div>
+    <p className="r-text text-center truncate"> {playlist.name->React.string} </p>
+  </Route.Link>
 }

@@ -13,6 +13,7 @@ type t = React.component<props>
 @module("@phosphor-icons/react") external userSquare: t = "UserSquareIcon"
 @module("@phosphor-icons/react") external x: t = "XIcon"
 @module("@phosphor-icons/react") external magnifyingGlass: t = "MagnifyingGlassIcon"
+@module("@phosphor-icons/react") external trash: t = "TrashIcon"
 
 // Arrows
 @module("@phosphor-icons/react") external arrowLeft: t = "ArrowLeftIcon"
@@ -22,6 +23,7 @@ type t = React.component<props>
 @module("@phosphor-icons/react") external caretLeft: t = "CaretLeftIcon"
 
 @module("@phosphor-icons/react") external house: t = "HouseIcon"
+@module("@phosphor-icons/react") external info: t = "InfoIcon"
 @module("@phosphor-icons/react") external warning: t = "WarningIcon"
 @module("@phosphor-icons/react") external warningCircle: t = "WarningCircleIcon"
 @module("@phosphor-icons/react") external check: t = "CheckIcon"
@@ -32,6 +34,7 @@ type t = React.component<props>
 @module("@phosphor-icons/react") external empty: t = "EmptyIcon"
 @module("@phosphor-icons/react") external plus: t = "PlusIcon"
 @module("@phosphor-icons/react") external pencil: t = "PencilIcon"
+@module("@phosphor-icons/react") external pencilSimple: t = "PencilSimpleIcon"
 @module("@phosphor-icons/react") external sliders: t = "SlidersIcon"
 @module("@phosphor-icons/react") external slidersHorizontal: t = "SlidersHorizontalIcon"
 @module("@phosphor-icons/react") external sparkle: t = "SparkleIcon"

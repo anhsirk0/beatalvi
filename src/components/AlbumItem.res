@@ -35,7 +35,7 @@ let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
           onClick=onPlayClick
           className="btn btn-ghost btn-square bg-primary text-primary-content hover:nb-plain"
         >
-          <Icon.play className="r-icon" weight=Fill />
+          <Icon.play className="r-icon-lg" weight=Fill />
         </button>
         <div className="grow"></div>
         // <button

@@ -29,9 +29,7 @@ module Empty = {
         </p>
         <div className="mockup-code w-full mt-4">
           <pre>
-            <code className="r-text-lg">
-              {"ln -s /path/to/your/music ~/Music"->React.string}
-            </code>
+            <code className="r-text-lg"> {"ln -s /path/to/your/music ~/Music"->React.string} </code>
           </pre>
         </div>
       </div>
@@ -51,6 +49,7 @@ let make = () => {
       Invoke.playTracksByAlbumsFromAlbumId({
         albumIds: albums->Array.map(a => a.id),
         albumId: id,
+        shuffle: false,
         index,
       })->ignore
     | _ => ignore()

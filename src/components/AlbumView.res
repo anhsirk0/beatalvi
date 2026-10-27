@@ -88,7 +88,7 @@ let make = (~album: Shape.Album.t, ~onBack, ~onPlay) => {
         }}
         <div className="flex r-gap items-center mt-auto">
           <button id="play-all" onClick=onPlayClick className="btn 3xl:btn-xl btn-primary w-40">
-            <Icon.play className="r-icon pr-2" weight=Fill />
+            <Icon.play className="r-icon-lg pr-2" weight=Fill />
             <span className="font-medium"> {" Play"->React.string} </span>
           </button>
           <LoveBtn albumId=album.id />

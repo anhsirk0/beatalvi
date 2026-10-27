@@ -1,6 +1,7 @@
 @react.component
 let make = (~tracks: array<Shape.Track.t>) => {
-  let onPlayAll = _ => Invoke.playMany({uris: tracks->Array.map(t => t.uri)})->ignore
+  let onPlayAll = _ =>
+    Invoke.playMany({uris: tracks->Array.map(t => t.uri), shuffle: false})->ignore
 
   let onTrackClick = idx => {
     Invoke.playManyFromIndex({uris: tracks->Array.map(t => t.uri), index: idx})->ignore

@@ -135,7 +135,7 @@
 }
 
 @utility nb-ghost {
-  @apply nb-plain border-0 hover:nb-active active:nb-plain;
+  @apply nb-plain hover:nb-active active:nb-plain;
 }
 
 @utility btn {
@@ -223,8 +223,16 @@ body {
   @apply btn-sm lg:btn-md 2xl:btn-md;
 }
 
+.r-btn-lg {
+  @apply btn-md xl:btn-lg 2xl:btn-xl;
+}
+
 .r-icon {
   @apply size-4 lg:size-5 2xl:size-5;
+}
+
+.r-icon-lg {
+  @apply size-5 lg:size-6 2xl:size-7;
 }
 
 .r-gap {
@@ -262,6 +270,26 @@ body {
   pointer-events: none;
 }
 
-/* img:broken { */
-/*   display: none; */
-/* } */
+*:focus {
+  outline: none;
+}
+
+.alert {
+  @apply text-xl max-w-xl nb-outline;
+}
+
+.alert-success {
+  @apply bg-success text-success-content;
+}
+
+.alert-error {
+  @apply bg-error text-error-content;
+}
+
+.alert-info {
+  @apply bg-info text-info-content;
+}
+
+.alert-warning {
+  @apply bg-warning text-warning-content;
+}
