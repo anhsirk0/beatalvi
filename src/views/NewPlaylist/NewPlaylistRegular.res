@@ -43,7 +43,14 @@ module Content = {
           if uris == data.tracks && data.playlist.name == name {
             Toast.info("No changes were made")
           } else {
-            Toast.info("Updating")
+            Invoke.updatePlaylist({id: data.playlist.id, name, uris})
+            ->Promise.catch(async _e => -1.)
+            ->Promise.then(async id => {
+              id > 0.
+                ? Toast.success("Playlist updated.")
+                : Toast.error("Failed to update playlist.")
+            })
+            ->ignore
           }
         | None =>
           Invoke.createPlaylist({name, uris})
@@ -59,37 +66,39 @@ module Content = {
 
     <React.Fragment>
       <Portal id="tools">
-        <p className="r-text-sm uppercase text-80 -mb-1">
-          {"Filter songs by song/album/artist name"->React.string}
-        </p>
-        <label
-          className="input input-xl bg-base-100 outline-none nb-box active:nb-active has-focus:nb-active w-full mb-4"
-        >
-          <Icon.magnifyingGlass className="r-icon" />
-          <InputBase
-            id="search-input"
-            value=query
-            onChange
-            type_="text"
-            className="grow"
-            placeholder=" Search songs"
-          />
-        </label>
-        <p className="r-text-sm uppercase text-80 -mb-1">
-          {"Select or deselect matching songs"->React.string}
-        </p>
-        <div className="w-full join isolate">
-          <button
-            onClick={_ => toggleAll(true)} className="join-item btn xl:btn-lg 2xl:btn-xl flex-1"
+        <div className="p-4 flex flex-col gap-4 bg-base-100 nb-outline rounded-box">
+          <p className="r-text-sm uppercase text-80 -mb-1">
+            {"Filter songs by song/album/artist name"->React.string}
+          </p>
+          <label
+            className="input input-xl outline-none bg-base-200 nb-box active:nb-active has-focus:nb-active w-full mb-4"
           >
-            {"Select all"->React.string}
-          </button>
-          <button
-            onClick={_ => toggleAll(false)}
-            className="join-item btn xl:btn-lg 2xl:btn-xl flex-1 z-10"
-          >
-            {"Deselect all"->React.string}
-          </button>
+            <Icon.magnifyingGlass className="r-icon" />
+            <InputBase
+              id="search-input"
+              value=query
+              onChange
+              type_="text"
+              className="grow"
+              placeholder=" Search songs"
+            />
+          </label>
+          <p className="r-text-sm uppercase text-80 -mb-1">
+            {"Select or deselect matching songs"->React.string}
+          </p>
+          <div className="w-full join isolate">
+            <button
+              onClick={_ => toggleAll(true)} className="join-item btn xl:btn-lg 2xl:btn-xl flex-1"
+            >
+              {"Select all"->React.string}
+            </button>
+            <button
+              onClick={_ => toggleAll(false)}
+              className="join-item btn xl:btn-lg 2xl:btn-xl flex-1 z-10"
+            >
+              {"Deselect all"->React.string}
+            </button>
+          </div>
         </div>
         <div className="grow"></div>
         <NewPlaylistSubmitBtn onSubmit name=?{data->Option.map(d => d.playlist.name)} />

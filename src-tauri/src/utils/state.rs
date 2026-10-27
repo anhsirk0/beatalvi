@@ -54,12 +54,10 @@ impl AppState {
                                     .unwrap();
                             }
 
-                            let track_uri = queue.lock().unwrap().pop_front().or(playlist
-                                .lock()
-                                .unwrap()
-                                .next()
-                                .cloned());
-
+                            let track_uri = match queue.lock().unwrap().pop_front() {
+                                Some(uri) => Some(uri),
+                                None => playlist.lock().unwrap().next().cloned(),
+                            };
                             if let Some(uri) = track_uri {
                                 match player.lock().unwrap().play(&uri) {
                                     Ok(_) => {

@@ -133,3 +133,82 @@ module Playlist = {
     tracks: array<string>,
   }
 }
+
+module Rule = {
+  type numericColumn = Popularity | Year
+  type stringColumn = Track | Album | Artist
+  type column = Numeric(numericColumn) | String(stringColumn)
+  type value = Numeric(int) | String(string)
+  type numericOp =
+    | @as("is greater than") GreaterThan
+    | @as("is less than") LessThan
+    | @as("is equal to") EqualTo
+    | @as("is not equal to") NotEqualTo
+  type stringOp =
+    | @as("contains") Contains
+    | @as("does not contain") NotContains
+    | @as("is equal to") EqualTo
+    | @as("is not equal to") NotEqualTo
+
+  external numericOpToString: numericOp => string = "%identity"
+  external stringOpToString: stringOp => string = "%identity"
+
+  type t =
+    | String({column: stringColumn, operation: stringOp, value: string})
+    | Numeric({column: numericColumn, operation: numericOp, value: int})
+
+  let initial = String({column: Track, operation: Contains, value: "test"})
+  // type t = {
+  //   column: column,
+  // operation: operation,
+  // }
+}
+
+module SmartPlaylist = {
+  type match = All | Any
+  type orderCols = Track | Album | Artist | Year | Popularity
+  type order = Random | Asc(orderCols) | Desc(orderCols)
+
+  type t = {
+    match: match,
+    order: order,
+    limit: int,
+    rules: array<Rule.t>,
+  }
+  let initialState = {
+    match: All,
+    order: Asc(Track),
+    limit: 50,
+    rules: [],
+  }
+
+  type action =
+    // | AddRule(Rule.t)
+    | NewRule
+    | RemoveRule(int)
+    | UpdateRule(int, Rule.t)
+    | SetMatch(match)
+    | SetOrder(order)
+    | SetLimit(int)
+  type dispatch = action => unit
+
+  let reducer = (state, action) => {
+    switch action {
+    | SetMatch(match) => {...state, match}
+    | SetOrder(order) => {...state, order}
+    | SetLimit(limit) => {...state, limit}
+    // | AddRule(rule) => {...state, rules: state.rules->Array.concat([rule])}
+    | NewRule => {...state, rules: state.rules->Array.concat([Rule.initial])}
+    | RemoveRule(index) => {
+        ...state,
+        rules: state.rules->Array.filterWithIndex((_, i) => i != index),
+      }
+    | UpdateRule(index, rule) => {
+        ...state,
+        rules: state.rules->Array.mapWithIndex((r, i) => i == index ? rule : r),
+      }
+    }
+  }
+
+  let useReducer = (~data=initialState) => React.useReducer(reducer, data)
+}

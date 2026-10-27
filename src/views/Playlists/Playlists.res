@@ -16,7 +16,7 @@ module Content = {
             to=NewPlaylist(Regular) className="flex flex-col animate-fade cursor-pointer p-1"
           >
             <div
-              className="aspect-square bg-base-200 rounded-box center flex-col shrink-0 overflow-hidden relative isolate group outline-dashed outline-accent p-4"
+              className="aspect-square bg-base-200 rounded-box center flex-col shrink-0 overflow-hidden relative isolate group outline-dashed outline-base-content/60 p-4"
             >
               <Icon.plus className="size-12 text-60" />
               <p className="r-text text-center text-60 truncate">

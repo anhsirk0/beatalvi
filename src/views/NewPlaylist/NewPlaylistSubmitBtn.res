@@ -14,11 +14,13 @@ let make = (~onSubmit, ~name: option<string>=?) => {
     >
       <InputBase value onChange type_="text" className="grow" placeholder=" Playlist" />
     </label>
-    <button onClick={_ => onSubmit(value)} className="btn xl:btn-lg 3xl:btn-xl btn-primary">
-      {(name->Option.isNone ? "Create playlist" : "Save playlist")->React.string}
-    </button>
-    <button id="close-btn" onClick={_ => Route.goBack()} className="btn xl:btn-lg 3xl:btn-xl">
-      {"Cancel"->React.string}
-    </button>
+    <div className="flex gap-4">
+      <button onClick={_ => onSubmit(value)} className="btn xl:btn-lg 3xl:btn-xl btn-primary grow">
+        {(name->Option.isNone ? "Create playlist" : "Save playlist")->React.string}
+      </button>
+      <button id="close-btn" onClick={_ => Route.goBack()} className="btn xl:btn-lg 3xl:btn-xl">
+        {"Cancel"->React.string}
+      </button>
+    </div>
   </div>
 }

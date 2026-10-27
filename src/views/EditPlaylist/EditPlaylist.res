@@ -13,7 +13,7 @@ module Main = {
             />
           : React.null}
         <div className="w-full join mb-4">
-          <div className="join-item grow px-4 py-3 text-xl nb-outline border-r-0">
+          <div className="join-item font-medium grow px-4 py-3 text-xl nb-outline border-r-0">
             {data.playlist.name->React.string}
           </div>
           <button
