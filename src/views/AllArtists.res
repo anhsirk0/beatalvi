@@ -17,7 +17,7 @@ module ArtistItem = {
         className="aspect-square bg-primary/40 rounded-full flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain"
       >
         <img alt="" id className="object-cover h-full z-10" />
-        <div className="center p-4 absolute inset-0">
+        <div className="center p-4 absolute inset-0 animate-fade">
           <Icon.userCircle className="size-24" weight=Thin />
         </div>
       </div>

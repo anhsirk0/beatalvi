@@ -15,7 +15,7 @@ type t =
 // Todo: add routes for Album/Artist etc
 // | Album(float)
 
-let all = [
+let sidebar = [
   Home,
   PopularAlbums,
   RandomAlbums,
@@ -28,7 +28,6 @@ let all = [
 
 let useRoute: unit => t = () => {
   let url = RescriptReactRouter.useUrl()
-
   switch url.path {
   | list{} => Home
   | list{"popular-albums"} => PopularAlbums
@@ -117,5 +116,7 @@ module Link = {
     <a ?id href=path className onClick> {children} </a>
   }
 }
+
+// let fromPlaylist = (item: Shape.Playlist.playlist) =>
 
 let goBack = () => Window.History.history->Window.History.back

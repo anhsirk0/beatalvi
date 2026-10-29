@@ -24,9 +24,9 @@ let make = (~album: Shape.Album.item, ~onPlay) => {
         className="w-20 2xl:w-28 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb-outline"
       >
         <img alt="" id className="object-cover h-full z-10" />
-        <div className="center p-4 absolute inset-0">
+        <div className="center p-4 absolute inset-0 animate-fade">
           <p className="text-4xl 2xl:text-6xl text-center text-base-content font-serif">
-            {"?"->React.string}
+            {Constant.logo->React.string}
           </p>
         </div>
       </div>

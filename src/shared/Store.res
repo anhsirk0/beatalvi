@@ -43,6 +43,7 @@ module Player = {
     state: state,
     position: int,
     queue: array<string>, // array of uris
+    playlists: array<Shape.Playlist.playlist>,
   }
 
   type action =
@@ -51,6 +52,7 @@ module Player = {
     | RemoveTrack
     | SetPosition(int)
     | SetQueue(array<string>)
+    | SetPlaylists(array<Shape.Playlist.playlist>)
     | QueueToggle(string)
     | QueueRemove(string)
 
@@ -61,6 +63,7 @@ module Player = {
     | RemoveTrack => {...data, track: None}
     | SetPosition(position) => {...data, position}
     | SetQueue(queue) => {...data, queue}
+    | SetPlaylists(playlists) => {...data, playlists}
     | QueueToggle(uri) => {...data, queue: data.queue->Util.Arr.toggle(uri)}
     | QueueRemove(uri) => {...data, queue: data.queue->Array.filter(u => u != uri)}
     }
@@ -76,6 +79,7 @@ module Player = {
       state: Stopped,
       position: 0,
       queue: [],
+      playlists: [],
     },
     update: action => set(prev => {...prev, data: prev.data->reducer(action)}),
   })

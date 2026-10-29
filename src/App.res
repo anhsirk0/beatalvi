@@ -27,6 +27,10 @@ let make = () => {
   })
 
   let _ = Hook.useFetch({fn: () => Invoke.setVolume({volume: volume})})
+  let _ = Hook.useFetch({
+    fn: Invoke.getAllPlaylists,
+    onSuccess: playlists => update(SetPlaylists(playlists)),
+  })
 
   let setTrack = track => {
     update(SetState(Playing))
@@ -78,7 +82,7 @@ let make = () => {
             | AllArtists => <AllArtists />
             | Settings => <Settings />
             | Playlists => <Playlists />
-            | Playlist(id) => <PlaylistView id />
+            | Playlist(id) => <PlaylistView id key={id->Float.toString} />
             | NewPlaylist(kind) => <NewPlaylist kind />
             | EditPlaylist(id) => <EditPlaylist id />
             | NotFound => <ErrorPage />

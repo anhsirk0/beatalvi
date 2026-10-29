@@ -13,6 +13,7 @@ module Item = {
 @react.component
 let make = () => {
   let data = Hook.useFetch({fn: Invoke.getStats})
+  let playlistCount = Store.Player.useShallow(s => s.data.playlists->Array.length)
 
   switch data {
   | Loading | Failed => React.null
@@ -22,7 +23,7 @@ let make = () => {
       <Item title="Song" count=stats.tracks hideBorder=true />
       <Item title="Album" count=stats.albums />
       <Item title="Artist" count=stats.artists />
-      <Item title="Playlist" count=0 />
+      <Item title="Playlist" count=playlistCount />
     </div>
   }
 }

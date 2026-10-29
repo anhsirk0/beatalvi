@@ -14,6 +14,58 @@ module Item = {
   }
 }
 
+module CliArgs = {
+  @react.component
+  let make = () => {
+    <div className="flex flex-col">
+      <p className="r-text-xl font-semibold"> {"Command line args"->React.string} </p>
+      <Item title="Play / pause">
+        <Kbd k="--toggle" />
+      </Item>
+      <Item title="Next song">
+        <Kbd k="--next" />
+      </Item>
+      <Item title="Previous song">
+        <Kbd k="--previous" />
+      </Item>
+      <Item title="Queue song by song id">
+        <Kbd k="--queue <INT>" />
+      </Item>
+      <Item title="Seek [n] seconds">
+        <Kbd k="--seek <INT>" />
+      </Item>
+      <Item title="Rewind [n] seconds">
+        <Kbd k="--rewind <INT>" />
+      </Item>
+    </div>
+  }
+}
+
+module Navigation = {
+  @react.component
+  let make = () => {
+    <div className="flex flex-col">
+      <p className="r-text-xl font-semibold"> {"Navigation"->React.string} </p>
+      <Item title="Search / focus search input">
+        <Kbd k="/" />
+      </Item>
+      <Item title="Sidebar item [n]">
+        <Kbd k="ctrl" />
+        <p className="px-2 text-2xl 2xl:text-3xl"> {"+"->React.string} </p>
+        <Kbd k="1-0" />
+      </Item>
+      <Item title="Back / close">
+        <Kbd k="Backspace" />
+        <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
+        <Kbd k="Escape︎" />
+      </Item>
+      <Item title="Settings">
+        <Kbd k="," />
+      </Item>
+    </div>
+  }
+}
+
 @react.component
 let make = (~showCli=false) => {
   <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 2xl:gap-16 overflow-y-auto min-h-0">
@@ -29,22 +81,22 @@ let make = (~showCli=false) => {
         <Item title="Previous song">
           <Kbd k="p" />
         </Item>
-        <Item title="Skip forward 10 seconds">
+        <Item title="Seek 10 seconds forwards">
           <Kbd k="🡆" />
           <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
           <Kbd k="l︎" />
         </Item>
-        <Item title="Skip backward 10 seconds">
+        <Item title="Rewind 10 seconds">
           <Kbd k="🡄" />
           <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
           <Kbd k="h︎" />
         </Item>
-        <Item title="Volume + 10">
+        <Item title="Volume + 5">
           <Kbd k="🡅" />
           <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
           <Kbd k="j︎" />
         </Item>
-        <Item title="Volume - 10">
+        <Item title="Volume - 5">
           <Kbd k="🡇" />
           <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
           <Kbd k="k︎" />
@@ -59,23 +111,7 @@ let make = (~showCli=false) => {
           <Kbd k="q" />
         </Item>
       </div>
-      {showCli
-        ? <div className="flex flex-col">
-            <p className="r-text-xl font-semibold"> {"Command line args"->React.string} </p>
-            <Item title="Play / pause">
-              <Kbd k="--toggle" />
-            </Item>
-            <Item title="Next song">
-              <Kbd k="--next" />
-            </Item>
-            <Item title="Previous song">
-              <Kbd k="--previous" />
-            </Item>
-            <Item title="Queue song by song id">
-              <Kbd k="--queue <INT>" />
-            </Item>
-          </div>
-        : React.null}
+      {showCli ? <Navigation /> : React.null}
     </div>
     <div className="grid grid-cols-1 gap-8">
       <div className="flex flex-col">
@@ -95,25 +131,7 @@ let make = (~showCli=false) => {
           <Kbd k="?" />
         </Item>
       </div>
-      <div className="flex flex-col">
-        <p className="r-text-xl font-semibold"> {"Navigation"->React.string} </p>
-        <Item title="Search / focus search input">
-          <Kbd k="/" />
-        </Item>
-        <Item title="Sidebar item (s)">
-          <Kbd k="ctrl" />
-          <p className="px-2 text-2xl 2xl:text-3xl"> {"+"->React.string} </p>
-          <Kbd k="1-9" />
-        </Item>
-        <Item title="Back / close">
-          <Kbd k="Backspace" />
-          <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
-          <Kbd k="Escape︎" />
-        </Item>
-        <Item title="Settings">
-          <Kbd k="," />
-        </Item>
-      </div>
+      {showCli ? <CliArgs /> : <Navigation />}
     </div>
   </div>
 }

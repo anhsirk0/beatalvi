@@ -139,6 +139,15 @@ pub struct UserPlaylist {
     pub mtime: i64,
     pub smart_enabled: bool,
     pub smart_sql: String,
+    pub smart_json: String,
+}
+
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct PlaylistItem {
+    pub id: i64,
+    pub name: String,
+    pub is_smart: bool,
 }
 
 #[derive(Serialize, Clone)]

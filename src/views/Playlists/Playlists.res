@@ -1,14 +1,14 @@
 module Content = {
   @react.component
-  let make = (~playlists: array<Shape.Playlist.t>) => {
+  let make = (~playlists: array<Shape.Playlist.playlist>) => {
     playlists->Array.length > 0
       ? <div
           className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-8 w-full p-8 overflow-y-auto min-h-0"
         >
           {playlists
           ->Array.mapWithIndex((playlist, i) =>
-            <Delay key={playlist.playlist.id->Float.toString} timeout={i * 20}>
-              <PlaylistItem playlist=playlist.playlist />
+            <Delay key={playlist.id->Float.toString} timeout={i * 20}>
+              <PlaylistItem playlist />
             </Delay>
           )
           ->React.array}
@@ -42,7 +42,11 @@ module Content = {
 
 @react.component
 let make = () => {
-  let data = Hook.useFetch({fn: Invoke.getPlaylistsWithTracks})
+  let update = Store.Player.useShallow(s => s.update)
+  let data = Hook.useFetch({
+    fn: Invoke.getAllPlaylists,
+    onSuccess: playlists => update(SetPlaylists(playlists)),
+  })
   switch data {
   | Loading | Failed => React.null
   | Success(playlists) => <Content playlists />

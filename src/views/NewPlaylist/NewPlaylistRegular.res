@@ -3,7 +3,11 @@ let countLabel = (matching, total) =>
 
 module Content = {
   @react.component
-  let make = (~tracks: array<Shape.Track.t>, ~data: option<Shape.Playlist.t>=?) => {
+  let make = (
+    ~tracks: array<Shape.Track.t>,
+    ~data: option<Shape.Playlist.regular>=?,
+    ~playlists: array<Shape.Playlist.playlist>,
+  ) => {
     let (query, setQuery) = React.useState(_ => "")
     let (selected, setSelected) = React.useState(_ =>
       switch data {
@@ -32,6 +36,7 @@ module Content = {
       )
 
     let onSubmit = name => {
+      let success = ref(false)
       if name->String.length < 1 {
         Toast.error("Please enter a name to create a playlist.")
       } else if selected->Array.length < 1 {
@@ -42,6 +47,9 @@ module Content = {
         | Some(data) =>
           if uris == data.tracks && data.playlist.name == name {
             Toast.info("No changes were made")
+            success := true
+          } else if playlists->Array.some(p => p.name == name && p.id != data.playlist.id) {
+            Toast.error("Playlist with same name already exists.")
           } else {
             Invoke.updatePlaylist({id: data.playlist.id, name, uris})
             ->Promise.catch(async _e => -1.)
@@ -51,15 +59,25 @@ module Content = {
                 : Toast.error("Failed to update playlist.")
             })
             ->ignore
+            success := true
           }
         | None =>
-          Invoke.createPlaylist({name, uris})
-          ->Promise.catch(async _e => -1.)
-          ->Promise.then(async id => {
-            id > 0. ? Toast.success("Playlist created.") : Toast.error("Failed to create playlist.")
-          })
-          ->ignore
+          if playlists->Array.some(p => p.name == name) {
+            Toast.error("Playlist with same name already exists.")
+          } else {
+            Invoke.createPlaylist({name, uris})
+            ->Promise.catch(async _e => -1.)
+            ->Promise.then(async id => {
+              id > 0.
+                ? Toast.success("Playlist created.")
+                : Toast.error("Failed to create playlist.")
+            })
+            ->ignore
+            success := true
+          }
         }
+      }
+      if success.contents {
         RescriptReactRouter.replace(Route.toPath(Playlists))
       }
     }
@@ -153,11 +171,11 @@ module Content = {
 }
 
 @react.component
-let make = (~data=?) => {
+let make = (~data=?, ~playlists) => {
   let tracks = Hook.useFetch({fn: Invoke.getAllTracksGroupedByAlbum})
 
   switch tracks {
   | Loading | Failed => React.null
-  | Success(tracks) => <Content tracks ?data />
+  | Success(tracks) => <Content tracks ?data playlists />
   }
 }

@@ -49,16 +49,18 @@ let useKeys = () => {
       Invoke.seek10Seconds()->ignore
     } else if key == "ArrowUp" || key == "j" {
       // Todo: show a toast
-      Invoke.setVolume({volume: Store.Config.getVolume() + 10})->ignore
+      Invoke.setVolume({volume: Store.Config.getVolume() + 5})->ignore
     } else if key == "ArrowDown" || key == "k" {
       // Todo: show a toast
-      Invoke.setVolume({volume: Store.Config.getVolume() - 10})->ignore
+      Invoke.setVolume({volume: Store.Config.getVolume() - 5})->ignore
     } else if isCtrl && key == "r" {
       Invoke.reloadWindow()->ignore
     } else if isCtrl && digit->Option.isSome {
       switch digit {
-      | Some(i) =>
-        `#side-item-${(i - 1)->Int.toString}`->Util.Dom.querySelectAndThen(Util.Dom.click)
+      | Some(i) => {
+          let id = (i == 0 ? 9 : i - 1)->Int.toString
+          `#side-item-${id}`->Util.Dom.querySelectAndThen(Util.Dom.click)
+        }
       | None => ignore()
       }
     }

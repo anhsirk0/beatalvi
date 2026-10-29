@@ -16,7 +16,7 @@ let make = (~onSubmit, ~name: option<string>=?) => {
     </label>
     <div className="flex gap-4">
       <button onClick={_ => onSubmit(value)} className="btn xl:btn-lg 3xl:btn-xl btn-primary grow">
-        {(name->Option.isNone ? "Create playlist" : "Save playlist")->React.string}
+        {(name->Option.isNone ? "Create playlist" : "Update playlist")->React.string}
       </button>
       <button id="close-btn" onClick={_ => Route.goBack()} className="btn xl:btn-lg 3xl:btn-xl">
         {"Cancel"->React.string}

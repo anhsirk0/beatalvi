@@ -17,4 +17,12 @@ pub struct Args {
     /// Queue toggle track by track id
     #[arg(short, long)]
     pub queue: Option<i64>,
+
+    /// Seek n seconds forwards
+    #[arg(short, long)]
+    pub seek: Option<u64>,
+
+    /// Rewind n seconds
+    #[arg(short, long)]
+    pub rewind: Option<u64>,
 }

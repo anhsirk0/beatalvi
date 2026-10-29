@@ -55,7 +55,7 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
         className="w-40 2xl:w-48 aspect-square bg-primary/40 rounded-full flex shrink-0 overflow-hidden relative isolate group nb-outline"
       >
         <img alt="" id className="object-cover h-full z-10" />
-        <div className="center p-4 absolute inset-0">
+        <div className="center p-4 absolute inset-0 animate-fade">
           <Icon.userCircle className="size-24" weight=Thin />
         </div>
       </div>

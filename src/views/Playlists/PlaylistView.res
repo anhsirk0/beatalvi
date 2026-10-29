@@ -1,6 +1,6 @@
 module Content = {
   @react.component
-  let make = (~playlist: Shape.Playlist.t, ~tracks) => {
+  let make = (~playlist: Shape.Playlist.playlist, ~tracks) => {
     let (trackCount, trackDuration) = (tracks->Array.length, tracks->Shape.Track.totalDuration)
 
     let onPlay = (~shuffle) =>
@@ -12,7 +12,7 @@ module Content = {
       <div className="flex gap-4 items-end">
         <div className="flex flex-col">
           <p className="text-3xl 2xl:text-5xl pl-1 font-semibold truncate">
-            {playlist.playlist.name->React.string}
+            {playlist.name->React.string}
           </p>
           <p className="r-text pl-2 text-60">
             {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
@@ -32,7 +32,7 @@ module Content = {
           <Icon.shuffle className="r-icon-lg" weight=Bold />
         </button>
         <Route.Link
-          to=EditPlaylist(playlist.playlist.id) className="btn xl:btn-lg 2xl:btn-xl btn-square mb-1"
+          to=EditPlaylist(playlist.id) className="btn xl:btn-lg 2xl:btn-xl btn-square mb-1"
         >
           <Icon.pencilSimple className="r-icon-lg" />
         </Route.Link>
@@ -47,25 +47,36 @@ module Content = {
     </React.Fragment>
   }
 }
+
 module Main = {
   @react.component
   let make = (~playlist: Shape.Playlist.t) => {
     let tracks = Hook.useFetch({
-      fn: () => Invoke.getTracksByUris({uris: playlist.tracks}),
+      fn: () => {
+        switch playlist {
+        | Regular({tracks}) => Invoke.getTracksByUris({uris: tracks})
+        | Smart(data) => Invoke.getSmartPlaylistTracks({query: data.smartSql})
+        }
+      },
     })
+    let info: Shape.Playlist.playlist = switch playlist {
+    | Regular({playlist}) => playlist
+    | Smart(data) => {id: data.id, name: data.name, isSmart: true}
+    }
 
     <div className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative">
-      <button
+      <Route.Link
         id="close-btn"
-        onClick={_ => Route.goBack()}
+        to=Playlists
         className="btn bg-base-100 btn-ghost r-btn nb-box active:nb-box absolute top-4 right-4 2xl:top-8 2xl:right-8"
+        replace=true
       >
         <Icon.arrowLeft className="r-icon" weight=Bold />
         {"Go back"->React.string}
-      </button>
+      </Route.Link>
       {switch tracks {
       | Loading | Failed => React.null
-      | Success(tracks) => <Content playlist tracks />
+      | Success(tracks) => <Content playlist=info tracks />
       }}
     </div>
   }
@@ -77,7 +88,7 @@ let make = (~id) => {
 
   switch playlist {
   | Loading | Failed => React.null
-  | Success(Value(playlist)) => <Main playlist />
+  | Success(Value(playlist)) => <Main playlist={playlist->Shape.Playlist.fromData} />
   | Success(_) => React.null
   }
 }

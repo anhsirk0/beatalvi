@@ -66,9 +66,9 @@ let make = (~album: Shape.Album.t, ~onBack, ~onPlay) => {
         className="size-40 2xl:size-48 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb nb-active"
       >
         <img alt="" id className="object-cover h-full z-10" />
-        <div className="center p-4 absolute inset-0">
+        <div className="center p-4 absolute inset-0 animate-fade">
           <p className="text-6xl 2xl:text-8xl text-center text-base-content font-serif">
-            {"?"->React.string}
+            {Constant.logo->React.string}
           </p>
         </div>
       </div>

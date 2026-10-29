@@ -25,8 +25,10 @@ let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
       className={`${width} aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain ${border}`}
     >
       <img alt="" id className="object-cover h-full z-10" />
-      <div className="center p-4 absolute inset-0">
-        <p className="text-9xl text-center text-base-content font-serif"> {"?"->React.string} </p>
+      <div className="center p-4 absolute inset-0 animate-fade">
+        <p className="text-9xl text-center text-base-content font-serif">
+          {Constant.logo->React.string}
+        </p>
       </div>
       <div
         className="flex items-center transitional translate-y-14 group-hover:translate-y-0 h-14 w-full z-20 absolute -bottom-0 p-2"
@@ -37,13 +39,6 @@ let make = (~album: Shape.Album.t, ~onClick, ~onPlay, ~width="w-full") => {
         >
           <Icon.play className="r-icon-lg" weight=Fill />
         </button>
-        <div className="grow"></div>
-        // <button
-        //   onClick=onPlayFromHereClick
-        //   className="btn btn-ghost btn-square bg-primary text-primary-content"
-        // >
-        //   <Icon.arrowRight className="r-icon" weight=Bold />
-        // </button>
       </div>
     </div>
     <p className="r-text pl-1 pt-2 font-medium truncate"> {album.name->React.string} </p>

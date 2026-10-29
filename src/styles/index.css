@@ -270,10 +270,11 @@ body {
   pointer-events: none;
 }
 
+a:focus,
 div:focus,
 button:focus,
 select:focus {
-  outline: none;
+  outline: none !important;
 }
 
 .alert {

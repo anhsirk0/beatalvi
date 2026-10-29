@@ -10,6 +10,7 @@ type tracks = array<Shape.Track.t>
 
 type coverArt = Nullable.t<Shape.Bytes.t>
 
+let getAppVersion: fn<unit, string> = make("get_app_version")
 let reloadApp: fn<unit, unit> = make("reload_app")
 let reloadWindow: fn<unit, unit> = make("reload_window")
 let loadMusic: fn<unit, string> = make("load_music")
@@ -20,10 +21,10 @@ type getTracksByUrisArgs = {uris: array<string>}
 let getTracksByUris: fn<getTracksByUrisArgs, tracks> = make("get_tracks_by_uris")
 let getTop10Tracks: fn<unit, tracks> = make("get_top_10_tracks")
 let getTop10Albums: fn<unit, albums> = make("get_top_10_albums")
-let getTop100Albums: fn<unit, albums> = make("get_top_100_albums")
-let getRandom100Albums: fn<unit, albums> = make("get_random_100_albums")
+let getTop50Albums: fn<unit, albums> = make("get_top_50_albums")
+let getRandom50Albums: fn<unit, albums> = make("get_random_50_albums")
 let getLovedAlbums: fn<unit, albums> = make("get_loved_albums")
-let getRecent100Albums: fn<unit, albums> = make("get_recent_100_albums")
+let getRecent50Albums: fn<unit, albums> = make("get_recent_50_albums")
 let getAllAlbums: fn<unit, albums> = make("get_all_albums")
 type getTracksByAlbumsArgs = {albumIds: array<float>}
 let getTracksByAlbums: fn<getTracksByAlbumsArgs, tracks> = make("get_tracks_by_albums")
@@ -96,12 +97,21 @@ let setAlbumLovedById: fn<setAlbumLovedByIdArgs, unit> = make("set_album_loved_b
 
 type createPlaylistArgs = {name: string, uris: array<string>}
 let createPlaylist: fn<createPlaylistArgs, float> = make("create_playlist_with_track_uris")
+type createSmartPlaylistArgs = {name: string, sql: string, json: string}
+let createSmartPlaylist: fn<createSmartPlaylistArgs, float> = make("create_smart_playlist")
 type updatePlaylistArgs = {id: float, name: string, uris: array<string>}
 let updatePlaylist: fn<updatePlaylistArgs, float> = make("update_playlist_with_track_uris")
+type updateSmartPlaylistArgs = {id: float, name: string, sql: string, json: string}
+let updateSmartPlaylist: fn<updateSmartPlaylistArgs, float> = make("update_smart_playlist")
+let getAllPlaylists: fn<unit, array<Shape.Playlist.playlist>> = make("get_all_playlists")
 let getPlaylistsWithTracks: fn<unit, array<Shape.Playlist.t>> = make("get_playlists_with_tracks")
 type findPlaylistByIdArgs = {id: float}
-let findPlaylistById: fn<findPlaylistByIdArgs, Nullable.t<Shape.Playlist.t>> = make(
+let findPlaylistById: fn<findPlaylistByIdArgs, Nullable.t<Shape.Playlist.full>> = make(
   "find_playlist_with_tracks_by_id",
 )
 type deletePlaylistByIdArgs = {id: float}
 let deletePlaylistById: fn<deletePlaylistByIdArgs, float> = make("delete_playlist_by_id")
+type getSmartPlaylistTracksArgs = {query: string}
+let getSmartPlaylistTracks: fn<getSmartPlaylistTracksArgs, tracks> = make(
+  "get_smart_playlist_tracks",
+)

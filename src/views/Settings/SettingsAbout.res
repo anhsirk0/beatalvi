@@ -10,7 +10,9 @@ module Item = {
 
 @react.component
 let make = () => {
+  let (version, setVersion) = React.useState(_ => "0.0.0")
   let data = Hook.useFetch({fn: Invoke.getStats})
+  let _ = Hook.useFetch({fn: Invoke.getAppVersion, onSuccess: v => setVersion(_ => v)})
 
   <div className="flex flex-col 2xl:gap-8 max-w-[90%] lg:max-w-[70%] 2xl:max-w-[50%] self-center">
     <div className="center flex-col width-fit">
@@ -26,7 +28,7 @@ let make = () => {
     </div>
 
     <div className="flex-col w-full">
-      <Item title="Version" info="0.0.0" />
+      <Item title="Version" info=version />
       <Item title="Made By" info="Anhsirk0" />
       {switch data {
       | Loading | Failed => React.null

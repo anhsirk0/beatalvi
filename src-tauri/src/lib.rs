@@ -3,8 +3,8 @@ mod utils;
 extern crate rand;
 use clap::Parser;
 use models::{
-    AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, PlaylistWithTracks,
-    Stats, Track, TrackState,
+    AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, PlaylistItem,
+    PlaylistWithTracks, Stats, Track, TrackState,
 };
 use rand::prelude::SliceRandom;
 use rusqlite::OptionalExtension;
@@ -18,6 +18,11 @@ use utils::importer;
 use utils::playlist_database;
 use utils::scanner;
 use utils::state::AppState;
+
+#[tauri::command]
+fn get_app_version(app_handle: AppHandle) -> String {
+    app_handle.package_info().version.to_string()
+}
 
 #[tauri::command]
 async fn load_music() -> (usize, usize, usize) {
@@ -73,18 +78,18 @@ fn get_top_10_albums() -> Vec<BasicAlbum> {
 }
 
 #[tauri::command]
-fn get_top_100_albums() -> Vec<BasicAlbum> {
-    database::get_top_n_albums(100).unwrap_or(Vec::new())
+fn get_top_50_albums() -> Vec<BasicAlbum> {
+    database::get_top_n_albums(50).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
-fn get_random_100_albums() -> Vec<BasicAlbum> {
-    database::get_random_n_albums(100).unwrap_or(Vec::new())
+fn get_random_50_albums() -> Vec<BasicAlbum> {
+    database::get_random_n_albums(50).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
-fn get_recent_100_albums() -> Vec<BasicAlbum> {
-    database::get_recent_n_albums(100).unwrap_or(Vec::new())
+fn get_recent_50_albums() -> Vec<BasicAlbum> {
+    database::get_recent_n_albums(50).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
@@ -303,6 +308,13 @@ fn seek(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
 }
 
 #[tauri::command]
+fn rewind(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
+    if state.player.lock().unwrap().rewind(seconds).is_ok() {
+        let _ = app_handle.emit(event::POSITION, seconds);
+    }
+}
+
+#[tauri::command]
 fn seek_10_seconds(app_handle: AppHandle, state: State<AppState>) {
     if let Ok(seconds) = state.player.lock().unwrap().seek_10_seconds() {
         let _ = app_handle.emit(event::POSITION, seconds);
@@ -311,7 +323,7 @@ fn seek_10_seconds(app_handle: AppHandle, state: State<AppState>) {
 
 #[tauri::command]
 fn rewind_10_seconds(app_handle: AppHandle, state: State<AppState>) {
-    if let Ok(seconds) = state.player.lock().unwrap().rewind_10_seconds() {
+    if let Ok(seconds) = state.player.lock().unwrap().rewind(10) {
         let _ = app_handle.emit(event::POSITION, seconds);
     }
 }
@@ -356,10 +368,10 @@ fn get_volume(state: State<AppState>) -> i32 {
 
 #[tauri::command]
 fn set_volume(volume: i32, app_handle: AppHandle, state: State<AppState>) {
-    let vol = ((volume as f64) / 100.).max(0.).min(1.);
+    let vol = ((volume as f64) / 50.).max(0.).min(1.);
     match state.player.lock().unwrap().set_volume(vol) {
         Ok(_) => {
-            let _ = app_handle.emit(event::VOLUME, (vol * 100.) as i8);
+            let _ = app_handle.emit(event::VOLUME, (vol * 50.) as i8);
         }
         Err(e) => eprintln!("{:?}", e),
     }
@@ -387,6 +399,20 @@ fn create_playlist_with_track_uris(name: String, uris: Vec<String>) -> Result<i6
 }
 
 #[tauri::command]
+fn create_smart_playlist(name: String, sql: String, json: String) -> Result<i64, String> {
+    playlist_database::create_smart_playlist(&name, sql, json).map_err(|e| {
+        eprintln!("{}", e);
+        "failed to create smart playlist".into()
+    })
+}
+
+#[tauri::command]
+fn update_smart_playlist(id: i64, name: String, sql: String, json: String) -> Result<i64, String> {
+    playlist_database::update_smart_playlist(id, &name, sql, json)
+        .map_err(|_| "failed to update smart playlist".into())
+}
+
+#[tauri::command]
 fn update_playlist_with_track_uris(
     id: i64,
     name: String,
@@ -401,8 +427,18 @@ fn delete_playlist_by_id(id: i64) -> Result<i64, String> {
 }
 
 #[tauri::command]
+fn get_all_playlists() -> Vec<PlaylistItem> {
+    playlist_database::get_all_playlists().unwrap_or(Vec::new())
+}
+
+#[tauri::command]
 fn get_playlists_with_tracks() -> Vec<PlaylistWithTracks> {
     playlist_database::get_playlists_with_tracks().unwrap_or(Vec::new())
+}
+
+#[tauri::command]
+fn get_smart_playlist_tracks(query: String) -> Vec<Track> {
+    playlist_database::get_smart_playlist_tracks(query).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
@@ -448,6 +484,10 @@ pub fn run() {
                         play_previous(app.state());
                     } else if let Some(id) = args.queue {
                         queue_toggle_track_by_id(id, app.state());
+                    } else if let Some(seconds) = args.seek {
+                        seek(seconds, app.app_handle().clone(), app.state());
+                    } else if let Some(seconds) = args.rewind {
+                        rewind(seconds, app.app_handle().clone(), app.state());
                     }
                 }
             }
@@ -459,6 +499,7 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
+            get_app_version,
             reload_app,
             reload_window,
             load_music,
@@ -468,10 +509,10 @@ pub fn run() {
             get_tracks_by_uris,
             get_top_10_tracks,
             get_top_10_albums,
-            get_top_100_albums,
-            get_random_100_albums,
+            get_top_50_albums,
+            get_random_50_albums,
             get_loved_albums,
-            get_recent_100_albums,
+            get_recent_50_albums,
             get_all_albums,
             get_tracks_by_albums,
             get_track_cover_art,
@@ -507,8 +548,12 @@ pub fn run() {
             is_album_loved,
             set_album_loved_by_id,
             create_playlist_with_track_uris,
+            create_smart_playlist,
             update_playlist_with_track_uris,
+            update_smart_playlist,
+            get_all_playlists,
             get_playlists_with_tracks,
+            get_smart_playlist_tracks,
             find_playlist_with_tracks_by_id,
             delete_playlist_by_id
         ])

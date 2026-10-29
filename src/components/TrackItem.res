@@ -11,8 +11,10 @@ module Cover = {
       className="size-12 2xl:size-14 bg-base-content/30 rounded-box flex shrink-0 overflow-hidden nb-outline relative isolate"
     >
       <img alt="" key=id id className="object-cover h-full z-10" />
-      <div className="center p-4 absolute inset-0">
-        <p className="text-4xl text-center text-base-content font-serif"> {"?"->React.string} </p>
+      <div className="center p-4 absolute inset-0 animate-fade">
+        <p className="text-4xl text-center text-base-content font-serif">
+          {Constant.logo->React.string}
+        </p>
       </div>
     </div>
   }
