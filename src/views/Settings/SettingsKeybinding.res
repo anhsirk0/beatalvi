@@ -31,7 +31,7 @@ module CliArgs = {
       <Item title="Queue song by song id">
         <Kbd k="--queue <INT>" />
       </Item>
-      <Item title="Seek [n] seconds">
+      <Item title="Seek forwards [n] seconds">
         <Kbd k="--seek <INT>" />
       </Item>
       <Item title="Rewind [n] seconds">
@@ -81,7 +81,7 @@ let make = (~showCli=false) => {
         <Item title="Previous song">
           <Kbd k="p" />
         </Item>
-        <Item title="Seek 10 seconds forwards">
+        <Item title="Seek 10 seconds">
           <Kbd k="🡆" />
           <p className="px-2 text-2xl 2xl:text-3xl text-60"> {"or"->React.string} </p>
           <Kbd k="l︎" />

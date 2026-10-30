@@ -2,19 +2,22 @@ module Config = {
   type t = {
     theme: Theme.t,
     volume: int,
+    showPlaylistsInSidebar: bool,
   }
 
-  type action = SetTheme(Theme.t) | SetVolume(int)
+  type action = SetTheme(Theme.t) | SetVolume(int) | SetShowPlaylistsInSidebar(bool)
 
   let reducer = (config, action) =>
     switch action {
     | SetTheme(theme) => {...config, theme}
     | SetVolume(volume) => {...config, volume}
+    | SetShowPlaylistsInSidebar(b) => {...config, showPlaylistsInSidebar: b}
     }
 
   let defaultOptions = {
     theme: Lemon,
     volume: 100,
+    showPlaylistsInSidebar: true,
   }
   module StoreData = {
     type state = {

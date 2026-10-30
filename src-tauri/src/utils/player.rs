@@ -77,18 +77,17 @@ impl Player {
         self.playbin.seek_simple(gst::SeekFlags::FLUSH, position)?;
         Ok(seconds)
     }
-
-    pub fn rewind(&self, seconds: u64) -> Result<u64, Box<dyn Error>> {
+    pub fn seek_forward(&self, seconds: u64) -> Result<u64, Box<dyn Error>> {
         if let Some(pos) = self.get_position() {
-            Ok(self.seek(pos.saturating_sub(seconds))?)
+            Ok(self.seek(pos + seconds)?)
         } else {
             Ok(0)
         }
     }
 
-    pub fn seek_10_seconds(&self) -> Result<u64, Box<dyn Error>> {
+    pub fn rewind(&self, seconds: u64) -> Result<u64, Box<dyn Error>> {
         if let Some(pos) = self.get_position() {
-            Ok(self.seek(pos + 10)?)
+            Ok(self.seek(pos.saturating_sub(seconds))?)
         } else {
             Ok(0)
         }

@@ -23,47 +23,15 @@ module Card = {
   }
 }
 
-module ModeBtns = {
-  @react.component
-  let make = (~onChange, ~isDark, ~current) => {
-    let onDarkClick = _ => {
-      if !isDark {
-        onChange(current->Theme.toggleTheme)
-      }
-    }
-    let onLightClick = _ => {
-      if isDark {
-        onChange(current->Theme.toggleTheme)
-      }
-    }
-
-    <div className="flex r-gap">
-      {isDark
-        ? <button onClick=onLightClick className="btn r-btn nb-outline active:nb-outline btn-ghost">
-            {"Light"->React.string}
-          </button>
-        : <button onClick=onLightClick className="btn r-btn btn-primary">
-            {"Light"->React.string}
-          </button>}
-      {isDark
-        ? <button onClick=onDarkClick className="btn r-btn btn-primary">
-            {"Dark"->React.string}
-          </button>
-        : <button onClick=onDarkClick className="btn r-btn nb-outline active:nb-outline btn-ghost">
-            {"Dark"->React.string}
-          </button>}
-    </div>
-  }
-}
-
 type btnState = Idle | Loading | Done
 
 @react.component
 let make = () => {
   let (state, setState) = React.useState(_ => Idle)
-  let (current, isDark, updateConfig) = Store.Config.useShallow(s => (
+  let (current, isDark, showPlaylistsInSidebar, updateConfig) = Store.Config.useShallow(s => (
     s.config.theme,
     s.config.theme->Theme.isDark,
+    s.config.showPlaylistsInSidebar,
     s.update,
   ))
 
@@ -80,25 +48,37 @@ let make = () => {
 
   <React.Fragment>
     <p className="xl:mt-4 text-80 uppercase font-medium"> {"Mode"->React.string} </p>
-    <ModeBtns onChange isDark current />
+    <ToggleButtons
+      first="Light"
+      second="Dark"
+      active={isDark ? "Dark" : "Light"}
+      onChange={_ => onChange(current->Theme.toggleTheme)}
+    />
     <p className="mt-4 text-80 uppercase font-medium"> {"Theme"->React.string} </p>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {(isDark ? Theme.darkThemes : Theme.lightThemes)
       ->Array.map(theme => <Card theme current onChange key={theme->Theme.toString} />)
       ->React.array}
     </div>
+    <p className="xl:mt-4 text-80 uppercase font-medium">
+      {"Show playlists in sidebar"->React.string}
+    </p>
+    <ToggleButtons
+      active={showPlaylistsInSidebar ? "Yes" : "No"}
+      onChange={_ => updateConfig(SetShowPlaylistsInSidebar(!showPlaylistsInSidebar))}
+    />
     <p className="mt-4 text-80 uppercase font-medium"> {"Cover art"->React.string} </p>
     {switch state {
     | Idle =>
-      <button onClick=onRegenCover className="btn xl:btn-lg 3xl:btn-xl w-96">
+      <button onClick=onRegenCover className="btn r-btn-lg w-96">
         {"Regenerate cover art cache"->React.string}
       </button>
     | Done =>
-      <button onClick=onRegenCover className="btn xl:btn-lg 3xl:btn-xl btn-success w-100">
+      <button onClick=onRegenCover className="btn r-btn-lg btn-success w-100">
         {"Cover art cache regenerated"->React.string}
       </button>
     | Loading =>
-      <button disabled=true className="btn xl:btn-lg 3xl:btn-xl w-96">
+      <button disabled=true className="btn r-btn-lg w-96">
         <span className="loading loading-spinner"></span>
         {"Generating cover art cache"->React.string}
       </button>

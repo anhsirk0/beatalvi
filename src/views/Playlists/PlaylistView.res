@@ -7,6 +7,8 @@ module Content = {
       Invoke.playMany({uris: tracks->Array.map(t => t.uri), shuffle})->ignore
     let onStartPlay = _ => onPlay(~shuffle=false)
     let onStartRandomPlay = _ => onPlay(~shuffle=true)
+    let onTrackPlay = idx =>
+      Invoke.playManyFromIndex({uris: tracks->Array.map(t => t.uri), index: idx})->ignore
 
     <React.Fragment>
       <div className="flex gap-4 items-end">
@@ -40,7 +42,7 @@ module Content = {
       <div className="grid grid-cols-2 gap-4 w-full px-1 pt-4 border-t-2 border-accent">
         {tracks
         ->Array.mapWithIndex((track, idx) =>
-          <TrackItem idx track key=track.uri onClick={() => Console.log(idx)} />
+          <TrackItem idx track key=track.uri onClick={() => onTrackPlay(idx)} />
         )
         ->React.array}
       </div>

@@ -18,6 +18,7 @@ module Item = {
 
 @react.component
 let make = (~active) => {
+  let showPlaylistsInSidebar = Store.Config.useShallow(s => s.config.showPlaylistsInSidebar)
   let (track, queue, playlists) = Store.Player.useShallow(s => (
     s.data.track,
     s.data.queue,
@@ -27,7 +28,9 @@ let make = (~active) => {
   let routes =
     Route.sidebar
     ->Array.map(r => (r, r->Route.toTitle))
-    ->Array.concat(playlists->Array.map(p => (Route.Playlist(p.id), p.name)))
+    ->Array.concat(
+      showPlaylistsInSidebar ? playlists->Array.map(p => (Route.Playlist(p.id), p.name)) : [],
+    )
 
   <div
     className={`${Constant.sidebarWidth} flex flex-col gap-1 2xl:gap-2 h-full bg-neutral text-neutral-content`}

@@ -308,15 +308,22 @@ fn seek(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
 }
 
 #[tauri::command]
+fn seek_forward(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
+    if let Ok(pos) = state.player.lock().unwrap().seek_forward(seconds) {
+        let _ = app_handle.emit(event::POSITION, pos);
+    }
+}
+
+#[tauri::command]
 fn rewind(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
-    if state.player.lock().unwrap().rewind(seconds).is_ok() {
-        let _ = app_handle.emit(event::POSITION, seconds);
+    if let Ok(pos) = state.player.lock().unwrap().rewind(seconds) {
+        let _ = app_handle.emit(event::POSITION, pos);
     }
 }
 
 #[tauri::command]
 fn seek_10_seconds(app_handle: AppHandle, state: State<AppState>) {
-    if let Ok(seconds) = state.player.lock().unwrap().seek_10_seconds() {
+    if let Ok(seconds) = state.player.lock().unwrap().seek_forward(10) {
         let _ = app_handle.emit(event::POSITION, seconds);
     }
 }
@@ -485,7 +492,7 @@ pub fn run() {
                     } else if let Some(id) = args.queue {
                         queue_toggle_track_by_id(id, app.state());
                     } else if let Some(seconds) = args.seek {
-                        seek(seconds, app.app_handle().clone(), app.state());
+                        seek_forward(seconds, app.app_handle().clone(), app.state());
                     } else if let Some(seconds) = args.rewind {
                         rewind(seconds, app.app_handle().clone(), app.state());
                     }
