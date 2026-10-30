@@ -77,4 +77,17 @@ module Dom = {
     }
   }
   let targetValue = evt => ReactEvent.Form.target(evt)["value"]
+
+  module Scroll = {
+    type behavior =
+      | @as("smooth") Smooth
+      | @as("auto") Auto
+    type block =
+      | @as("start") Start
+      | @as("center") Center
+      | @as("end") End
+      | @as("nearest") Nearest
+    type intoViewOpts = {behavior?: behavior, block?: block, inline?: block}
+    @send external intoView: (Dom.element, intoViewOpts) => unit = "scrollIntoView"
+  }
 }

@@ -29,16 +29,21 @@ module TrackItem = {
 }
 
 @react.component
-let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false) => {
-  let (collapsed, toggleCollapsed, _) = Hook.useToggle(~init=closed)
+let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~idx) => {
+  let (collapsed, toggleCollapsed, setCollapsed) = Hook.useToggle(~init=closed)
 
-  let id = `group-${group.id->Float.toString}`
+  let id = `group-${idx->Int.toString}-${group.id->Float.toString}`
   let _ = Hook.useFetch({
     fn: () => Invoke.getAlbumCoverArt({album: group.name, isSmall: true}),
     onSuccess: Shape.Bytes.setCover(_, id),
   })
 
-  <div className="animate-slide-up flex flex-col r-gap px-1">
+  React.useEffect(() => {
+    setCollapsed(_ => closed)
+    None
+  }, [closed])
+
+  <div id={`group-${idx->Int.toString}`} className="animate-slide-up flex flex-col r-gap px-1">
     <div
       onClick={_ => toggleCollapsed()}
       className="flex gap-4 r-gap cursor-pointer hover:bg-primary/10 rounded-box"
@@ -48,7 +53,7 @@ let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false) => 
       >
         <img alt="" id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0 animate-fade">
-          <p className="text-4xl 2xl:text-6xl text-center text-base-content font-serif">
+          <p className="r-text-2xl text-center text-base-content font-serif">
             {Constant.logo->React.string}
           </p>
         </div>

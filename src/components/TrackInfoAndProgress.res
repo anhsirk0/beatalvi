@@ -40,7 +40,7 @@ let make = (~track: Shape.Track.t) => {
       >
         <img alt="" key=id id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0 animate-fade">
-          <p className="text-4xl text-center text-accent font-serif">
+          <p className="text-2xl text-center text-accent font-serif">
             {Constant.logo->React.string}
           </p>
         </div>

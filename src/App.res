@@ -7,7 +7,11 @@ let make = () => {
     }
   }
   let route = Route.useRoute()
-  let (theme, volume) = Store.Config.useShallow(s => (s.config.theme, s.config.volume))
+  let (theme, volume, updateConfig) = Store.Config.useShallow(s => (
+    s.config.theme,
+    s.config.volume,
+    s.update,
+  ))
   let update = Store.Player.useShallow(s => s.update)
 
   let state = Hook.useFetch({fn: Invoke.loadMusic})
@@ -51,6 +55,9 @@ let make = () => {
   })
   Event.useListen(Event.listenPrevious, setTrack)
   Event.useListen(Event.listenQueueToggle, uri => update(QueueToggle(uri)))
+  Event.useListen(Event.listenToggleDarkMode, _ =>
+    updateConfig(SetTheme(Store.Config.getTheme()->Theme.toggleTheme))
+  )
 
   Event.useListen(Event.listenFinished, _ => {
     update(SetState(Stopped))

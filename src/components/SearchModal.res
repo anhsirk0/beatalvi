@@ -13,7 +13,7 @@ module Content = {
           ? groups
             ->Array.mapWithIndex((group, i) =>
               <Delay key={group.id->Float.toString} timeout={i * 20}>
-                <AlbumGroupItem group />
+                <AlbumGroupItem group idx=i />
               </Delay>
             )
             ->React.array

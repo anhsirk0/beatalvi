@@ -12,3 +12,4 @@ pub const EMPTY: &str = "empty";
 pub const PLAYBACK_ERROR: &str = "playback_error";
 pub const VOLUME: &str = "volume";
 pub const LOVED: &str = "loved";
+pub const TOGGLE_DARK_MODE: &str = "toggle_dark_mode";

@@ -308,20 +308,6 @@ fn seek(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
 }
 
 #[tauri::command]
-fn seek_forward(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
-    if let Ok(pos) = state.player.lock().unwrap().seek_forward(seconds) {
-        let _ = app_handle.emit(event::POSITION, pos);
-    }
-}
-
-#[tauri::command]
-fn rewind(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
-    if let Ok(pos) = state.player.lock().unwrap().rewind(seconds) {
-        let _ = app_handle.emit(event::POSITION, pos);
-    }
-}
-
-#[tauri::command]
 fn seek_10_seconds(app_handle: AppHandle, state: State<AppState>) {
     if let Ok(seconds) = state.player.lock().unwrap().seek_forward(10) {
         let _ = app_handle.emit(event::POSITION, seconds);
@@ -465,6 +451,22 @@ fn reload_window(webview: Webview) {
     webview.eval("location.reload()").ok();
 }
 
+fn seek_forward(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
+    if let Ok(pos) = state.player.lock().unwrap().seek_forward(seconds) {
+        let _ = app_handle.emit(event::POSITION, pos);
+    }
+}
+
+fn rewind(seconds: u64, app_handle: AppHandle, state: State<AppState>) {
+    if let Ok(pos) = state.player.lock().unwrap().rewind(seconds) {
+        let _ = app_handle.emit(event::POSITION, pos);
+    }
+}
+
+fn toggle_dark_mode(app_handle: AppHandle) {
+    let _ = app_handle.emit(event::TOGGLE_DARK_MODE, true);
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let _ = config::create_config_dir_if_not_exists();
@@ -489,6 +491,8 @@ pub fn run() {
                         play_next(app.state());
                     } else if args.previous {
                         play_previous(app.state());
+                    } else if args.dark_toggle {
+                        toggle_dark_mode(app.app_handle().clone());
                     } else if let Some(id) = args.queue {
                         queue_toggle_track_by_id(id, app.state());
                     } else if let Some(seconds) = args.seek {

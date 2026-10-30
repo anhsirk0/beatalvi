@@ -37,6 +37,9 @@ module CliArgs = {
       <Item title="Rewind [n] seconds">
         <Kbd k="--rewind <INT>" />
       </Item>
+      <Item title="Toggle dark mode">
+        <Kbd k="--dark-toggle" />
+      </Item>
     </div>
   }
 }

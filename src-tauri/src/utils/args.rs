@@ -25,4 +25,8 @@ pub struct Args {
     /// Rewind n seconds
     #[arg(short, long)]
     pub rewind: Option<u64>,
+
+    /// Toggle dark mode
+    #[arg(short, long)]
+    pub dark_toggle: bool,
 }

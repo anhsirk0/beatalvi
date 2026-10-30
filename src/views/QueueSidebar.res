@@ -8,8 +8,19 @@ module Item = {
     | None => false
     }
 
+    React.useEffect(() => {
+      if hasTrack {
+        setTimeout(() => {
+          `#group-${idx->Int.toString}`->Util.Dom.querySelectAndThen(
+            Util.Dom.Scroll.intoView(_, {behavior: Smooth, block: Center}),
+          )
+        }, idx * 20 + 100)->ignore
+      }
+      None
+    }, [hasTrack])
+
     <Delay timeout={idx * 20}>
-      <AlbumGroupItem group closed={!hasTrack} showTrackCount=true />
+      <AlbumGroupItem group closed={!hasTrack} showTrackCount=true idx />
     </Delay>
   }
 }

@@ -68,9 +68,9 @@ impl Playlist {
     }
 
     /// Get current index
-    pub fn current_index(&self) -> Option<usize> {
-        self.current_index
-    }
+    // pub fn current_index(&self) -> Option<usize> {
+    //     self.current_index
+    // }
 
     /// Get all tracks
     pub fn all(&self) -> &Vec<String> {
@@ -102,24 +102,24 @@ impl Playlist {
     }
 
     /// Remove track at index
-    pub fn remove(&mut self, index: usize) -> Option<String> {
-        if index < self.tracks.len() {
-            let removed = self.tracks.remove(index);
+    // pub fn remove(&mut self, index: usize) -> Option<String> {
+    //     if index < self.tracks.len() {
+    //         let removed = self.tracks.remove(index);
 
-            // Adjust current_index if needed
-            if let Some(current) = self.current_index {
-                if current == index && current >= self.tracks.len() && !self.tracks.is_empty() {
-                    self.current_index = Some(self.tracks.len() - 1);
-                } else if current > index {
-                    self.current_index = Some(current - 1);
-                }
-            }
+    //         // Adjust current_index if needed
+    //         if let Some(current) = self.current_index {
+    //             if current == index && current >= self.tracks.len() && !self.tracks.is_empty() {
+    //                 self.current_index = Some(self.tracks.len() - 1);
+    //             } else if current > index {
+    //                 self.current_index = Some(current - 1);
+    //             }
+    //         }
 
-            Some(removed)
-        } else {
-            None
-        }
-    }
+    //         Some(removed)
+    //     } else {
+    //         None
+    //     }
+    // }
 
     pub fn add_many_and_jump_to_index(
         &mut self,
