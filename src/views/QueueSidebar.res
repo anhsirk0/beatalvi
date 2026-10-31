@@ -54,7 +54,7 @@ let make = () => {
   <React.Fragment>
     // <UpNext />
     <p className="text-60 r-text uppercase"> {"Playing Albums"->React.string} </p>
-    <div className="flex flex-col overflow-y-auto min-h-0 gap-4 2xl:gap-8 grow">
+    <div className="flex flex-col min-h-0 gap-4 2xl:gap-8 grow">
       {switch playings {
       | Loading => <div className="loading loading-spinner"></div>
       | Failed => React.null
