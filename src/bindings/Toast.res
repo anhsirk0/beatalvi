@@ -20,7 +20,7 @@ module Toaster = {
 let success = make(
   Options.fromObj({
     "icon": makeIcon(Icon.checkCircle),
-    "className": "alert alert-success",
+    "className": "alert alert-primary",
   }),
   _,
 )

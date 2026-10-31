@@ -63,7 +63,7 @@ module Navigation = {
         <Kbd k="Escape︎" />
       </Item>
       <Item title="Settings">
-        <Kbd k="," />
+        <Kbd k=";" />
       </Item>
     </div>
   }
@@ -126,6 +126,9 @@ let make = (~showCli=false) => {
         </Item>
         <Item title="Rotate theme">
           <Kbd k="." />
+        </Item>
+        <Item title="Rotate theme backward">
+          <Kbd k="," />
         </Item>
         <Item title="Toggle dark mode">
           <Kbd k="d" />

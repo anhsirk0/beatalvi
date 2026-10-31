@@ -39,13 +39,22 @@ module Content = {
           <Icon.pencilSimple className="r-icon-lg" />
         </Route.Link>
       </div>
-      <div className="grid grid-cols-2 gap-4 w-full px-1 pt-4 border-t-2 border-accent">
-        {tracks
-        ->Array.mapWithIndex((track, idx) =>
-          <TrackItem idx track key=track.uri onClick={() => onTrackPlay(idx)} />
-        )
-        ->React.array}
-      </div>
+      {tracks->Array.length > 0
+        ? <div className="grid grid-cols-2 gap-4 w-full px-1 pt-4 border-t-2 border-accent">
+            {tracks
+            ->Array.mapWithIndex((track, idx) =>
+              <TrackItem idx track key=track.uri onClick={() => onTrackPlay(idx)} />
+            )
+            ->React.array}
+          </div>
+        : <div className="center r-gap flex-col border-t-2 border-accent">
+            <p className="font-instrument r-text-3xl font-light text-center italic mt-[20%]">
+              {"No song fits these words yet."->React.string}
+            </p>
+            <p className="r-text-lg text-center text-60">
+              {"Loosen a rule or two to let more music in."->React.string}
+            </p>
+          </div>}
     </React.Fragment>
   }
 }

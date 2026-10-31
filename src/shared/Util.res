@@ -59,6 +59,12 @@ module Arr = {
     | None => arr[0]
     }
   }
+  let rotateBackward = (arr, item) => {
+    switch arr->Array.findIndexOpt(i => i == item) {
+    | Some(idx) => arr[mod(idx - 1 + arr->Array.length, arr->Array.length)]
+    | None => arr[0]
+    }
+  }
   // let render = (arr, fn) => arr->Array.map(fn)->React.array
   // let renderOr = (arr, fn, empty) => arr->isEmpty ? empty : arr->Array.map(fn)->React.array
 }

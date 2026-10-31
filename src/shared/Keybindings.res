@@ -26,8 +26,13 @@ let useKeys = () => {
     } else if key == "/" {
       "#search-modal"->Util.Dom.querySelectAndThen(Util.Dom.click)
       setTimeout(() => "#search-input"->Util.Dom.querySelectAndThen(Util.Dom.focus), 200)->ignore
-    } else if key == "," {
+    } else if key == ";" {
       Route.Settings->Route.toPath->RescriptReactRouter.push
+    } else if key == "," {
+      switch Store.Config.getTheme()->Theme.rotateBackward {
+      | Some(theme) => updateConfig(SetTheme(theme))
+      | None => ignore()
+      }
     } else if key == "." {
       switch Store.Config.getTheme()->Theme.rotate {
       | Some(theme) => updateConfig(SetTheme(theme))

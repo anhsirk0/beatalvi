@@ -281,8 +281,8 @@ select:focus {
   @apply text-xl max-w-xl nb-outline;
 }
 
-.alert-success {
-  @apply bg-success text-success-content;
+.alert-primary {
+  @apply bg-primary text-primary-content;
 }
 
 .alert-error {

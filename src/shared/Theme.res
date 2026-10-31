@@ -71,6 +71,8 @@ let toggleTheme = theme =>
   }
 
 let rotate = theme => (theme->isDark ? darkThemes : lightThemes)->Util.Arr.rotate(theme)
+let rotateBackward = theme =>
+  (theme->isDark ? darkThemes : lightThemes)->Util.Arr.rotateBackward(theme)
 
 let setTheme = theme => {
   "html"->Util.Dom.querySelectAndThen(Util.Dom.setAttribute(_, "data-theme", theme->toString))
