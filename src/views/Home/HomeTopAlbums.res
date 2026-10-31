@@ -12,7 +12,7 @@ let make = (~setAlbum, ~albums: array<Shape.Album.t>, ~onPlay) => {
         {"Play all"->React.string}
       </button>
     </div>
-    <div className="flex flex-row overflow-x-auto gap-4 w-full pt-4 px-1">
+    <div className="flex flex-row overflow-x-auto gap-4 w-full py-4 px-1">
       {albums
       ->Array.map(album =>
         <AlbumItem

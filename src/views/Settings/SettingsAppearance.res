@@ -55,7 +55,7 @@ let make = () => {
       onChange={_ => onChange(current->Theme.toggleTheme)}
     />
     <p className="mt-4 text-80 uppercase font-medium"> {"Theme"->React.string} </p>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
       {(isDark ? Theme.darkThemes : Theme.lightThemes)
       ->Array.map(theme => <Card theme current onChange key={theme->Theme.toString} />)
       ->React.array}

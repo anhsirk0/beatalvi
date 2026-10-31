@@ -15,9 +15,13 @@ type t =
   | @as("sunflower-dark") SunflowerDark
   | @as("cherry") Cherry
   | @as("cherry-dark") CherryDark
+  | @as("sky") Sky
+  | @as("sky-dark") SkyDark
+  | @as("mango") Mango
+  | @as("mango-dark") MangoDark
 
 let defaultTheme = Lemon
-let lightThemes = [Lemon, Bubblegum, Ocean, Orchid, Forest, Coral, Sunflower, Cherry]
+let lightThemes = [Lemon, Bubblegum, Ocean, Orchid, Forest, Coral, Sunflower, Cherry, Sky, Mango]
 let darkThemes = [
   LemonDark,
   BubblegumDark,
@@ -27,6 +31,8 @@ let darkThemes = [
   CoralDark,
   SunflowerDark,
   CherryDark,
+  SkyDark,
+  MangoDark,
 ]
 
 // let fromString = s =>
@@ -50,6 +56,8 @@ let toggleTheme = theme =>
   | CoralDark => Coral
   | SunflowerDark => Sunflower
   | CherryDark => Cherry
+  | SkyDark => Sky
+  | MangoDark => Mango
   | Lemon => LemonDark
   | Bubblegum => BubblegumDark
   | Ocean => OceanDark
@@ -58,6 +66,8 @@ let toggleTheme = theme =>
   | Coral => CoralDark
   | Sunflower => SunflowerDark
   | Cherry => CherryDark
+  | Sky => SkyDark
+  | Mango => MangoDark
   }
 
 let rotate = theme => (theme->isDark ? darkThemes : lightThemes)->Util.Arr.rotate(theme)

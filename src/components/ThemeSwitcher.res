@@ -31,7 +31,7 @@ let make = () => {
       <p className="text-80 r-text"> {"THEME"->React.string} </p>
       <div className="font-medium r-text"> {current->Theme.toString->React.string} </div>
     </div>
-    <div className="grid grid-cols-4 gap-4 mt-2">
+    <div className="grid grid-cols-5 gap-4 mt-2">
       {(isDark ? Theme.darkThemes : Theme.lightThemes)
       ->Array.map(theme => <Card theme current onChange key={theme->Theme.toString} />)
       ->React.array}

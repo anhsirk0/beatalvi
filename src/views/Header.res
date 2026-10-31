@@ -47,7 +47,7 @@ let make = (~toggleOpen) => {
       </Popover.Btn>
       <Popover.Menu id=popoverId anchor="settings-btn">
         <div
-          className="dropdown dropdown-end p-4 w-80 mt-4 bg-base-100 nb-box nb-active flex flex-col"
+          className="dropdown dropdown-end p-4 w-96 mt-4 bg-base-100 nb-box nb-active flex flex-col"
         >
           <VolumeSlider />
           <div className="divider divider-accent"></div>
