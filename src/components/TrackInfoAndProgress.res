@@ -50,7 +50,7 @@ let make = (~track: Shape.Track.t) => {
         <div className="r-text-sm text-80 truncate"> {track.artist->React.string} </div>
       </div>
     </div>
-    <div className="flex items-center r-gap grow">
+    <div className="flex items-center r-gap grow invisible xl:visible">
       <p className="r-text font-medium text-right min-w-16 2xl:min-w-24">
         {position->Util.durationToString->React.string}
       </p>
