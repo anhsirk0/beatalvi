@@ -170,7 +170,7 @@
 
 html,
 body {
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; */
   scrollbar-gutter: auto !important;
   overflow-x: hidden;
 }
@@ -295,4 +295,29 @@ select:focus {
 
 .alert-warning {
   @apply bg-warning text-warning-content;
+}
+
+/* html.lenis, */
+/* html.lenis body { */
+/*   height: auto; */
+/* } */
+
+/* .lenis.lenis-smooth { */
+/*   scroll-behavior: auto !important; */
+/* } */
+
+/* .lenis.lenis-smooth [data-lenis-prevent] { */
+/*   scroll-behavior: contain; */
+/* } */
+
+/* .lenis.lenis-stopped { */
+/*   overflow: hidden; */
+/* } */
+
+/* .lenis.lenis-scrolling iframe { */
+/*   pointer-events: none; */
+/* } */
+
+@utility main-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-8 w-full p-8 overflow-y-auto animate-slide-up;
 }

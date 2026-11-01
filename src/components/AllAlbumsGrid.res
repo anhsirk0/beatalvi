@@ -22,19 +22,15 @@ let make = (~albums: array<Shape.Album.t>) => {
   switch view {
   | One(album) => <AlbumView album onBack={() => setView(_ => All)} onPlay />
   | All =>
-    <React.Fragment>
+    <Lenis options=Lenis.options className="[&>div]:main-grid overflow-y-auto min-h-0">
       <button onClick=onStartPlay id="play-all" className="hidden"></button>
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-8 w-full p-8 overflow-y-auto animate-slide-up"
-      >
-        {albums
-        ->Array.mapWithIndex((album, i) =>
-          <Delay key={album.id->Float.toString} timeout={i * 20}>
-            <AlbumItem album onClick={() => setView(_ => One(album))} onPlay />
-          </Delay>
-        )
-        ->React.array}
-      </div>
-    </React.Fragment>
+      {albums
+      ->Array.mapWithIndex((album, i) =>
+        <Delay key={album.id->Float.toString} timeout={i * 20}>
+          <AlbumItem album onClick={() => setView(_ => One(album))} onPlay />
+        </Delay>
+      )
+      ->React.array}
+    </Lenis>
   }
 }

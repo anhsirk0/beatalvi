@@ -11,7 +11,7 @@ module Content = {
       Invoke.playManyFromIndex({uris: tracks->Array.map(t => t.uri), index: idx})->ignore
 
     <React.Fragment>
-      <div className="flex gap-4 items-end">
+      <div className="flex gap-4 items-end pb-4">
         <div className="flex flex-col">
           <p className="text-3xl 2xl:text-5xl pl-1 font-semibold truncate">
             {playlist.name->React.string}
@@ -75,7 +75,10 @@ module Main = {
     | Smart(data) => {id: data.id, name: data.name, isSmart: true}
     }
 
-    <div className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative">
+    <Lenis
+      options=Lenis.options
+      className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative"
+    >
       <Route.Link
         id="close-btn"
         to=Playlists
@@ -89,7 +92,7 @@ module Main = {
       | Loading | Failed => React.null
       | Success(tracks) => <Content playlist=info tracks />
       }}
-    </div>
+    </Lenis>
   }
 }
 

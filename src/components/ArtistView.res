@@ -41,7 +41,10 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
       }
     }
 
-  <div className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative">
+  <Lenis
+    options=Lenis.options
+    className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative"
+  >
     <button
       id="close-btn"
       onClick={_ => onBack()}
@@ -50,7 +53,7 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
       <Icon.arrowLeft className="r-icon" weight=Bold />
       {"Go back"->React.string}
     </button>
-    <div className="flex gap-4 2xl:gap-8">
+    <div className="flex gap-4 2xl:gap-8 mb-4">
       <div
         className="w-40 2xl:w-48 aspect-square bg-primary/40 rounded-full flex shrink-0 overflow-hidden relative isolate group nb-outline"
       >
@@ -89,12 +92,12 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
       <div className="grid grid-cols-2 gap-4 w-full px-1 pt-2 border-t-2 border-accent">
         {albums
         ->Array.mapWithIndex((album, i) =>
-          <Delay key={album.id->Float.toString} timeout={i * 40}>
+          <Delay key={album.id->Float.toString} timeout={i * 5}>
             <ArtistAlbumItem album key={album.id->Float.toString} onPlay />
           </Delay>
         )
         ->React.array}
       </div>
     }}
-  </div>
+  </Lenis>
 }

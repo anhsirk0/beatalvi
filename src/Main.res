@@ -1,4 +1,5 @@
 %%raw("import './styles/index.css'")
+%%raw("import 'lenis/dist/lenis.css'")
 
 switch ReactDOM.querySelector("#beatalvi") {
 | Some(root) =>

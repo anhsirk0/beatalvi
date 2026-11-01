@@ -96,4 +96,11 @@ module Dom = {
     type intoViewOpts = {behavior?: behavior, block?: block, inline?: block}
     @send external intoView: (Dom.element, intoViewOpts) => unit = "scrollIntoView"
   }
+
+  module Classlist = {
+    type t
+    @get external classlist: Dom.element => t = "classList"
+    @send external contains: (t, string) => bool = "contains"
+  }
+
 }
