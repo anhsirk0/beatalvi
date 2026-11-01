@@ -1,8 +1,8 @@
 @react.component
-let make = (~setAlbum, ~albums: array<Shape.Album.t>, ~onPlay) => {
-  let onPlayAll = _ => {
-    Invoke.playTracksByAlbums({albumIds: albums->Array.map(a => a.id)})->ignore
-  }
+let make = (~albums: array<Shape.Album.t>, ~onPlay) => {
+  let onPlayAll = _ => Invoke.playTracksByAlbums({albumIds: albums->Array.map(a => a.id)})->ignore
+
+  let ids = albums->Array.map(a => a.id->Float.toString)->Array.join(",")
 
   <div className="flex flex-col w-full min-w-0 animate-slide-up">
     <div className="flex justify-between">
@@ -18,7 +18,7 @@ let make = (~setAlbum, ~albums: array<Shape.Album.t>, ~onPlay) => {
         <AlbumItem
           key={album.id->Float.toString}
           album
-          onClick={_ => setAlbum(album)}
+          ids
           onPlay
           width="w-40 2xl:w-48 animate-slide-left min-w-0 shrink-0"
         />

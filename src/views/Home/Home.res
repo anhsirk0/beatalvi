@@ -1,5 +1,3 @@
-type view = All | One(Shape.Album.t)
-
 module Empty = {
   @react.component
   let make = () => {
@@ -39,7 +37,6 @@ module Empty = {
 
 @react.component
 let make = () => {
-  let (view, setView) = React.useState(_ => All)
   let tracks = Hook.useFetch({fn: Invoke.getTop10Tracks})
   let albums = Hook.useFetch({fn: Invoke.getTop10Albums})
 
@@ -56,20 +53,16 @@ let make = () => {
     }
   }
 
-  switch view {
-  | All =>
-    <div className="size-full flex flex-col p-4 px-8 2xl:p-8 r-gap min-w-0 overflow-y-auto min-h-0">
-      {switch (tracks, albums) {
-      | (Success(tracks), Success(albums)) =>
-        tracks->Array.length > 0
-          ? <React.Fragment>
-              <HomeTopTracks tracks />
-              <HomeTopAlbums onPlay albums setAlbum={a => setView(_ => One(a))} />
-            </React.Fragment>
-          : <Empty />
-      | _ => React.null
-      }}
-    </div>
-  | One(album) => <AlbumView album onBack={() => setView(_ => All)} onPlay />
-  }
+  <div className="size-full flex flex-col p-4 px-8 2xl:p-8 r-gap min-w-0 overflow-y-auto min-h-0">
+    {switch (tracks, albums) {
+    | (Success(tracks), Success(albums)) =>
+      tracks->Array.length > 0
+        ? <React.Fragment>
+            <HomeTopTracks tracks />
+            <HomeTopAlbums onPlay albums />
+          </React.Fragment>
+        : <Empty />
+    | _ => React.null
+    }}
+  </div>
 }

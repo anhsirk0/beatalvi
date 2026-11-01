@@ -1,5 +1,6 @@
 type t =
   | Home
+  | Album(float, string)
   | PopularAlbums
   | RandomAlbums
   | LovedAlbums
@@ -28,21 +29,22 @@ let sidebar = [
 
 let useRoute: unit => t = () => {
   let url = RescriptReactRouter.useUrl()
-  switch url.path {
-  | list{} => Home
-  | list{"popular-albums"} => PopularAlbums
-  | list{"random-albums"} => RandomAlbums
-  | list{"loved-albums"} => LovedAlbums
-  | list{"recent-albums"} => RecentAlbums
-  | list{"all-albums"} => AllAlbums
-  | list{"all-artists"} => AllArtists
-  | list{"playlists"} => Playlists
-  | list{"playlist", id} => Playlist(id->Float.fromString->Option.getOr(0.))
-  | list{"new-playlist", "regular"} => NewPlaylist(Regular)
-  | list{"new-playlist", "smart"} => NewPlaylist(Smart)
-  | list{"edit-playlist", id} => EditPlaylist(id->Float.fromString->Option.getOr(0.))
-  | list{"settings"} => Settings
-  // | list{"album", id} => Album(id)
+  let toFloat = id => id->Float.fromString->Option.getOr(0.)
+  switch (url.path, url.search) {
+  | (list{}, _) => Home
+  | (list{"album", id}, params) => Album(id->toFloat, params)
+  | (list{"popular-albums"}, _) => PopularAlbums
+  | (list{"random-albums"}, _) => RandomAlbums
+  | (list{"loved-albums"}, _) => LovedAlbums
+  | (list{"recent-albums"}, _) => RecentAlbums
+  | (list{"all-albums"}, _) => AllAlbums
+  | (list{"all-artists"}, _) => AllArtists
+  | (list{"playlists"}, _) => Playlists
+  | (list{"playlist", id}, _) => Playlist(id->toFloat)
+  | (list{"new-playlist", "regular"}, _) => NewPlaylist(Regular)
+  | (list{"new-playlist", "smart"}, _) => NewPlaylist(Smart)
+  | (list{"edit-playlist", id}, _) => EditPlaylist(id->toFloat)
+  | (list{"settings"}, _) => Settings
   | _ => NotFound
   }
 }
@@ -54,7 +56,7 @@ let toIcon = route =>
   | RandomAlbums => Icon.shuffle
   | LovedAlbums => Icon.heart
   | RecentAlbums => Icon.clockCounterClockwise
-  | AllAlbums => Icon.cassetteTape
+  | Album(_) | AllAlbums => Icon.cassetteTape
   | AllArtists => Icon.userSquare
   | Playlists | Playlist(_) | NewPlaylist(_) | EditPlaylist(_) => Icon.playlist
   | Settings => Icon.sliders
@@ -64,6 +66,7 @@ let toIcon = route =>
 let toTitle = route =>
   switch route {
   | Home => "Home"
+  | Album(_) => "Album"
   | PopularAlbums => "Popular Albums"
   | RandomAlbums => "Random Albums"
   | LovedAlbums => "Loved Albums"
@@ -82,6 +85,7 @@ let toTitle = route =>
 let toPath = route =>
   switch route {
   | Home => "/"
+  | Album(id, ids) => `/album/${id->Float.toString}?ids=${ids}`
   | PopularAlbums => "/popular-albums"
   | RandomAlbums => "/random-albums"
   | LovedAlbums => "/loved-albums"

@@ -167,6 +167,28 @@ pub fn get_artists_id_map() -> Result<NameIdMap> {
     Ok(artists)
 }
 
+pub fn find_album_by_id(id: i64) -> Option<BasicAlbum> {
+    let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
+    conn.query_one("
+        SELECT 
+            a.id, 
+            a.name, 
+            a.year, 
+            (SELECT GROUP_CONCAT(ar.name, ', ') 
+             FROM (SELECT DISTINCT aa.artist_id FROM album_artists aa WHERE aa.album_id = a.id) AS unique_artists 
+             JOIN artists ar ON unique_artists.artist_id = ar.id) AS artists
+        FROM albums a
+        WHERE a.id = ?1
+    ", params![id], |row| {
+        Ok(BasicAlbum {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            year: row.get(2)?,
+            artist: row.get(3)?,
+        })
+    }).ok()
+}
+
 pub fn find_track_by_uri(uri: &str) -> Option<Track> {
     let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
     conn.query_one(
@@ -426,11 +448,8 @@ fn albums_query(limit: Option<usize>, order: Option<String>) -> String {
           a.year,
           a.popularity,
           (SELECT GROUP_CONCAT(ar.name, ', ')
-          FROM (
-          SELECT DISTINCT aa.artist_id
-          FROM album_artists aa
-          WHERE aa.album_id = a.id
-          ) AS unique_artists
+          FROM (SELECT DISTINCT aa.artist_id FROM album_artists aa WHERE aa.album_id = a.id)
+          AS unique_artists
           JOIN artists ar ON unique_artists.artist_id = ar.id
           ) AS artists
         FROM albums a

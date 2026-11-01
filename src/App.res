@@ -81,6 +81,7 @@ let make = () => {
             <Header toggleOpen />
             {switch route {
             | Home => <Home />
+            | Album(id, searchParams) => <AlbumView id key={id->Float.toString} searchParams />
             | PopularAlbums => <PopularAlbums />
             | RandomAlbums => <RandomAlbums />
             | LovedAlbums => <LovedAlbums />

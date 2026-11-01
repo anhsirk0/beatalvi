@@ -34,7 +34,7 @@ let options = {
   autoRaf: true,
   allowNestedScroll: true,
   smoothWheel: true,
-  duration: 1.5,
+  duration: 1.,
   lerp: 0.8,
   wheelMultiplier: 4.,
 }

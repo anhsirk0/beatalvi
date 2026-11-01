@@ -103,4 +103,10 @@ module Dom = {
     @send external contains: (t, string) => bool = "contains"
   }
 
+  module URLSearchParams = {
+    type t
+    @new external make: string => t = "URLSearchParams"
+    %%private(@send external get_: (t, string) => Nullable.t<string> = "get")
+    let get = (params, key) => params->get_(key)->Nullable.toOption
+  }
 }

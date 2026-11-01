@@ -115,3 +115,5 @@ type getSmartPlaylistTracksArgs = {query: string}
 let getSmartPlaylistTracks: fn<getSmartPlaylistTracksArgs, tracks> = make(
   "get_smart_playlist_tracks",
 )
+type findAlbumByIdArgs = {id: float}
+let findAlbumById: fn<findAlbumByIdArgs, Nullable.t<Shape.Album.t>> = make("find_album_by_id")

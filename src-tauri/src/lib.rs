@@ -113,6 +113,11 @@ fn get_all_artists() -> Vec<Artist> {
 }
 
 #[tauri::command]
+fn find_album_by_id(id: i64) -> Option<BasicAlbum> {
+    database::find_album_by_id(id)
+}
+
+#[tauri::command]
 async fn get_track_cover_art(album: String, track_uri: String) -> Option<Vec<u8>> {
     tokio::task::spawn_blocking(move || {
         importer::get_and_set_cover_art(&album, &track_uri, true).ok()
@@ -525,6 +530,7 @@ pub fn run() {
             get_loved_albums,
             get_recent_64_albums,
             get_all_albums,
+            find_album_by_id,
             get_tracks_by_albums,
             get_track_cover_art,
             get_album_cover_art,
