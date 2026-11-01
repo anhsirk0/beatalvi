@@ -11,6 +11,7 @@ let make = (~album: Shape.Album.t, ~ids, ~onPlay, ~width="w-full") => {
 
   let onPlayClick = evt => {
     evt->ReactEvent.Mouse.stopPropagation
+    evt->ReactEvent.Mouse.preventDefault
     onPlay(album.id, ~index=0)
   }
 
