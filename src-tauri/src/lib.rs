@@ -4,7 +4,7 @@ extern crate rand;
 use clap::Parser;
 use models::{
     AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, PlaylistItem,
-    PlaylistWithTracks, Stats, Track, TrackState,
+    PlaylistWithTracks, Stats, Track, TrackState, UserPlaylist,
 };
 use rand::prelude::SliceRandom;
 use rusqlite::OptionalExtension;
@@ -435,8 +435,20 @@ fn get_playlists_with_tracks() -> Vec<PlaylistWithTracks> {
 }
 
 #[tauri::command]
+fn get_playlists_tracks_by_id(id: i64) -> Vec<Track> {
+    playlist_database::get_playlist_tracks(id).unwrap_or(Vec::new())
+}
+
+#[tauri::command]
 fn get_smart_playlist_tracks(query: String) -> Vec<Track> {
     playlist_database::get_smart_playlist_tracks(query).unwrap_or(Vec::new())
+}
+
+#[tauri::command]
+fn find_playlist_by_id(id: i64) -> Option<UserPlaylist> {
+    playlist_database::find_playlist_by_id(id)
+        .optional()
+        .unwrap_or(None)
 }
 
 #[tauri::command]
@@ -571,7 +583,9 @@ pub fn run() {
             get_all_playlists,
             get_playlists_with_tracks,
             get_smart_playlist_tracks,
+            get_playlists_tracks_by_id,
             find_playlist_with_tracks_by_id,
+            find_playlist_by_id,
             delete_playlist_by_id
         ])
         .run(tauri::generate_context!())

@@ -43,7 +43,9 @@ module Content = {
         ? <div className="grid grid-cols-2 gap-4 w-full px-1 pt-4 border-t-2 border-accent">
             {tracks
             ->Array.mapWithIndex((track, idx) =>
-              <TrackItem idx track key=track.uri onClick={() => onTrackPlay(idx)} />
+              <Delay key=track.uri timeout={idx * 20}>
+                <TrackItem idx track onClick={() => onTrackPlay(idx)} />
+              </Delay>
             )
             ->React.array}
           </div>

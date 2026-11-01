@@ -1,5 +1,6 @@
 use crate::models::{PlaylistItem, PlaylistWithTracks, Track, UserPlaylist};
 use crate::utils::config;
+use crate::utils::database;
 use rusqlite::{Connection, Result, params};
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -151,6 +152,14 @@ pub fn get_playlists_with_tracks() -> Result<Vec<PlaylistWithTracks>> {
     Ok(result)
 }
 
+pub fn get_playlist_track_uris(id: i64, conn: &Connection) -> Result<Vec<String>> {
+    let mut track_stmt = conn.prepare("SELECT uri FROM tracks WHERE playlist_id = ?1")?;
+    let uris: Vec<String> = track_stmt
+        .query_map([id], |row| row.get(0))?
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(uris)
+}
+
 pub fn find_playlist_with_tracks_by_id(id: i64) -> Result<PlaylistWithTracks> {
     let conn = Connection::open(config::get_playlist_db_path())?;
     let mut stmt = conn.prepare(
@@ -168,12 +177,29 @@ pub fn find_playlist_with_tracks_by_id(id: i64) -> Result<PlaylistWithTracks> {
         })
     })?;
 
-    let mut track_stmt = conn.prepare("SELECT uri FROM tracks WHERE playlist_id = ?1")?;
-    let tracks: Vec<String> = track_stmt
-        .query_map([playlist.id], |row| row.get(0))?
-        .collect::<Result<Vec<_>, _>>()?;
+    let tracks = get_playlist_track_uris(id, &conn)?;
 
     Ok(PlaylistWithTracks { playlist, tracks })
+}
+
+pub fn find_playlist_by_id(id: i64) -> Result<UserPlaylist> {
+    let conn = Connection::open(config::get_playlist_db_path())?;
+    let mut stmt = conn.prepare(
+        "SELECT id, name, smart_enabled, smart_sql, smart_json, mtime FROM playlists WHERE id = ?1",
+    )?;
+
+    let playlist = stmt.query_one([id], |row| {
+        Ok(UserPlaylist {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            smart_enabled: row.get::<_, i32>(2)? != 0,
+            smart_sql: row.get(3)?,
+            smart_json: row.get(4)?,
+            mtime: row.get(5)?,
+        })
+    })?;
+
+    Ok(playlist)
 }
 
 pub fn get_smart_playlist_tracks(query: String) -> Result<Vec<Track>> {
@@ -195,6 +221,27 @@ pub fn get_smart_playlist_tracks(query: String) -> Result<Vec<Track>> {
     Ok(tracks)
 }
 
-pub fn get_playlist_tracks(query: String) -> Result<Vec<Track>> {
-    todo!()
+pub fn get_playlist_tracks(id: i64) -> Result<Vec<Track>> {
+    let conn = Connection::open(config::get_playlist_db_path())?;
+    let sql = conn.query_one(
+        "SELECT id, smart_enabled, smart_sql  FROM playlists WHERE id = ?1",
+        params![id],
+        |row| {
+            Ok(if row.get::<_, i32>(1)? != 0 {
+                Some(row.get::<_, String>(2)?)
+            } else {
+                None
+            })
+        },
+    )?;
+
+    let tracks = match sql {
+        Some(query) => get_smart_playlist_tracks(query)?,
+        None => {
+            let uris = get_playlist_track_uris(id, &conn)?;
+            database::get_tracks_by_uris(uris)?
+        }
+    };
+
+    Ok(tracks)
 }

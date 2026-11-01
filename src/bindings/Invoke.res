@@ -7,8 +7,8 @@ let make = name => invoke(name, _)
 
 type albums = array<Shape.Album.t>
 type tracks = array<Shape.Track.t>
-
 type coverArt = Nullable.t<Shape.Bytes.t>
+type byId = {id: float}
 
 let getAppVersion: fn<unit, string> = make("get_app_version")
 let reloadApp: fn<unit, unit> = make("reload_app")
@@ -105,15 +105,13 @@ type updateSmartPlaylistArgs = {id: float, name: string, sql: string, json: stri
 let updateSmartPlaylist: fn<updateSmartPlaylistArgs, float> = make("update_smart_playlist")
 let getAllPlaylists: fn<unit, array<Shape.Playlist.playlist>> = make("get_all_playlists")
 let getPlaylistsWithTracks: fn<unit, array<Shape.Playlist.t>> = make("get_playlists_with_tracks")
-type findPlaylistByIdArgs = {id: float}
-let findPlaylistById: fn<findPlaylistByIdArgs, Nullable.t<Shape.Playlist.full>> = make(
+let findPlaylistById: fn<byId, Nullable.t<Shape.Playlist.full>> = make(
   "find_playlist_with_tracks_by_id",
 )
-type deletePlaylistByIdArgs = {id: float}
-let deletePlaylistById: fn<deletePlaylistByIdArgs, float> = make("delete_playlist_by_id")
+let deletePlaylistById: fn<byId, float> = make("delete_playlist_by_id")
 type getSmartPlaylistTracksArgs = {query: string}
 let getSmartPlaylistTracks: fn<getSmartPlaylistTracksArgs, tracks> = make(
   "get_smart_playlist_tracks",
 )
-type findAlbumByIdArgs = {id: float}
-let findAlbumById: fn<findAlbumByIdArgs, Nullable.t<Shape.Album.t>> = make("find_album_by_id")
+let getPlaylistsTracksById: fn<byId, tracks> = make("get_playlists_tracks_by_id")
+let findAlbumById: fn<byId, Nullable.t<Shape.Album.t>> = make("find_album_by_id")

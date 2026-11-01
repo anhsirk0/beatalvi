@@ -42,7 +42,6 @@ module Main = {
 @react.component
 let make = (~id) => {
   let playlist = Hook.useFetch({fn: () => Invoke.findPlaylistById({id: id})})
-  Console.log(playlist)
 
   switch playlist {
   | Loading | Failed => React.null

@@ -136,9 +136,6 @@ let make = (~id, ~searchParams) => {
     })->ignore
   }
 
-  Console.log(id)
-  Console.log(searchParams)
-
   switch album {
   | Loading | Failed => React.null
   | Success(Value(album)) => <Content album onPlay />
