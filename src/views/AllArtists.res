@@ -34,9 +34,7 @@ module ArtistsGrid = {
     switch view {
     | One(artist) => <ArtistView artist onBack={() => setView(_ => All)} />
     | All =>
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-8 w-full p-8 overflow-y-auto min-h-0"
-      >
+      <Lenis options=Lenis.options className="[&>div]:main-grid overflow-y-auto min-h-0">
         {artists
         ->Array.mapWithIndex((artist, i) =>
           <Delay key={artist.id->Float.toString} timeout={i * 20}>
@@ -44,7 +42,7 @@ module ArtistsGrid = {
           </Delay>
         )
         ->React.array}
-      </div>
+      </Lenis>
     }
   }
 }
