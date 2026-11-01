@@ -7,6 +7,7 @@ type t =
   | RecentAlbums
   | AllAlbums
   | AllArtists
+  | Artist(float, string)
   | Playlist(float)
   | Playlists
   | NewPlaylist(Shape.Playlist.kind)
@@ -39,6 +40,8 @@ let useRoute: unit => t = () => {
   | (list{"recent-albums"}, _) => RecentAlbums
   | (list{"all-albums"}, _) => AllAlbums
   | (list{"all-artists"}, _) => AllArtists
+  // Setting name here is error prone but okay
+  | (list{"artist", id, name}, _) => Artist(id->toFloat, name)
   | (list{"playlists"}, _) => Playlists
   | (list{"playlist", id}, _) => Playlist(id->toFloat)
   | (list{"new-playlist", "regular"}, _) => NewPlaylist(Regular)
@@ -57,7 +60,7 @@ let toIcon = route =>
   | LovedAlbums => Icon.heart
   | RecentAlbums => Icon.clockCounterClockwise
   | Album(_) | AllAlbums => Icon.cassetteTape
-  | AllArtists => Icon.userSquare
+  | Artist(_) | AllArtists => Icon.userSquare
   | Playlists | Playlist(_) | NewPlaylist(_) | EditPlaylist(_) => Icon.playlist
   | Settings => Icon.sliders
   | NotFound => Icon.empty
@@ -73,6 +76,7 @@ let toTitle = route =>
   | RecentAlbums => "Recent Albums"
   | AllAlbums => "All Albums"
   | AllArtists => "All Artists"
+  | Artist(_) => "Artist"
   | Playlist(_) => "Playlist"
   | Playlists => "Playlists"
   | NewPlaylist(Regular) => "New Regular Playlist"
@@ -92,6 +96,7 @@ let toPath = route =>
   | RecentAlbums => "/recent-albums"
   | AllAlbums => "/all-albums"
   | AllArtists => "/all-artists"
+  | Artist(id, name) => `/artist/${id->Float.toString}/${name}`
   | Playlists => "/playlists"
   | Playlist(id) => `/playlist/${id->Float.toString}`
   | NewPlaylist(Regular) => "/new-playlist/regular"

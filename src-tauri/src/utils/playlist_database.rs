@@ -194,3 +194,7 @@ pub fn get_smart_playlist_tracks(query: String) -> Result<Vec<Track>> {
         .collect::<Result<Vec<Track>, _>>()?;
     Ok(tracks)
 }
+
+pub fn get_playlist_tracks(query: String) -> Result<Vec<Track>> {
+    todo!()
+}

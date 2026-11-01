@@ -1,8 +1,6 @@
-type view = All | One(Shape.Artist.t)
-
 module ArtistItem = {
   @react.component
-  let make = (~artist: Shape.Artist.t, ~onClick) => {
+  let make = (~artist: Shape.Artist.t) => {
     let id = `artist-${artist.id->Float.toString}`
 
     let _ = Hook.useFetch({
@@ -10,8 +8,8 @@ module ArtistItem = {
       onSuccess: Shape.Bytes.setCover(_, id),
     })
 
-    <div
-      role="button" onClick={_ => onClick()} className="flex flex-col animate-fade cursor-pointer"
+    <Route.Link
+      to=Artist(artist.id, artist.name) className="flex flex-col animate-fade cursor-pointer"
     >
       <div
         className="aspect-square bg-primary/40 rounded-full flex shrink-0 overflow-hidden relative isolate group nb active:nb-plain"
@@ -22,28 +20,22 @@ module ArtistItem = {
         </div>
       </div>
       <p className="r-text text-center truncate"> {artist.name->React.string} </p>
-    </div>
+    </Route.Link>
   }
 }
 
 module ArtistsGrid = {
   @react.component
   let make = (~artists: array<Shape.Artist.t>) => {
-    let (view, setView) = React.useState(_ => All)
-
-    switch view {
-    | One(artist) => <ArtistView artist onBack={() => setView(_ => All)} />
-    | All =>
-      <Lenis options=Lenis.options className="[&>div]:main-grid overflow-y-auto min-h-0">
-        {artists
-        ->Array.mapWithIndex((artist, i) =>
-          <Delay key={artist.id->Float.toString} timeout={i * 20}>
-            <ArtistItem artist onClick={() => setView(_ => One(artist))} />
-          </Delay>
-        )
-        ->React.array}
-      </Lenis>
-    }
+    <Lenis options=Lenis.options className="[&>div]:main-grid overflow-y-auto min-h-0">
+      {artists
+      ->Array.mapWithIndex((artist, i) =>
+        <Delay key={artist.id->Float.toString} timeout={i * 20}>
+          <ArtistItem artist />
+        </Delay>
+      )
+      ->React.array}
+    </Lenis>
   }
 }
 

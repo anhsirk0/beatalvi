@@ -1,12 +1,12 @@
 @react.component
-let make = (~artist: Shape.Artist.t, ~onBack) => {
-  let id = `artist-${artist.id->Float.toString}`
+let make = (~id, ~name) => {
+  let imgId = `artist-${name}`
   let _ = Hook.useFetch({
-    fn: () => Invoke.getArtistCoverArt({artistId: artist.id}),
-    onSuccess: Shape.Bytes.setCover(_, id),
+    fn: () => Invoke.getArtistCoverArt({artistId: id}),
+    onSuccess: Shape.Bytes.setCover(_, imgId),
   })
-  let stats = Hook.useFetch({fn: () => Invoke.getArtistStats({artistId: artist.id})})
-  let albums = Hook.useFetch({fn: () => Invoke.getAlbumsByArtistId({artistId: artist.id})})
+  let stats = Hook.useFetch({fn: () => Invoke.getArtistStats({artistId: id})})
+  let albums = Hook.useFetch({fn: () => Invoke.getAlbumsByArtistId({artistId: id})})
 
   let onPlay = (id, ~index, ~shuffle) => {
     switch albums {
@@ -47,7 +47,7 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
   >
     <button
       id="close-btn"
-      onClick={_ => onBack()}
+      onClick={_ => Route.goBack()}
       className="btn bg-base-100 btn-ghost r-btn nb-box active:nb-box absolute top-4 right-4 2xl:top-8 2xl:right-8"
     >
       <Icon.arrowLeft className="r-icon" weight=Bold />
@@ -57,14 +57,14 @@ let make = (~artist: Shape.Artist.t, ~onBack) => {
       <div
         className="w-40 2xl:w-48 aspect-square bg-primary/40 rounded-full flex shrink-0 overflow-hidden relative isolate group nb-outline"
       >
-        <img alt="" id className="object-cover h-full z-10" />
+        <img alt="" id=imgId className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0 animate-fade">
           <Icon.userCircle className="size-24" weight=Thin />
         </div>
       </div>
       <div className="flex flex-col gap-2 py-2">
         <p className="text-3xl 2xl:text-5xl pl-1 font-semibold truncate">
-          {artist.name->React.string}
+          {decodeURI(name)->React.string}
         </p>
         {switch stats {
         | Loading | Failed => React.null

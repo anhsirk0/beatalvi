@@ -88,6 +88,7 @@ let make = () => {
             | RecentAlbums => <RecentAlbums />
             | AllAlbums => <AllAlbums />
             | AllArtists => <AllArtists />
+            | Artist(id, name) => <ArtistView id name key=name />
             | Settings => <Settings />
             | Playlists => <Playlists />
             | Playlist(id) => <PlaylistView id key={id->Float.toString} />
