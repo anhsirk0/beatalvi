@@ -26,7 +26,8 @@ let make = (~albums: array<Shape.Album.t>) => {
     <button onClick=onStartPlay id="play-all" className="hidden"></button>
     <Virtuoso.Grid
       totalCount={albums->Array.length}
-      listClassName="main-grid mt-8 pt-2"
+      listClassName="main-grid mt-7"
+      itemClassName="pt-1"
       id="album-grid"
       data=albums
       itemContent={(_, album) => <AlbumItem key={album.id->Float.toString} album onPlay ids />}

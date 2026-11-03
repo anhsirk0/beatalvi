@@ -319,5 +319,5 @@ select:focus {
 /* } */
 
 @utility main-grid {
-  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-8 w-full p-8 overflow-y-auto animate-slide-up;
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 gap-x-8 gap-y-7 w-full p-8 overflow-y-auto animate-slide-up;
 }

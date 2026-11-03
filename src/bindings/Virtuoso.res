@@ -19,6 +19,7 @@ module Grid = {
     ~useWindowScroll: bool=?,
     ~scrollerRef: Nullable.t<Dom.element> => unit=?,
     ~id: string=?,
+    ~className: string=?,
     ~itemClassName: string=?,
     ~listClassName: string=?,
   ) => React.element = "VirtuosoGrid"
