@@ -3,8 +3,7 @@ external firstElementChild: Dom.element => option<Dom.element> = "firstElementCh
 
 @react.component
 let make = (~albums: array<Shape.Album.t>) => {
-  let (scroller, setScroller) = React.useState(_ => None)
-  let lenisRef = React.useRef(Nullable.null)
+  let scrollerRef = Lenis.useScroller()
 
   let onPlay = (id, ~index) => {
     Invoke.playTracksByAlbumsFromAlbumId({
@@ -23,35 +22,6 @@ let make = (~albums: array<Shape.Album.t>) => {
 
   let ids = albums->Array.map(a => a.id->Float.toString)->Array.join(",")
 
-  React.useEffect(() => {
-    switch scroller {
-    | Some(wrapper) =>
-      switch wrapper->firstElementChild {
-      | Some(content) =>
-        let lenis = Lenis.make({
-          wrapper,
-          content,
-          autoRaf: true,
-          allowNestedScroll: true,
-          duration: 1.,
-          lerp: 0.8,
-          smoothWheel: true,
-          wheelMultiplier: 4.,
-        })
-        Some(() => lenis->Lenis.destroy)
-      | None => None
-      }
-    | None => None
-    }
-  }, [scroller])
-
-  let scrollerRef = React.useCallback0(el =>
-    switch el->Nullable.toOption {
-    | Some(el) => setScroller(_ => Some(el))
-    | None => ()
-    }
-  )
-
   <React.Fragment>
     <button onClick=onStartPlay id="play-all" className="hidden"></button>
     <Virtuoso.Grid
@@ -59,7 +29,7 @@ let make = (~albums: array<Shape.Album.t>) => {
       listClassName="main-grid mt-8"
       id="album-grid"
       data=albums
-      itemContent={(i, album) => <AlbumItem key={album.id->Float.toString} album onPlay ids />}
+      itemContent={(_, album) => <AlbumItem key={album.id->Float.toString} album onPlay ids />}
       scrollerRef
     />
   </React.Fragment>

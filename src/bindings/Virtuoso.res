@@ -4,6 +4,7 @@ external make: (
   ~data: array<'a>,
   ~itemContent: (int, 'a) => React.element,
   ~id: string=?,
+  ~scrollerRef: Nullable.t<Dom.element> => unit=?,
   ~className: string=?,
 ) => React.element = "Virtuoso"
 

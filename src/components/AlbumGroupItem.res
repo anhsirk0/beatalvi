@@ -29,7 +29,7 @@ module TrackItem = {
 }
 
 @react.component
-let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~idx) => {
+let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~idx, ~cls="") => {
   let (collapsed, toggleCollapsed, setCollapsed) = Hook.useToggle(~init=closed)
 
   let id = `group-${idx->Int.toString}-${group.id->Float.toString}`
@@ -43,7 +43,9 @@ let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~id
     None
   }, [closed])
 
-  <div id={`group-${idx->Int.toString}`} className="animate-slide-up flex flex-col r-gap px-1">
+  <div
+    id={`group-${idx->Int.toString}`} className={`animate-slide-up flex flex-col r-gap px-1 ${cls}`}
+  >
     <div
       onClick={_ => toggleCollapsed()}
       className="flex gap-4 r-gap cursor-pointer hover:bg-primary/10 rounded-box"

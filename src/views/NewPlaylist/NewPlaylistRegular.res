@@ -1,6 +1,29 @@
 let countLabel = (matching, total) =>
   `${matching->Int.toString} matching ${Constant.sep} ${total->Int.toString} songs`
 
+module TrackList = {
+  @react.component
+  let make = (~data: array<Shape.Track.t>, ~selected, ~onToggle, ~forSelected=false) => {
+    let scrollerRef = Lenis.useScroller()
+
+    <Virtuoso
+      id={forSelected ? "selected-tracks" : "tracks"}
+      style={{display: "flex", flexDirection: "column"}}
+      data
+      scrollerRef
+      itemContent={(idx, track) =>
+        <PlaylistsTrackItem
+          isSelected={selected->Array.some(Shape.Track.eq(track, _))}
+          key=track.uri
+          track
+          index={idx + 1}
+          onToggle
+          forSelected
+        />}
+    />
+  }
+}
+
 module Content = {
   @react.component
   let make = (
@@ -127,20 +150,7 @@ module Content = {
         classes="col-span-14 lg:col-span-7 xl:col-span-5 min-h-[65vh]"
       >
         {filteredSelected->Array.length > 0
-          ? <Virtuoso
-              id="selected-tracks"
-              style={{display: "flex", flexDirection: "column"}}
-              data=filteredSelected
-              itemContent={(idx, track) =>
-                <PlaylistsTrackItem
-                  key={track.id->Float.toString}
-                  track
-                  index={idx + 1}
-                  isSelected={selected->Array.some(Shape.Track.eq(track, _))}
-                  onToggle
-                  forSelected=true
-                />}
-            />
+          ? <TrackList data=filteredSelected onToggle selected forSelected=true />
           : <div className="center size-full">
               <p className="r-text-2xl font-instrument font-light italic text-center">
                 {"Selected songs will gather here."->React.string}
@@ -152,19 +162,7 @@ module Content = {
         subtitle={countLabel(filteredTracks->Array.length, tracks->Array.length)}
         classes="col-span-14 lg:col-span-7 xl:col-span-5 min-h-[65vh]"
       >
-        <Virtuoso
-          id="tracks"
-          style={{display: "flex", flexDirection: "column"}}
-          data=filteredTracks
-          itemContent={(idx, track) =>
-            <PlaylistsTrackItem
-              key={track.id->Float.toString}
-              track
-              index={idx + 1}
-              isSelected={selected->Array.some(Shape.Track.eq(track, _))}
-              onToggle
-            />}
-        />
+        <TrackList data=filteredTracks onToggle selected />
       </ItemsContainer>
     </React.Fragment>
   }

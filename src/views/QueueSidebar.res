@@ -14,14 +14,12 @@ module Item = {
           `#group-${idx->Int.toString}`->Util.Dom.querySelectAndThen(
             Util.Dom.Scroll.intoView(_, {behavior: Smooth, block: Center}),
           )
-        }, idx * 20 + 100)->ignore
+        }, 800)->ignore
       }
       None
     }, [hasTrack])
 
-    <Delay timeout={idx * 20}>
-      <AlbumGroupItem group closed={!hasTrack} showTrackCount=true idx />
-    </Delay>
+    <AlbumGroupItem group closed={!hasTrack} showTrackCount=true idx cls="mb-4" />
   }
 }
 
@@ -50,25 +48,28 @@ module Item = {
 @react.component
 let make = () => {
   let playings = Hook.useFetch({fn: Invoke.getPlayingAlbumGroups})
+  let scrollerRef = Lenis.useScroller()
 
   <React.Fragment>
     // <UpNext />
     <p className="text-60 r-text uppercase"> {"Playing Albums"->React.string} </p>
-    <div className="flex flex-col min-h-0 gap-4 2xl:gap-8 grow">
-      {switch playings {
-      | Loading => <div className="loading loading-spinner"></div>
-      | Failed => React.null
-      | Success(groups) =>
-        groups->Array.length > 0
-          ? groups
-            ->Array.mapWithIndex((group, idx) => <Item group idx key={idx->Int.toString} />)
-            ->React.array
-          : <p className="font-instrument r-text-2xl font-light text-center italic mt-[100%]">
-              {"The night is quiet."->React.string}
-              <br />
-              {"Play something"->React.string}
-            </p>
-      }}
-    </div>
+    {switch playings {
+    | Loading => <div className="loading loading-spinner"></div>
+    | Failed => React.null
+    | Success(groups) =>
+      groups->Array.length > 0
+        ? <Virtuoso
+            className="flex flex-col min-h-0 gap-4 2xl:gap-8 grow"
+            style={{display: "flex", flexDirection: "column", height: "100%", flexGrow: "1"}}
+            data=groups
+            itemContent={(idx, group) => <Item group idx key={idx->Int.toString} />}
+            scrollerRef
+          />
+        : <p className="font-instrument r-text-2xl font-light text-center italic mt-[100%]">
+            {"The night is quiet."->React.string}
+            <br />
+            {"Play something"->React.string}
+          </p>
+    }}
   </React.Fragment>
 }

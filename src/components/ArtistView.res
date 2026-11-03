@@ -92,7 +92,7 @@ let make = (~id, ~name) => {
       <div className="grid grid-cols-2 gap-4 w-full px-1 pt-2 border-t-2 border-accent">
         {albums
         ->Array.mapWithIndex((album, i) =>
-          <Delay key={album.id->Float.toString} timeout={i * 5}>
+          <Delay key={album.id->Float.toString} timeout={i * 2}>
             <ArtistAlbumItem album key={album.id->Float.toString} onPlay />
           </Delay>
         )

@@ -53,3 +53,37 @@ let options = {
 
 @send external scrollTo: (t, float) => unit = "scrollTo"
 // @send external scrollToWithOptions: (t, float, scrollToOptions) => unit = "scrollTo"
+
+let useScroller = () => {
+  let (scroller, setScroller) = React.useState(_ => None)
+  React.useEffect(() => {
+    switch scroller {
+    | Some(wrapper) =>
+      switch wrapper->Util.Dom.firstElementChild {
+      | Some(content) =>
+        let lenis = make({
+          wrapper,
+          content,
+          autoRaf: true,
+          allowNestedScroll: true,
+          duration: 1.,
+          lerp: 0.8,
+          smoothWheel: true,
+          wheelMultiplier: 4.,
+        })
+        Some(() => lenis->destroy)
+      | None => None
+      }
+    | None => None
+    }
+  }, [scroller])
+
+  let scrollerRef = React.useCallback0(el =>
+    switch el->Nullable.toOption {
+    | Some(el) => setScroller(_ => Some(el))
+    | None => ()
+    }
+  )
+
+  scrollerRef
+}

@@ -109,4 +109,7 @@ module Dom = {
     %%private(@send external get_: (t, string) => Nullable.t<string> = "get")
     let get = (params, key) => params->get_(key)->Nullable.toOption
   }
+
+  @get @return(nullable)
+  external firstElementChild: Dom.element => option<Dom.element> = "firstElementChild"
 }
