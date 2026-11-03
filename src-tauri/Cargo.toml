@@ -1,6 +1,6 @@
 [package]
 name = "beatalvi"
-version = "0.4.2"
+version = "0.5.2"
 description = "Music player"
 authors = ["anhsirk0"]
 edition = "2024"

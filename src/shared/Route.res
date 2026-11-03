@@ -1,5 +1,6 @@
 type t =
   | Home
+  // | Track
   | Album(float, string)
   | PopularAlbums
   | RandomAlbums

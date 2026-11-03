@@ -173,6 +173,11 @@ fn get_playing_album_groups(state: State<AppState>) -> Vec<AlbumGroup> {
 }
 
 #[tauri::command]
+fn get_remaining_album_groups(state: State<AppState>) -> Vec<AlbumGroup> {
+    state.get_remaining_album_groups()
+}
+
+#[tauri::command]
 fn get_queued_tracks(state: State<AppState>) -> Vec<Track> {
     state.get_queued_tracks()
 }
@@ -552,6 +557,7 @@ pub fn run() {
             get_albums_by_artist_id,
             search_tracks_grouped,
             get_playing_album_groups,
+            get_remaining_album_groups,
             get_queued_album_groups,
             get_queued_tracks,
             play,

@@ -41,7 +41,7 @@ let make = (~id, ~name) => {
       }
     }
 
-  <Lenis
+  <Lenis.Component
     options=Lenis.options
     className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative"
   >
@@ -99,5 +99,5 @@ let make = (~id, ~name) => {
         ->React.array}
       </div>
     }}
-  </Lenis>
+  </Lenis.Component>
 }

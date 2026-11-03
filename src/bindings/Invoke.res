@@ -46,6 +46,7 @@ let searchTracksGrouped: fn<searchTracksGroupedArgs, array<Shape.Album.group>> =
   "search_tracks_grouped",
 )
 let getPlayingAlbumGroups: fn<unit, array<Shape.Album.group>> = make("get_playing_album_groups")
+let getRemainingAlbumGroups: fn<unit, array<Shape.Album.group>> = make("get_remaining_album_groups")
 let getQueuedAlbumGroups: fn<unit, array<Shape.Album.group>> = make("get_queued_album_groups")
 let getQueuedTracks: fn<unit, tracks> = make("get_queued_tracks")
 type playArgs = {trackUri: string}

@@ -27,7 +27,7 @@ module ArtistItem = {
 module ArtistsGrid = {
   @react.component
   let make = (~artists: array<Shape.Artist.t>) => {
-    <Lenis options=Lenis.options className="[&>div]:main-grid overflow-y-auto min-h-0">
+    <Lenis.Component options=Lenis.options className="[&>div]:main-grid overflow-y-auto min-h-0">
       {artists
       ->Array.mapWithIndex((artist, i) =>
         <Delay key={artist.id->Float.toString} timeout={i * 20}>
@@ -35,7 +35,7 @@ module ArtistsGrid = {
         </Delay>
       )
       ->React.array}
-    </Lenis>
+    </Lenis.Component>
   }
 }
 

@@ -77,7 +77,7 @@ module Main = {
     | Smart(data) => {id: data.id, name: data.name, isSmart: true}
     }
 
-    <Lenis
+    <Lenis.Component
       options=Lenis.options
       className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative"
     >
@@ -94,7 +94,7 @@ module Main = {
       | Loading | Failed => React.null
       | Success(tracks) => <Content playlist=info tracks />
       }}
-    </Lenis>
+    </Lenis.Component>
   }
 }
 

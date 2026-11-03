@@ -235,11 +235,19 @@ impl AppState {
     }
 
     pub fn get_playing_album_groups(&self) -> Vec<AlbumGroup> {
-        if self.playlist.lock().unwrap().remaining().is_empty() {
+        if self.playlist.lock().unwrap().all().is_empty() {
             return Vec::new();
         }
         database::get_album_groups_from_uris(self.playlist.lock().unwrap().all().clone())
     }
+
+    pub fn get_remaining_album_groups(&self) -> Vec<AlbumGroup> {
+        if self.playlist.lock().unwrap().remaining().is_empty() {
+            return Vec::new();
+        }
+        database::get_album_groups_from_uris(self.playlist.lock().unwrap().remaining().clone())
+    }
+
     pub fn get_queued_tracks(&self) -> Vec<Track> {
         if self.queue.lock().unwrap().is_empty() {
             return Vec::new();
