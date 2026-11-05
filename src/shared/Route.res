@@ -1,6 +1,6 @@
 type t =
   | Home
-  // | Track
+  | CurrentTrack // need better name
   | Album(float, string)
   | PopularAlbums
   | RandomAlbums
@@ -49,6 +49,7 @@ let useRoute: unit => t = () => {
   | (list{"new-playlist", "smart"}, _) => NewPlaylist(Smart)
   | (list{"edit-playlist", id}, _) => EditPlaylist(id->toFloat)
   | (list{"settings"}, _) => Settings
+  | (list{"current-track"}, _) => CurrentTrack
   | _ => NotFound
   }
 }
@@ -64,6 +65,7 @@ let toIcon = route =>
   | Artist(_) | AllArtists => Icon.userSquare
   | Playlists | Playlist(_) | NewPlaylist(_) | EditPlaylist(_) => Icon.playlist
   | Settings => Icon.sliders
+  | CurrentTrack => Icon.musicNote
   | NotFound => Icon.empty
   }
 
@@ -84,6 +86,7 @@ let toTitle = route =>
   | NewPlaylist(Smart) => "New Smart Playlist"
   | EditPlaylist(_) => "Edit Playlist"
   | Settings => "Settings"
+  | CurrentTrack => "Current track"
   | NotFound => "Not Found"
   }
 
@@ -104,6 +107,7 @@ let toPath = route =>
   | NewPlaylist(Smart) => "/new-playlist/smart"
   | EditPlaylist(id) => `/edit-playlist/${id->Float.toString}`
   | Settings => "/settings"
+  | CurrentTrack => "/current-track"
   | NotFound => "/not-found"
   }
 

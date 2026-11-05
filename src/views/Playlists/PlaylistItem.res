@@ -10,7 +10,7 @@ module Cover = {
   let make = (~playlistId, ~idx, ~album) => {
     let id = `${playlistId->Float.toString}-cover-${idx->Int.toString}`
     let _ = Hook.useFetch({
-      fn: () => Invoke.getAlbumCoverArt({album, isSmall: false}),
+      fn: () => Invoke.getAlbumCoverArt({album, size: Shape.CoverSize.Medium}),
       onSuccess: Shape.Bytes.setCover(_, id),
     })
 

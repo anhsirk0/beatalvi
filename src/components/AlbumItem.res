@@ -5,7 +5,7 @@ let make = (~album: Shape.Album.t, ~ids, ~onPlay, ~width="w-full") => {
   )
   let id = `album-${album.id->Float.toString}`
   let _ = Hook.useFetch({
-    fn: () => Invoke.getAlbumCoverArt({album: album.name, isSmall: false}),
+    fn: () => Invoke.getAlbumCoverArt({album: album.name, size: Shape.CoverSize.Medium}),
     onSuccess: Shape.Bytes.setCover(_, id),
   })
 
@@ -25,9 +25,7 @@ let make = (~album: Shape.Album.t, ~ids, ~onPlay, ~width="w-full") => {
     >
       <img alt="" id className="object-cover h-full z-10" />
       <div className="center p-4 absolute inset-0 animate-fade-slow">
-        <p className="text-9xl text-center text-base-content font-serif">
-          {Constant.logo->React.string}
-        </p>
+        <p className="text-9xl text-center text-80 font-serif"> {Constant.logo->React.string} </p>
       </div>
       <div
         className="flex items-center transitional translate-y-14 group-hover:translate-y-0 h-14 w-full z-20 absolute -bottom-0 p-2"

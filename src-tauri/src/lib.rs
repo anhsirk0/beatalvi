@@ -2,8 +2,9 @@ pub mod models;
 mod utils;
 extern crate rand;
 use clap::Parser;
+use itertools::Itertools;
 use models::{
-    AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, PlaylistItem,
+    AlbumGroup, Artist, ArtistAlbum, ArtistStats, BasicAlbum, BasicTrack, CoverSize, PlaylistItem,
     PlaylistWithTracks, Stats, Track, TrackState, UserPlaylist,
 };
 use rand::prelude::SliceRandom;
@@ -108,6 +109,24 @@ fn get_tracks_by_albums(album_ids: Vec<i64>) -> Vec<Track> {
 }
 
 #[tauri::command]
+fn get_related_tracks(track_id: i64, track_uri: String, artist_names: Vec<String>) -> Vec<Track> {
+    let mut tracks = database::get_other_tracks_of_same_album(track_id).unwrap_or(Vec::new());
+    for artist in artist_names {
+        tracks.extend(database::get_top_20_tracks_by_artist_name(&artist).unwrap_or(Vec::new()));
+    }
+    let playlist_tracks =
+        playlist_database::get_other_tracks_in_playlist(&track_uri).unwrap_or(Vec::new());
+    tracks.extend(playlist_tracks);
+    tracks.sort_by(Track::cmp_by_popularity);
+    tracks
+        .iter()
+        .unique_by(|t| &t.uri)
+        .filter(|t| t.id != track_id)
+        .cloned()
+        .collect()
+}
+
+#[tauri::command]
 fn get_all_artists() -> Vec<Artist> {
     database::get_all_artists().unwrap()
 }
@@ -120,24 +139,26 @@ fn find_album_by_id(id: i64) -> Option<BasicAlbum> {
 #[tauri::command]
 async fn get_track_cover_art(album: String, track_uri: String) -> Option<Vec<u8>> {
     tokio::task::spawn_blocking(move || {
-        importer::get_and_set_cover_art(&album, &track_uri, true).ok()
+        importer::get_and_set_cover_art(&album, &track_uri, &CoverSize::Small).ok()
     })
     .await
     .unwrap()
 }
 
 #[tauri::command]
-async fn get_album_cover_art(album: String, is_small: bool) -> Option<Vec<u8>> {
-    tokio::task::spawn_blocking(move || importer::get_cover_art(&album, is_small).ok())
-        .await
-        .unwrap()
+async fn get_album_cover_art(album: String, size: String) -> Option<Vec<u8>> {
+    tokio::task::spawn_blocking(move || {
+        importer::get_cover_art(&album, &CoverSize::from_string(&size)).ok()
+    })
+    .await
+    .unwrap()
 }
 
 #[tauri::command]
 async fn get_artist_cover_art(artist_id: i64) -> Option<Vec<u8>> {
     tokio::task::spawn_blocking(move || {
         if let Ok(Some(album)) = database::get_random_album_name_by_artist_id(artist_id) {
-            importer::get_cover_art(&album, false).ok()
+            importer::get_cover_art(&album, &CoverSize::Medium).ok()
         } else {
             None
         }
@@ -173,8 +194,8 @@ fn get_playing_album_groups(state: State<AppState>) -> Vec<AlbumGroup> {
 }
 
 #[tauri::command]
-fn get_remaining_album_groups(state: State<AppState>) -> Vec<AlbumGroup> {
-    state.get_remaining_album_groups()
+fn get_playing_tracks(state: State<AppState>) -> Vec<Track> {
+    state.get_playing_tracks()
 }
 
 #[tauri::command]
@@ -549,6 +570,7 @@ pub fn run() {
             get_all_albums,
             find_album_by_id,
             get_tracks_by_albums,
+            get_related_tracks,
             get_track_cover_art,
             get_album_cover_art,
             get_artist_cover_art,
@@ -557,7 +579,7 @@ pub fn run() {
             get_albums_by_artist_id,
             search_tracks_grouped,
             get_playing_album_groups,
-            get_remaining_album_groups,
+            get_playing_tracks,
             get_queued_album_groups,
             get_queued_tracks,
             play,

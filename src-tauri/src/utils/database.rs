@@ -863,6 +863,87 @@ pub fn get_album_groups_from_uris(uris: Vec<String>) -> Vec<AlbumGroup> {
     groups
 }
 
+pub fn get_other_tracks_of_same_album(track_id: i64) -> Result<Vec<Track>> {
+    let conn = Connection::open(config::get_db_path())?;
+
+    let mut stmt = conn.prepare(
+        "SELECT
+               t.id,
+               t.name AS track_name,
+               t.uri,
+               t.duration,
+               t.popularity,
+               a.name AS album_name,
+               (SELECT GROUP_CONCAT(ar.name, ', ')
+                FROM (SELECT DISTINCT ta.artist_id FROM track_artists ta WHERE ta.track_id = t.id) u
+                JOIN artists ar ON ar.id = u.artist_id) AS artists
+             FROM tracks t
+             JOIN albums a ON a.id = t.album_id
+             WHERE t.album_id = (SELECT album_id FROM tracks WHERE id = ?1)
+               AND t.id != ?1
+             ORDER BY t.id ASC",
+    )?;
+
+    let tracks = stmt
+        .query_map(params![track_id], |row| {
+            Ok(Track {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                uri: row.get(2)?,
+                duration: row.get(3)?,
+                popularity: row.get(4)?,
+                album: row.get(5)?,
+                artist: row.get(6)?,
+            })
+        })?
+        .collect::<Result<Vec<_>>>()?;
+
+    Ok(tracks)
+}
+
+pub fn get_top_20_tracks_by_artist_name(name: &str) -> Result<Vec<Track>> {
+    let conn = Connection::open(config::get_db_path())?;
+    let mut stmt = conn.prepare(
+        "SELECT
+               t.id,
+               t.name AS track_name,
+               t.uri,
+               t.duration,
+               t.popularity,
+               a.name AS album_name,
+               (SELECT GROUP_CONCAT(ar2.name, ', ')
+                FROM (SELECT DISTINCT ta2.artist_id FROM track_artists ta2 WHERE ta2.track_id = t.id) u
+                JOIN artists ar2 ON ar2.id = u.artist_id) AS artists
+             FROM tracks t
+             JOIN albums a ON a.id = t.album_id
+             WHERE EXISTS (
+               SELECT 1
+               FROM track_artists ta
+               JOIN artists ar ON ar.id = ta.artist_id
+               WHERE ta.track_id = t.id
+                 AND ar.name = ?1
+             )
+             ORDER BY t.popularity DESC, t.id ASC
+             LIMIT 20",
+    )?;
+
+    let tracks = stmt
+        .query_map(params![name], |row| {
+            Ok(Track {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                uri: row.get(2)?,
+                duration: row.get(3)?,
+                popularity: row.get(4)?,
+                album: row.get(5)?,
+                artist: row.get(6)?,
+            })
+        })?
+        .collect::<Result<Vec<_>>>()?;
+
+    Ok(tracks)
+}
+
 /* ───────────────────────────── DB Updates ───────────────────────────── */
 pub fn update_track_by_id(
     conn: &Connection,

@@ -33,7 +33,7 @@ let make = (~onClose) => {
 
   let onChange = evt => {
     evt->ReactEvent.Form.stopPropagation
-    setValue(_ => evt->Util.Dom.targetValue)
+    setValue(_ => evt->Domapi.targetValue)
   }
 
   let query = Hook.useDebounce(value, 500)

@@ -162,6 +162,12 @@ pub struct PlaylistWithTracks {
 //     pub tracks_uris: Vec<String>,
 // }
 
+impl Track {
+    pub fn cmp_by_popularity(&self, other: &Self) -> Ordering {
+        other.popularity.cmp(&self.popularity)
+    }
+}
+
 impl AlbumGroup {
     // Sort by match priority: tracks first, then album, then artists
     pub fn cmp_by_query(query: &str, a: &Self, b: &Self) -> Ordering {
@@ -194,5 +200,49 @@ impl AlbumGroup {
 
         // Artist match (starts_with first, then contains)
         order(&b.artists).cmp(&order(&a.artists)) // Descending
+    }
+}
+
+pub enum CoverSize {
+    Small,
+    Medium,
+    Large,
+}
+
+impl CoverSize {
+    pub fn value(&self) -> u32 {
+        match self {
+            CoverSize::Small => 100,
+            CoverSize::Medium => 250,
+            CoverSize::Large => 800,
+        }
+    }
+
+    pub fn from_string(s: &str) -> Self {
+        match s {
+            "small" => CoverSize::Small,
+            "large" => CoverSize::Large,
+            _ => CoverSize::Medium,
+        }
+    }
+
+    pub fn name(&self, s: &str) -> String {
+        let name = s
+            .chars()
+            .map(|c| match c {
+                'a'..='z' | '0'..='9' | 'A'..='Z' => c,
+                ' ' | '-' | '_' => '-',
+                _ => ' ', // Replace special chars with space
+            })
+            .collect::<String>()
+            .split_whitespace()
+            .collect::<Vec<&str>>()
+            .join("-");
+
+        match self {
+            CoverSize::Small => format!("{}_sm.jpg", name),
+            CoverSize::Medium => format!("{}.jpg", name),
+            CoverSize::Large => format!("{}_lg.jpg", name),
+        }
     }
 }

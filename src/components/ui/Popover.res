@@ -17,4 +17,4 @@ module Menu = {
 
 @send external hidePopover: Dom.element => unit = "hidePopover"
 
-let close = id => `#${id}`->Util.Dom.querySelectAndThen(hidePopover)
+let close = id => `#${id}`->Domapi.querySelectAndThen(hidePopover)

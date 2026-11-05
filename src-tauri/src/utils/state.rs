@@ -241,11 +241,12 @@ impl AppState {
         database::get_album_groups_from_uris(self.playlist.lock().unwrap().all().clone())
     }
 
-    pub fn get_remaining_album_groups(&self) -> Vec<AlbumGroup> {
-        if self.playlist.lock().unwrap().remaining().is_empty() {
+    pub fn get_playing_tracks(&self) -> Vec<Track> {
+        let all = self.playlist.lock().unwrap().all().clone();
+        if all.is_empty() {
             return Vec::new();
         }
-        database::get_album_groups_from_uris(self.playlist.lock().unwrap().remaining().clone())
+        database::get_tracks_by_uris(all.clone()).unwrap_or(Vec::new())
     }
 
     pub fn get_queued_tracks(&self) -> Vec<Track> {

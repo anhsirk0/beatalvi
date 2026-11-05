@@ -1,4 +1,4 @@
-use crate::models::{TrackInfo, UriMtime};
+use crate::models::{CoverSize, TrackInfo, UriMtime};
 use dashmap::DashMap;
 use image::{ImageError, imageops};
 use rayon::prelude::*;
@@ -16,9 +16,6 @@ use symphonia::core::{
     probe::{Hint, ProbeResult},
 };
 use url::Url;
-
-const IMG_SIZE: u32 = 300;
-const IMG_SIZE_SM: u32 = 100;
 
 fn get_probe_result(path: &Path) -> Result<ProbeResult, Box<dyn Error>> {
     let file = File::open(path)?;
@@ -39,11 +36,11 @@ fn get_probe_result(path: &Path) -> Result<ProbeResult, Box<dyn Error>> {
 }
 pub fn get_cover_art_bytes_from_metadata(
     data: Metadata,
-    is_small: bool,
+    cover_size: &CoverSize,
 ) -> Result<Vec<u8>, Box<dyn Error>> {
     if let Some(metadata_rev) = data.current() {
         for visual in metadata_rev.visuals() {
-            let buf = resize_image_bytes(&visual.data, is_small)?;
+            let buf = resize_image_bytes(&visual.data, cover_size)?;
             return Ok(buf);
         }
     }
@@ -52,11 +49,11 @@ pub fn get_cover_art_bytes_from_metadata(
 
 pub fn get_cover_art_bytes_from_path(
     path: &Path,
-    is_small: bool,
+    cover_size: &CoverSize,
 ) -> Result<Vec<u8>, Box<dyn Error>> {
     let probe = get_probe_result(path)?;
     let mut format = probe.format;
-    get_cover_art_bytes_from_metadata(format.metadata(), is_small)
+    get_cover_art_bytes_from_metadata(format.metadata(), cover_size)
 }
 
 pub fn get_track_meta<P: AsRef<Path>>(path: &P) -> Result<UriMtime, Box<dyn Error>> {
@@ -154,7 +151,7 @@ pub fn get_info_map(files: Vec<String>) -> Result<DashMap<String, TrackInfo>, Bo
     Ok(info_map)
 }
 
-fn resize_image_bytes(input: &[u8], is_small: bool) -> Result<Vec<u8>, ImageError> {
+fn resize_image_bytes(input: &[u8], cover_size: &CoverSize) -> Result<Vec<u8>, ImageError> {
     let img = image::load_from_memory(input)?;
 
     // Crop to centered square
@@ -166,7 +163,7 @@ fn resize_image_bytes(input: &[u8], is_small: bool) -> Result<Vec<u8>, ImageErro
 
     let cropped = imageops::crop(&mut img.to_rgb8(), x, y, square_size, square_size).to_image();
 
-    let size = if is_small { IMG_SIZE_SM } else { IMG_SIZE };
+    let size = cover_size.value();
     let resized = imageops::resize(&cropped, size, size, imageops::FilterType::Lanczos3);
     let mut out = Vec::new();
     resized.write_to(&mut Cursor::new(&mut out), image::ImageFormat::Jpeg)?;

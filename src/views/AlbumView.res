@@ -40,7 +40,7 @@ module Content = {
     let id = `album-${album.id->Float.toString}`
     let hasManyArtists = album.artist->String.includes(", ")
     let _ = Hook.useFetch({
-      fn: () => Invoke.getAlbumCoverArt({album: album.name, isSmall: false}),
+      fn: () => Invoke.getAlbumCoverArt({album: album.name, size: Shape.CoverSize.Medium}),
       onSuccess: Shape.Bytes.setCover(_, id),
     })
     let tracks = Hook.useFetch({fn: () => Invoke.getTracksByAlbums({albumIds: [album.id]})})
@@ -121,10 +121,10 @@ let make = (~id, ~searchParams) => {
   let album = Hook.useFetch({fn: () => Invoke.findAlbumById({id: id})})
 
   let onPlay = (id, ~index) => {
-    let params = Util.Dom.URLSearchParams.make(searchParams)
+    let params = Domapi.URLSearchParams.make(searchParams)
     let albumIds =
       params
-      ->Util.Dom.URLSearchParams.get("ids")
+      ->Domapi.URLSearchParams.get("ids")
       ->Option.map(ids => ids->String.split(",")->Array.filterMap(Float.fromString))
       ->Option.getOr([id])
 

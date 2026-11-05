@@ -11,8 +11,8 @@ module Item = {
     React.useEffect(() => {
       if hasTrack {
         setTimeout(() => {
-          `#group-${idx->Int.toString}`->Util.Dom.querySelectAndThen(
-            Util.Dom.Scroll.intoView(_, {behavior: Smooth, block: Center}),
+          `#group-${idx->Int.toString}`->Domapi.querySelectAndThen(
+            Domapi.Scroll.intoView(_, {behavior: Smooth, block: Center}),
           )
         }, 800)->ignore
       }

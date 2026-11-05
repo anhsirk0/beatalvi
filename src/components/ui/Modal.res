@@ -18,7 +18,7 @@ let make = (~title=?, ~onClose, ~children, ~classes="") => {
   let onClick = _ => onClose()
 
   React.useEffect0(() => {
-    ".modal-open form"->Util.Dom.querySelectAndThen(Util.Dom.focus)
+    ".modal-open form"->Domapi.querySelectAndThen(Domapi.focus)
     None
   })
 

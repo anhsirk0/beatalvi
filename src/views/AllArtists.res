@@ -27,15 +27,16 @@ module ArtistItem = {
 module ArtistsGrid = {
   @react.component
   let make = (~artists: array<Shape.Artist.t>) => {
-    <Lenis.Component options=Lenis.options className="[&>div]:main-grid overflow-y-auto min-h-0">
-      {artists
-      ->Array.mapWithIndex((artist, i) =>
-        <Delay key={artist.id->Float.toString} timeout={i * 20}>
-          <ArtistItem artist />
-        </Delay>
-      )
-      ->React.array}
-    </Lenis.Component>
+    let scrollerRef = Lenis.useScroller()
+
+    <Virtuoso.Grid
+      totalCount={artists->Array.length}
+      listClassName="main-grid mt-7"
+      itemClassName="pt-1"
+      data=artists
+      itemContent={(_, artist) => <ArtistItem key={artist.id->Float.toString} artist />}
+      scrollerRef
+    />
   }
 }
 

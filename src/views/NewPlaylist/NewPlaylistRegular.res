@@ -41,7 +41,7 @@ module Content = {
 
     let onChange = evt => {
       evt->ReactEvent.Form.stopPropagation
-      setQuery(_ => evt->Util.Dom.targetValue)
+      setQuery(_ => evt->Domapi.targetValue)
     }
 
     let filteredTracks = React.useMemo2(() => {

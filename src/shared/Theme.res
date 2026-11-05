@@ -75,6 +75,6 @@ let rotateBackward = theme =>
   (theme->isDark ? darkThemes : lightThemes)->Util.Arr.rotateBackward(theme)
 
 let setTheme = theme => {
-  "html"->Util.Dom.querySelectAndThen(Util.Dom.setAttribute(_, "data-theme", theme->toString))
+  "html"->Domapi.querySelectAndThen(Domapi.setAttribute(_, "data-theme", theme->toString))
   "beatalviTheme"->Dom.Storage.setItem(theme->toString, Dom.Storage.localStorage)
 }

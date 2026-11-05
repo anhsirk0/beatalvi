@@ -78,11 +78,11 @@ impl Playlist {
     }
 
     /// Get remaining tracks (current + ahead)
-    pub fn remaining(&self) -> Vec<String> {
-        self.current_index
-            .map(|i| self.tracks[i..].to_vec())
-            .unwrap_or_default()
-    }
+    // pub fn remaining(&self) -> Vec<String> {
+    //     self.current_index
+    //         .map(|i| self.tracks[i..].to_vec())
+    //         .unwrap_or_default()
+    // }
 
     /// Get played tracks (before current)
     // pub fn history(&self) -> Vec<String> {
@@ -131,8 +131,7 @@ impl Playlist {
         if index > 0 {
             Ok(self.jump_to(index - 1)?)
         } else {
-            let first = self.tracks.first();
-            Ok(first)
+            Ok(self.tracks.first())
         }
     }
 

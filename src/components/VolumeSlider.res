@@ -4,7 +4,7 @@ let make = () => {
   let setVolume = vol => updateConfig(SetVolume(vol))
 
   let onChange = evt => {
-    switch evt->Util.Dom.targetValue->Int.fromString {
+    switch evt->Domapi.targetValue->Int.fromString {
     | Some(vol) => Invoke.setVolume({volume: vol})->ignore
     | None => ignore()
     }

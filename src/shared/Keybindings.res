@@ -20,12 +20,12 @@ let useKeys = () => {
     if key == " " {
       Invoke.toggle()->ignore
     } else if key == "Backspace" || key == "Escape" {
-      "#close-btn"->Util.Dom.querySelectAndThen(Util.Dom.click)
+      "#close-btn"->Domapi.querySelectAndThen(Domapi.click)
     } else if key == "?" {
-      "#keybindings-modal"->Util.Dom.querySelectAndThen(Util.Dom.click)
+      "#keybindings-modal"->Domapi.querySelectAndThen(Domapi.click)
     } else if key == "/" {
-      "#search-modal"->Util.Dom.querySelectAndThen(Util.Dom.click)
-      setTimeout(() => "#search-input"->Util.Dom.querySelectAndThen(Util.Dom.focus), 200)->ignore
+      "#search-modal"->Domapi.querySelectAndThen(Domapi.click)
+      setTimeout(() => "#search-input"->Domapi.querySelectAndThen(Domapi.focus), 200)->ignore
     } else if key == ";" {
       Route.Settings->Route.toPath->RescriptReactRouter.push
     } else if key == "," {
@@ -45,9 +45,11 @@ let useKeys = () => {
     } else if key == "p" {
       Invoke.playPrevious()->ignore
     } else if key == "q" {
-      "#queue-sidebar"->Util.Dom.querySelectAndThen(Util.Dom.click)
+      "#queue-sidebar"->Domapi.querySelectAndThen(Domapi.click)
     } else if key == "s" {
-      "#play-all"->Util.Dom.querySelectAndThen(Util.Dom.click)
+      "#play-all"->Domapi.querySelectAndThen(Domapi.click)
+    } else if key == "t" {
+      "#current-track"->Domapi.querySelectAndThen(Domapi.click)
     } else if key == "ArrowLeft" || key == "h" {
       Invoke.rewind10Seconds()->ignore
     } else if key == "ArrowRight" || key == "l" {
@@ -64,7 +66,7 @@ let useKeys = () => {
       switch digit {
       | Some(i) => {
           let id = (i == 0 ? 9 : i - 1)->Int.toString
-          `#side-item-${id}`->Util.Dom.querySelectAndThen(Util.Dom.click)
+          `#side-item-${id}`->Domapi.querySelectAndThen(Domapi.click)
         }
       | None => ignore()
       }

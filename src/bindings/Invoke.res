@@ -31,7 +31,7 @@ let getTracksByAlbums: fn<getTracksByAlbumsArgs, tracks> = make("get_tracks_by_a
 let getAllArtists: fn<unit, array<Shape.Artist.t>> = make("get_all_artists")
 type getTrackCoverArtArgs = {album: string, trackUri: string}
 let getTrackCoverArt: fn<getTrackCoverArtArgs, coverArt> = make("get_track_cover_art")
-type getAlbumCoverArtArgs = {album: string, isSmall: bool}
+type getAlbumCoverArtArgs = {album: string, size: Shape.CoverSize.t}
 let getAlbumCoverArt: fn<getAlbumCoverArtArgs, coverArt> = make("get_album_cover_art")
 type getArtistCoverArtArgs = {artistId: float}
 let getArtistCoverArt: fn<getArtistCoverArtArgs, coverArt> = make("get_artist_cover_art")
@@ -46,7 +46,7 @@ let searchTracksGrouped: fn<searchTracksGroupedArgs, array<Shape.Album.group>> =
   "search_tracks_grouped",
 )
 let getPlayingAlbumGroups: fn<unit, array<Shape.Album.group>> = make("get_playing_album_groups")
-let getRemainingAlbumGroups: fn<unit, array<Shape.Album.group>> = make("get_remaining_album_groups")
+let getPlayingTracks: fn<unit, tracks> = make("get_playing_tracks")
 let getQueuedAlbumGroups: fn<unit, array<Shape.Album.group>> = make("get_queued_album_groups")
 let getQueuedTracks: fn<unit, tracks> = make("get_queued_tracks")
 type playArgs = {trackUri: string}
@@ -116,3 +116,5 @@ let getSmartPlaylistTracks: fn<getSmartPlaylistTracksArgs, tracks> = make(
 )
 let getPlaylistsTracksById: fn<byId, tracks> = make("get_playlists_tracks_by_id")
 let findAlbumById: fn<byId, Nullable.t<Shape.Album.t>> = make("find_album_by_id")
+type getRelatedTracksArgs = {trackId: float, trackUri: string, artistNames: array<string>}
+let getRelatedTracks: fn<getRelatedTracksArgs, tracks> = make("get_related_tracks")

@@ -4,7 +4,7 @@ module SP = Shape.SmartPlaylist
 module SelectColumn = {
   @react.component
   let make = (~value, ~onChange) => {
-    let onChange = evt => evt->Util.Dom.targetValue->Rule.columnFromString->onChange
+    let onChange = evt => evt->Domapi.targetValue->Rule.columnFromString->onChange
     let makeOption = col => {
       let value = col->Rule.columnToString
       <option value> {value->React.string} </option>
@@ -25,7 +25,7 @@ module SelectColumn = {
 module SelectOperation = {
   @react.component
   let make = (~value, ~onChange, ~column: Rule.column) => {
-    let onChange = evt => evt->Util.Dom.targetValue->Rule.operationFromString(column)->onChange
+    let onChange = evt => evt->Domapi.targetValue->Rule.operationFromString(column)->onChange
     let makeOption = op => {
       let value = op->Rule.operationToString
       <option key=value value> {value->React.string} </option>
@@ -52,7 +52,7 @@ let make = (~rule: Rule.t, ~dispatch: SP.dispatch, ~index, ~match: SP.match) => 
 
   let onChange = evt => {
     evt->ReactEvent.Form.stopPropagation
-    let val = evt->Util.Dom.targetValue
+    let val = evt->Domapi.targetValue
     dispatch(
       UpdateRule(
         index - 1,

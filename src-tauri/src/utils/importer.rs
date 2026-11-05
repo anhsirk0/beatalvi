@@ -1,4 +1,4 @@
-use crate::models::{AlbumInfo, NameIdMap};
+use crate::models::{AlbumInfo, CoverSize, NameIdMap};
 use crate::utils::config;
 use crate::utils::database;
 use crate::utils::reader;
@@ -58,13 +58,8 @@ fn delete_tracks_and_related_stuff(conn: &Connection, ids: &[i64]) -> Result<()>
     Ok(())
 }
 
-fn get_album_cover_art_path(album: &str, is_small: bool) -> PathBuf {
-    let name = if is_small {
-        format!("{}_sm.jpg", slugify(album))
-    } else {
-        format!("{}.jpg", slugify(album))
-    };
-    config::get_cache_dir().join(name)
+fn get_album_cover_art_path(album: &str, cover_size: &CoverSize) -> PathBuf {
+    config::get_cache_dir().join(cover_size.name(album))
 }
 
 pub fn get_new_or_updated_tracks_files(
@@ -206,11 +201,11 @@ pub fn remove_deleted_tracks(
 fn store_album_cover_from_uri(
     track_uri: &str,
     album_path: &Path,
-    is_small: bool,
+    cover_size: &CoverSize,
 ) -> Result<Vec<u8>, Box<dyn Error>> {
     let uri = Url::parse(&track_uri).unwrap();
     let track_path = uri.to_file_path().expect("Failed to get path from uri");
-    match reader::get_cover_art_bytes_from_path(&track_path, is_small) {
+    match reader::get_cover_art_bytes_from_path(&track_path, cover_size) {
         Ok(buf) => {
             let mut out_file = File::create(&album_path).unwrap();
             out_file.write_all(&buf).unwrap();
@@ -223,55 +218,43 @@ fn store_album_cover_from_uri(
 pub fn get_and_set_cover_art(
     album: &str,
     track_uri: &str,
-    is_small: bool,
+    cover_size: &CoverSize,
 ) -> Result<Vec<u8>, Box<dyn Error>> {
-    let path = get_album_cover_art_path(album, is_small);
+    let path = get_album_cover_art_path(album, &cover_size);
     if path.exists() {
         Ok(std::fs::read(&path).expect("Failed to read"))
     } else {
-        let buf = store_album_cover_from_uri(&track_uri, &path, is_small)?;
+        let buf = store_album_cover_from_uri(&track_uri, &path, cover_size)?;
         Ok(buf)
     }
 }
 
-pub fn get_cover_art(album: &str, is_small: bool) -> Result<Vec<u8>, Box<dyn Error>> {
-    let path = get_album_cover_art_path(album, is_small);
+pub fn get_cover_art(album: &str, cover_size: &CoverSize) -> Result<Vec<u8>, Box<dyn Error>> {
+    let path = get_album_cover_art_path(album, cover_size);
     Ok(std::fs::read(&path)?)
 }
 
 pub fn generate_cover_art_cache() -> Result<(), Box<dyn Error>> {
     let album_tracks = database::get_one_track_per_album()?;
+    let sizes: Vec<CoverSize> = vec![CoverSize::Small, CoverSize::Medium, CoverSize::Large];
 
     album_tracks.par_iter().for_each(|item| {
-        let cover_name = format!("{}.jpg", slugify(&item.album_name));
-        let path = config::get_cache_dir().join(cover_name);
-        if !path.exists() {
-            if let Err(e) = store_album_cover_from_uri(&item.track_uri, &path, false) {
-                eprintln!("Failed to store album cover: {}", e);
+        sizes.par_iter().for_each(|size| {
+            let path = config::get_cache_dir().join(size.name(&item.album_name));
+            if !path.exists() {
+                if let Err(e) = store_album_cover_from_uri(&item.track_uri, &path, size) {
+                    eprintln!("Failed to store album cover: {}", e);
+                }
             }
-        }
-        let cover_name_sm = format!("{}_sm.jpg", slugify(&item.album_name));
-        let path = config::get_cache_dir().join(cover_name_sm);
-        if !path.exists() {
-            if let Err(e) = store_album_cover_from_uri(&item.track_uri, &path, true) {
-                eprintln!("Failed to store sm album cover: {}", e);
-            }
-        }
+        });
+        // let cover_name_sm = format!("{}_sm.jpg", slugify(&item.album_name));
+        // let path = config::get_cache_dir().join(cover_name_sm);
+        // if !path.exists() {
+        //     if let Err(e) = store_album_cover_from_uri(&item.track_uri, &path, true) {
+        //         eprintln!("Failed to store sm album cover: {}", e);
+        //     }
+        // }
     });
 
     Ok(())
-}
-
-fn slugify(s: &str) -> String {
-    s.to_lowercase()
-        .chars()
-        .map(|c| match c {
-            'a'..='z' | '0'..='9' | 'A'..='Z' => c,
-            ' ' | '-' | '_' => '-',
-            _ => ' ', // Replace special chars with space
-        })
-        .collect::<String>()
-        .split_whitespace()
-        .collect::<Vec<&str>>()
-        .join("-")
 }

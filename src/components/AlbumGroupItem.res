@@ -8,7 +8,7 @@ module TrackItem = {
     let onClick = _ => Invoke.play({trackUri: track.uri})->ignore
 
     let onMouseDown = evt => {
-      "#search-input"->Util.Dom.querySelectAndThen(Util.Dom.blur)
+      "#search-input"->Domapi.querySelectAndThen(Domapi.blur)
       if evt->ReactEvent.Mouse.button == 1 {
         evt->ReactEvent.Mouse.preventDefault
         Invoke.queueToggleTrack({uri: track.uri})->ignore
@@ -34,7 +34,7 @@ let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~id
 
   let id = `group-${idx->Int.toString}-${group.id->Float.toString}`
   let _ = Hook.useFetch({
-    fn: () => Invoke.getAlbumCoverArt({album: group.name, isSmall: true}),
+    fn: () => Invoke.getAlbumCoverArt({album: group.name, size: Shape.CoverSize.Small}),
     onSuccess: Shape.Bytes.setCover(_, id),
   })
 

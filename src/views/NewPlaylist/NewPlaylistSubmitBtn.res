@@ -4,7 +4,7 @@ let make = (~onSubmit, ~name: option<string>=?) => {
 
   let onChange = evt => {
     evt->ReactEvent.Form.stopPropagation
-    setValue(_ => evt->Util.Dom.targetValue)
+    setValue(_ => evt->Domapi.targetValue)
   }
 
   <div className="flex flex-col gap-4 mt-auto">

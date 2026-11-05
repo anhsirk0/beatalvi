@@ -444,3 +444,7 @@ module Playlist = {
     }
   }
 }
+
+module CoverSize = {
+  type t = | @as("small") Small | @as("medium") Medium | @as("large") Large
+}

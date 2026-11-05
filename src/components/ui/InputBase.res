@@ -4,7 +4,7 @@ let make = props => {
   let onKeyDown = evt => {
     evt->ReactEvent.Keyboard.stopPropagation
     if ReactEvent.Keyboard.key(evt) == "Escape" {
-      el.current->Nullable.forEach(input => input->Util.Dom.blur)
+      el.current->Nullable.forEach(input => input->Domapi.blur)
     }
   }
 

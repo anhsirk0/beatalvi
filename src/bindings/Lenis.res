@@ -30,11 +30,6 @@ type useLenisFn = t => unit
 @module("lenis/react")
 external useLenis: useLenisFn => unit = "useLenis"
 
-let prevent = el => {
-  open Util.Dom
-  !(el->Classlist.classlist->Classlist.contains("overflow-y-auto"))
-}
-
 let options = {
   autoRaf: true,
   allowNestedScroll: true,
@@ -59,7 +54,7 @@ let useScroller = () => {
   React.useEffect(() => {
     switch scroller {
     | Some(wrapper) =>
-      switch wrapper->Util.Dom.firstElementChild {
+      switch wrapper->Domapi.firstElementChild {
       | Some(content) =>
         let lenis = make({
           wrapper,

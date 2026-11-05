@@ -4,7 +4,7 @@ module SP = Shape.SmartPlaylist
 module SelectOrder = {
   @react.component
   let make = (~value, ~onChange) => {
-    let onChange = evt => evt->Util.Dom.targetValue->SP.orderFromString->onChange
+    let onChange = evt => evt->Domapi.targetValue->SP.orderFromString->onChange
 
     let makeOption = ord => {
       let value = ord->SP.orderToString
@@ -26,7 +26,7 @@ let make = (~data: option<Shape.Playlist.data>=?, ~playlists: array<Shape.Playli
 
   let onChange = evt => {
     evt->ReactEvent.Form.stopPropagation
-    dispatch(SetLimit(evt->Util.Dom.targetValue->Int.fromString->Option.getOr(0)))
+    dispatch(SetLimit(evt->Domapi.targetValue->Int.fromString->Option.getOr(0)))
   }
 
   let onAddNewRule = _ => {

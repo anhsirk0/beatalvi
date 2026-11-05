@@ -94,6 +94,7 @@ let make = () => {
             | Playlist(id) => <PlaylistView id key={id->Float.toString} />
             | NewPlaylist(kind) => <NewPlaylist kind />
             | EditPlaylist(id) => <EditPlaylist id />
+            | CurrentTrack => <CurrentTrackView />
             | NotFound => <ErrorPage />
             }}
           </div>

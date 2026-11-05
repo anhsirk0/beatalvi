@@ -3,7 +3,7 @@ let make = (~track: Shape.Track.t) => {
   let (position, update) = Store.Player.useShallow(s => (s.data.position, s.update))
   let id = `playing-track-${track.id->Float.toString}`
   let onChange = evt => {
-    switch evt->Util.Dom.targetValue->Int.fromString {
+    switch evt->Domapi.targetValue->Int.fromString {
     | Some(seconds) => Invoke.seek({seconds: seconds})->ignore
     | None => ignore()
     }
@@ -34,13 +34,17 @@ let make = (~track: Shape.Track.t) => {
   })
 
   <React.Fragment>
-    <div className="flex r-gap shrink-0 min-w-72 2xl:min-w-88">
+    <Route.Link
+      id="current-track"
+      to=CurrentTrack
+      className="flex r-gap shrink-0 min-w-72 2xl:min-w-88 hover:bg-primary/25 rounded-box"
+    >
       <div
         className="size-12 lg:size-12 2xl:size-14 bg-primary/40 rounded-box flex shrink-0 overflow-hidden nb-outline relative isolate"
       >
         <img alt="" key=id id className="object-cover h-full z-10" />
         <div className="center p-4 absolute inset-0 animate-fade">
-          <p className="text-2xl text-center text-accent font-serif">
+          <p className="text-2xl text-center text-accent font-serif text-80">
             {Constant.logo->React.string}
           </p>
         </div>
@@ -49,7 +53,7 @@ let make = (~track: Shape.Track.t) => {
         <div className="font-semibold r-text truncate"> {track.name->React.string} </div>
         <div className="r-text-sm text-80 truncate"> {track.artist->React.string} </div>
       </div>
-    </div>
+    </Route.Link>
     <div className="flex items-center r-gap grow invisible xl:visible">
       <p className="r-text font-medium text-right min-w-16 2xl:min-w-24">
         {position->Util.durationToString->React.string}

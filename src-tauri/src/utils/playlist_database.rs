@@ -245,3 +245,23 @@ pub fn get_playlist_tracks(id: i64) -> Result<Vec<Track>> {
 
     Ok(tracks)
 }
+
+pub fn get_other_tracks_in_playlist(track_uri: &str) -> Result<Vec<Track>> {
+    let conn = Connection::open(config::get_playlist_db_path())?;
+    let mut stmt = conn.prepare(
+        "SELECT t2.playlist_id, t2.uri
+         FROM tracks t1
+         JOIN tracks t2 ON t2.playlist_id = t1.playlist_id
+         WHERE t1.uri = ?1
+           AND t2.uri != ?1
+         ORDER BY t2.playlist_id ASC
+         LIMIT 10",
+    )?;
+
+    let uris = stmt
+        .query_map(params![track_uri], |row| Ok(row.get::<_, String>(1)?))?
+        .collect::<Result<Vec<_>, _>>()?;
+
+    let tracks = database::get_tracks_by_uris(uris)?;
+    Ok(tracks)
+}
