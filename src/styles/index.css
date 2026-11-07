@@ -24,12 +24,12 @@
     src: local("Fraunces"), url("./fonts/Fraunces/Fraunces-Variable.ttf");
   }
 
-  @font-face {
-    font-family: Instrument;
-    font-display: swap;
-    font-style: italic;
-    src: local("Instrument"), url("./fonts/Instrument/Instrument-Italic.ttf");
-  }
+  /* @font-face { */
+  /*   font-family: Instrument; */
+  /*   font-display: swap; */
+  /*   font-style: italic; */
+  /*   src: local("Instrument"), url("./fonts/Instrument/Instrument-Italic.ttf"); */
+  /* } */
 
   @font-face {
     font-family: Baloo;
