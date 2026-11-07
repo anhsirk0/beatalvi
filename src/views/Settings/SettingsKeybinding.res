@@ -65,7 +65,7 @@ module Navigation = {
       <Item title="Settings">
         <Kbd k=";" />
       </Item>
-      <Item title="Current track view">
+      <Item title="Current song view">
         <Kbd k="t" />
       </Item>
     </div>

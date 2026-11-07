@@ -26,7 +26,7 @@ module Content = {
           </Route.Link>
         </div>
       : <div className="center r-gap flex-col size-full">
-          <p className="font-instrument r-text-3xl font-light text-center italic">
+          <p className="font-fraunces font-light r-text-3xl text-center italic">
             {"Every collection begins with a single song."->React.string}
           </p>
           <p className="r-text-lg text-center text-60">

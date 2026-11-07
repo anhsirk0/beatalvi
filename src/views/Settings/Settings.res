@@ -6,12 +6,12 @@ let make = () => {
 
   let makeTab = tab => {
     let isActive = tab == view
-    let cls = isActive ? "nb-box nb-active bg-primary text-primary-content" : ""
+    let cls = isActive ? "bg-base-content text-base-200" : ""
     <div
       tabIndex=0
       role="button"
       onClick={_ => setView(_ => tab)}
-      className={`p-4 2xl:p-6 py-2 2xl:py-3 r-text-lg font-medium cursor-pointer ${cls}`}
+      className={`p-4 2xl:p-6 py-2 2xl:py-3 r-text-lg font-medium cursor-pointer rounded-box ${cls}`}
     >
       {tab->String.make->React.string}
     </div>

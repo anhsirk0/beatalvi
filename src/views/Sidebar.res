@@ -1,13 +1,11 @@
 module Item = {
   @react.component
   let make = (~route: Route.t, ~active: Route.t, ~idx, ~title) => {
-    let isSelected = route == active
+    let isActive = route == active
 
-    let bg = isSelected ? "bg-primary text-primary-content" : "hover:bg-primary/20"
+    let bg = isActive ? "bg-neutral-content text-neutral" : "hover:bg-neutral-content/20"
     let className = `flex flex-row p-2 2xl:py-3 px-4 gap-3 ${bg} rounded-box relative isolate overflow-hidden items-center cursor-pointer shrink-0 transitional duration-300`
-    let iconClassname = isSelected
-      ? "r-icon text-primary-content"
-      : "r-icon text-neutral-content/80"
+    let iconClassname = isActive ? "r-icon text-primary-content" : "r-icon text-neutral-content/80"
 
     <Route.Link to=route className id={`side-item-${idx->Int.toString}`} replace=true>
       {React.createElement(route->Route.toIcon, {className: iconClassname, weight: Bold})}

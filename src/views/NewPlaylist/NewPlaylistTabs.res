@@ -1,7 +1,7 @@
 @react.component
 let make = (~kind: Shape.Playlist.kind) => {
   let makeTab = tab => {
-    let cls = tab == kind ? "btn-primary" : "bg-base-100"
+    let cls = tab == kind ? "btn-neutral" : "bg-base-100"
     <Route.Link
       replace=true
       to=NewPlaylist(tab)

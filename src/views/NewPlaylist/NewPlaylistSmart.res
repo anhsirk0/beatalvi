@@ -90,7 +90,7 @@ let make = (~data: option<Shape.Playlist.data>=?, ~playlists: array<Shape.Playli
   }
 
   let makeMatchBtn = m => {
-    let cls = m == state.match ? "bg-primary text-primary-content" : ""
+    let cls = m == state.match ? "bg-base-content text-base-200" : ""
     let label = switch m {
     | All => "All rules"
     | Any => "Any rule"

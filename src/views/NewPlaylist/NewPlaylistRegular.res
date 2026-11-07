@@ -152,7 +152,7 @@ module Content = {
         {filteredSelected->Array.length > 0
           ? <TrackList data=filteredSelected onToggle selected forSelected=true />
           : <div className="center size-full">
-              <p className="r-text-2xl font-instrument font-light italic text-center">
+              <p className="r-text-2xl font-fraunces font-light italic text-center">
                 {"Selected songs will gather here."->React.string}
               </p>
             </div>}

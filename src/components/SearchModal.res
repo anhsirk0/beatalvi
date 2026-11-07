@@ -18,7 +18,7 @@ module Content = {
             )
             ->React.array
           : <div className="center grow">
-              <p className="font-instrument r-text-3xl font-light italic">
+              <p className="font-fraunces font-light r-text-3xl italic">
                 {"Not every word finds its tune."->React.string}
               </p>
             </div>
@@ -50,7 +50,7 @@ let make = (~onClose) => {
       ? <Content query key=query />
       : <div className="center grow">
           <p className="r-text-xl text-80">
-            {"Search for tracks, albums and artists"->React.string}
+            {"Search for songs, albums and artists"->React.string}
           </p>
         </div>}
   </Modal>

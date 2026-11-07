@@ -7,7 +7,6 @@ let make = () => {
           <div className="flex rounded-box size-full overflow-hidden">
             <div className="h-full flex-1 bg-base-300/50" />
             <div className="h-full flex-1 bg-neutral" />
-            // <div className="h-full flex-1 bg-neutral/40" />
             <div className="h-full flex-1 bg-secondary" />
             <div className="h-full flex-1 bg-primary/60" />
             <div className="h-full flex-1 bg-error/80" />

@@ -10,7 +10,7 @@ module Card = {
         <div className="flex flex-row grow">
           <div className="w-2/5 h-full bg-neutral"></div>
           <div className="w-3/5 h-full bg-base-200 p-4">
-            <div className="nb-box bg-primary h-4 w-16"></div>
+            <div className="nb-box bg-primary h-8 w-16"></div>
           </div>
         </div>
         <div className="flex p-4 justify-between border-t-2 border-accent bg-base-100">

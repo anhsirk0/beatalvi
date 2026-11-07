@@ -65,7 +65,7 @@ let make = () => {
             itemContent={(idx, group) => <Item group idx key={idx->Int.toString} />}
             scrollerRef
           />
-        : <p className="font-instrument r-text-2xl font-light text-center italic mt-[100%]">
+        : <p className="font-fraunces font-light r-text-2xl text-center italic mt-[100%]">
             {"The night is quiet."->React.string}
             <br />
             {"Play something"->React.string}

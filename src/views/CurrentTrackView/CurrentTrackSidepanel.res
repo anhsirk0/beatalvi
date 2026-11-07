@@ -1,13 +1,28 @@
 module TrackList = {
   @react.component
-  let make = (~tracks: array<Shape.Track.t>) => {
+  let make = (~tracks: array<Shape.Track.t>, ~scrollToIdx=?) => {
+    let containerRef = React.useRef(Nullable.null)
     let scrollerRef = Lenis.useScroller()
 
-    let onTrackPlay = idx => {
+    let onTrackPlay = idx =>
       Invoke.playManyFromIndex({uris: tracks->Array.map(t => t.uri), index: idx})->ignore
-    }
+
+    React.useEffect0(() => {
+      let id = setTimeout(() => {
+        switch containerRef.current->Nullable.toOption {
+        | Some(flex) =>
+          switch scrollToIdx {
+          | Some(idx) => flex->Virtuoso.scrollToIndex({index: idx})
+          | None => ignore()
+          }
+        | None => ignore()
+        }
+      }, 400)
+      Some(() => clearTimeout(id))
+    })
 
     <Virtuoso
+      ref=containerRef
       className="flex flex-col min-h-0 gap-4 2xl:gap-8 grow min-w-0 [&>div]:px-2"
       style={{display: "flex", flexDirection: "column", height: "100%", flexGrow: "1"}}
       data=tracks
@@ -20,12 +35,13 @@ module TrackList = {
 
 module Playing = {
   @react.component
-  let make = () => {
+  let make = (~track: Shape.Track.t) => {
     let tracks = Hook.useFetch({fn: Invoke.getPlayingTracks})
 
     switch tracks {
     | Loading | Failed => React.null
-    | Success(tracks) => <TrackList tracks />
+    | Success(tracks) =>
+      <TrackList tracks scrollToIdx=?{tracks->Array.findIndexOpt(t => t.uri == track.uri)} />
     }
   }
 }
@@ -64,7 +80,7 @@ let make = (~track) => {
     <div
       onClick={_ => setView(_ => tab)}
       role="tab"
-      className={`px-4 py-2 text-center r-text-lg cursor-pointer ${cls} border-b-2`}
+      className={`px-4 py-2 text-center r-text cursor-pointer ${cls} border-b-2`}
     >
       {tab->String.make->React.string}
     </div>
@@ -77,7 +93,7 @@ let make = (~track) => {
       <div className="grow border-b-base-content/40 border-b-2"></div>
     </div>
     {switch view {
-    | UpNext => <Playing />
+    | UpNext => <Playing track />
     | Related => <Related track />
     }}
   </React.Fragment>

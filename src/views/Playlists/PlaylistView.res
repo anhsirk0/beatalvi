@@ -17,7 +17,7 @@ module Content = {
             {playlist.name->React.string}
           </p>
           <p className="r-text pl-2 text-60">
-            {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
+            {`${trackCount->Int.toString} song${trackCount == 1 ? "" : "s"}`->React.string}
             <span className="px-4"> {Constant.sep->React.string} </span>
             {trackDuration->Util.durationToTimeString->React.string}
           </p>
@@ -50,7 +50,7 @@ module Content = {
             ->React.array}
           </div>
         : <div className="center r-gap flex-col border-t-2 border-accent">
-            <p className="font-instrument r-text-3xl font-light text-center italic mt-[20%]">
+            <p className="font-fraunces r-text-3xl font-light text-center italic mt-[20%]">
               {"No song fits these words yet."->React.string}
             </p>
             <p className="r-text-lg text-center text-60">

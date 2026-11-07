@@ -70,7 +70,7 @@ let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~id
           : <Icon.caretUp className="r-icon" weight=Bold />}
         {showTrackCount
           ? <div className="r-text-sm whitespace-nowrap">
-              {group.tracks->Array.length->Util.toAmountLabel("Track")->React.string}
+              {group.tracks->Array.length->Util.toAmountLabel("Song")->React.string}
             </div>
           : React.null}
       </div>

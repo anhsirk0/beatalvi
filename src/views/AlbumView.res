@@ -80,7 +80,7 @@ module Content = {
           | Loading | Failed => React.null
           | Success(_) =>
             <p className="r-text pl-1 text-60">
-              {`${trackCount->Int.toString} track${trackCount == 1 ? "" : "s"}`->React.string}
+              {`${trackCount->Int.toString} song${trackCount == 1 ? "" : "s"}`->React.string}
               <span className="px-4"> {Constant.sep->React.string} </span>
               {trackDuration->Util.durationToTimeString->React.string}
               <span className="px-4"> {Constant.sep->React.string} </span>
