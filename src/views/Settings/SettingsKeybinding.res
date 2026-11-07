@@ -40,6 +40,9 @@ module CliArgs = {
       <Item title="Toggle dark mode">
         <Kbd k="--dark-toggle" />
       </Item>
+      <Item title="Set theme by name">
+        <Kbd k="--accent <STRING>" />
+      </Item>
     </div>
   }
 }

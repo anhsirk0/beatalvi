@@ -510,6 +510,10 @@ fn toggle_dark_mode(app_handle: AppHandle) {
     let _ = app_handle.emit(event::TOGGLE_DARK_MODE, true);
 }
 
+fn set_theme(theme: String, app_handle: AppHandle) {
+    let _ = app_handle.emit(event::SET_THEME, theme);
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let _ = config::create_config_dir_if_not_exists();
@@ -542,6 +546,8 @@ pub fn run() {
                         seek_forward(seconds, app.app_handle().clone(), app.state());
                     } else if let Some(seconds) = args.rewind {
                         rewind(seconds, app.app_handle().clone(), app.state());
+                    } else if let Some(theme) = args.accent {
+                        set_theme(theme, app.app_handle().clone());
                     }
                 }
             }

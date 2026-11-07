@@ -21,6 +21,7 @@ let listenQueueToggle = (fn: string => unit) => listen("queue_toggle", d => fn(d
 let listenVolume = (fn: int => unit) => listen("volume", d => fn(d.payload))
 let listenAlbumLoved = (fn: ((float, bool)) => unit) => listen("loved", d => fn(d.payload))
 let listenToggleDarkMode = (fn: unit => unit) => listen("toggle_dark_mode", _ => fn())
+let listenSetTheme = (fn: string => unit) => listen("set_theme", d => fn(d.payload))
 
 // let listenTrackState = (fn: Shape.Track.state => unit) => listen("track_state", d => fn(d.payload))
 

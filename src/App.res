@@ -65,6 +65,13 @@ let make = () => {
     update(SetPosition(0))
   })
 
+  Event.useListen(Event.listenSetTheme, str => {
+    switch str->Theme.fromString {
+    | Some(theme) => updateConfig(SetTheme(theme))
+    | None => ignore()
+    }
+  })
+
   <React.Fragment>
     <Toast.Toaster />
     <div className="drawer drawer-end size-full">

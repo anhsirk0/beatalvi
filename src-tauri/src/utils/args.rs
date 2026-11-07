@@ -29,4 +29,8 @@ pub struct Args {
     /// Toggle dark mode
     #[arg(short, long)]
     pub dark_toggle: bool,
+
+    /// Set accent color (if exists)
+    #[arg(short, long)]
+    pub accent: Option<String>,
 }

@@ -35,12 +35,30 @@ let darkThemes = [
   MangoDark,
 ]
 
-// let fromString = s =>
-//   switch s {
-//   | "lemon" => Lemon
-//   | "lemon-dark" => LemonDark
-//   | _ => defaultTheme
-//   }
+let fromString = s =>
+  switch s {
+  | "lemon" => Some(Lemon)
+  | "lemon-dark" => Some(LemonDark)
+  | "bubblegum" => Some(Bubblegum)
+  | "bubblegum-dark" => Some(BubblegumDark)
+  | "ocean" => Some(Ocean)
+  | "ocean-dark" => Some(OceanDark)
+  | "orchid" => Some(Orchid)
+  | "orchid-dark" => Some(OrchidDark)
+  | "forest" => Some(Forest)
+  | "forest-dark" => Some(ForestDark)
+  | "coral" => Some(Coral)
+  | "coral-dark" => Some(CoralDark)
+  | "sunflower" => Some(Sunflower)
+  | "sunflower-dark" => Some(SunflowerDark)
+  | "cherry" => Some(Cherry)
+  | "cherry-dark" => Some(CherryDark)
+  | "sky" => Some(Sky)
+  | "sky-dark" => Some(SkyDark)
+  | "mango" => Some(Mango)
+  | "mango-dark" => Some(MangoDark)
+  | _ => None
+  }
 
 external toString: t => string = "%identity"
 
