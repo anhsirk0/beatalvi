@@ -23,7 +23,7 @@ let make = () => {
         {"ਬੀਟਾਲਵੀ"->React.string}
       </div>
       <div className="r-text-lg text-60 text-center">
-        {"A music player for the files you own."->React.string}
+        {"Bold player, soft soul"->React.string}
       </div>
     </div>
 
