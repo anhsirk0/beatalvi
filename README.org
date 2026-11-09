@@ -6,18 +6,58 @@
 #+NAME: logo.svg
 [[https://codeberg.org/anhsirk0/beatalvi/raw/branch/main/public/icon.svg]]
 
-Beatalvi is a local music player for the files you own. You can play almost any type of music from your system.
-It supports playlists (smart and regular). 10 accent colors, light and dark mode. Most of the things can be done via keybindings.
-You can control beatalvi from outside of the player via command line arguments.
+Beatalvi is a local music player for the files you own.
 Website/Screenshots: https://anhsirk0.codeberg.page/beatalvi/
 
 ** Features
   - Support aac, alac, flac, isomp4, mp3, ogg, vorbis and wav files
   - Keybindings for controlling the playback/navigation
-  - Polished UI with Neobrutal design with vibrant colors
-  - Playlist option (smart and regular)
+  - Polished UI with a neo-brutalist design and vibrant colors
+  - Playlist support (smart and regular)
   - Light/dark mode with 10 accent colors
   - CLI args to control the player (or via script)
   - No networking fully offline
   - Lightweight and fast (relatively)
+
+** Tech stack
+*** Backend
+  - [[https://gstreamer.freedesktop.org][Gstreamer]]
+  - [[https://rust-lang.org][Rust]]
+  - [[https://sqlite.org][Sqlite]]
+  - [[https://deno.com][Deno]]
+  - [[https://v2.tauri.app][Tauri v2]]
+*** Frontend
+  - [[https://rescript-lang.org/][Rescript]]
+  - [[https://react.dev][React]]
+  - [[https://tailwindcss.com][Tailwindcss]]
+  - [[https://daisyui.com][DaisyUI]]
+  - [[https://phosphoricons.com][Phosphor Icons]]
+  - [[https://lenis.dev][Lenis smooth scroll]]
+  - [[https://virtuoso.dev][React Virtuoso]]
+  - [[https://zustand.docs.pmnd.rs][Zustand]]
+  - [[https://atomiks.github.io/tippyjs][Tippyjs]]
+  - [[https://react-hot-toast.com][react-hot-toast]]
+
+** Development
+*** Dependencies
+  - [[https://gstreamer.freedesktop.org][Gstreamer]]
+  - [[https://deno.com][Deno]]
+  - [[https://v2.tauri.app][Tauri v2]]
+
+*** Update config for dev
+#+BEGIN_SRC rust
+pub fn get_db_path() -> PathBuf {
+    // get_config_dir().join("beatalvi.db")
+    get_config_dir().join("beatalvi-dev.db")
+}
+#+END_SRC
+
+#+BEGIN_SRC rust
+pub fn get_music_dir() -> PathBuf {
+    dirs::home_dir()
+        .expect("failed to get home dir")
+        // .join("Music")
+        .join("test")
+}
+#+END_SRC
 
