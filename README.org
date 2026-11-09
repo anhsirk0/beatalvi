@@ -61,3 +61,36 @@ pub fn get_music_dir() -> PathBuf {
 }
 #+END_SRC
 
+*** Run rescript server
+#+BEGIN_SRC shell
+deno task dev:res  
+#+END_SRC
+*** Run tauri server
+#+BEGIN_SRC shell
+deno task tauri dev
+#+END_SRC
+
+** Building
+*** Update config for build
+#+BEGIN_SRC rust
+pub fn get_db_path() -> PathBuf {
+    get_config_dir().join("beatalvi.db")
+}
+#+END_SRC
+
+#+BEGIN_SRC rust
+pub fn get_music_dir() -> PathBuf {
+    dirs::home_dir()
+        .expect("failed to get home dir")
+        .join("Music")
+}
+#+END_SRC
+*** Remove development build files (optional, to save disk space)
+#+BEGIN_SRC shell
+rm -rf src-tauri/target/*
+#+END_SRC
+*** Run tauri build command
+#+BEGIN_SRC shell
+deno task tauri build
+#+END_SRC
+
