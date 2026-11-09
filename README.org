@@ -1,2 +1,17 @@
 * Beatalvi - Bold player, soft soul
-Website: https://anhsirk0.codeberg.page/beatalvi/
+** About
+Beatalvi is a local music player for the files you own. You can play almost any type of music from your system.
+It supports playlists (smart and regular). 10 accent colors, light and dark mode. Most of the things can be done via keybindings.
+You can control beatalvi from outside of the player via command line arguments.
+Website/Screenshots: https://anhsirk0.codeberg.page/beatalvi/
+
+** Features
+  - Support aac, alac, flac, isomp4, mp3, ogg, vorbis and wav files
+  - Keybindings for controlling the playback/navigation
+  - Polished UI with Neobrutal design with vibrant colors
+  - Playlist option (smart and regular)
+  - Light/dark mode with 10 accent colors
+  - CLI args to control the player (or via script)
+  - No networking fully offline
+  - Lightweight and fast (relatively)
+
