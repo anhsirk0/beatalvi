@@ -18,7 +18,6 @@ https://anhsirk0.codeberg.page/beatalvi#screenshots
   - Light/dark mode with 10 accent colors.
   - CLI args to control the player (or via script).
   - No networking fully offline.
-  - Lightweight and fast (relatively).
 ** Scripting
 Beatalvi stores it database as =~/.config/beatalvi/beatalvi.db=
 the db can be use to fetch info about tracks/albums/artists etc.\\
