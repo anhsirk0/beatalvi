@@ -6,7 +6,7 @@
 #+NAME: logo.svg
 [[https://codeberg.org/anhsirk0/beatalvi/raw/branch/main/public/icon.svg]]
 
-Beatalvi is a local music player for the files you own.  
+Beatalvi is a local music player for the files you own.\\
 Website: https://anhsirk0.codeberg.page/beatalvi/
 ** Screenshots
 https://anhsirk0.codeberg.page/beatalvi#screenshots
@@ -19,7 +19,12 @@ https://anhsirk0.codeberg.page/beatalvi#screenshots
   - CLI args to control the player (or via script).
   - No networking fully offline.
   - Lightweight and fast (relatively).
-
+** Scripting
+Beatalvi stores it database as =~/.config/beatalvi/beatalvi.db=
+the db can be use to fetch info about tracks/albums/artists etc.\\
+Beatalvi has a cli arg =--queue <INT>= which can be to used add tracks via custom scripts.\\
+Script for =dmenu= and =rofi= are provided and can be find inside =scripts= directory.
+This scripts are written in perl, but you can use any language you want to port/extend these scripts.
 ** Tech stack
 *** Backend
   - [[https://gstreamer.freedesktop.org][Gstreamer]]
