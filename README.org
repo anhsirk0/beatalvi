@@ -1,7 +1,7 @@
 * Beatalvi - Bold player, soft soul
 ** About
 #+ATTR_ORG: :width 60
-#+ATTR_HTML: :width 60
+#+ATTR_HTML: :width 60px
 #+CAPTION: Logo
 #+NAME: logo.svg
 [[https://codeberg.org/anhsirk0/beatalvi/raw/branch/main/public/icon.svg]]
