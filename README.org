@@ -1,5 +1,9 @@
 * Beatalvi - Bold player, soft soul
 ** About
+#+CAPTION: Logo
+#+NAME: logo.svg
+[[https://codeberg.org/anhsirk0/beatalvi/raw/branch/main/public/icon.svg]]
+
 Beatalvi is a local music player for the files you own. You can play almost any type of music from your system.
 It supports playlists (smart and regular). 10 accent colors, light and dark mode. Most of the things can be done via keybindings.
 You can control beatalvi from outside of the player via command line arguments.
