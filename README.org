@@ -11,14 +11,14 @@ Website: https://anhsirk0.codeberg.page/beatalvi/
 ** Screenshots
 https://anhsirk0.codeberg.page/beatalvi#screenshots
 ** Features
-  - Support aac, alac, flac, isomp4, mp3, ogg, vorbis and wav files
-  - Keybindings for controlling the playback/navigation
-  - Polished UI with a neo-brutalist design and vibrant colors
-  - Playlist support (smart and regular)
-  - Light/dark mode with 10 accent colors
-  - CLI args to control the player (or via script)
-  - No networking fully offline
-  - Lightweight and fast (relatively)
+  - Support aac, alac, flac, isomp4, mp3, ogg, vorbis and wav files.
+  - Keybindings for controlling the playback/navigation.
+  - Polished UI with a neo-brutalist design and vibrant colors.
+  - Playlist support (smart and regular).
+  - Light/dark mode with 10 accent colors.
+  - CLI args to control the player (or via script).
+  - No networking fully offline.
+  - Lightweight and fast (relatively).
 
 ** Tech stack
 *** Backend
