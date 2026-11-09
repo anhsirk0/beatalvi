@@ -6,9 +6,10 @@
 #+NAME: logo.svg
 [[https://codeberg.org/anhsirk0/beatalvi/raw/branch/main/public/icon.svg]]
 
-Beatalvi is a local music player for the files you own.
-Website/Screenshots: https://anhsirk0.codeberg.page/beatalvi/
-
+Beatalvi is a local music player for the files you own.  
+Website: https://anhsirk0.codeberg.page/beatalvi/
+** Screenshots
+https://anhsirk0.codeberg.page/beatalvi#screenshots
 ** Features
   - Support aac, alac, flac, isomp4, mp3, ogg, vorbis and wav files
   - Keybindings for controlling the playback/navigation
