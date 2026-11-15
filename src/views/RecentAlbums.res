@@ -1,6 +1,6 @@
 @react.component
 let make = () => {
-  let albums = Hook.useFetch({fn: Invoke.getRecent64Albums})
+  let albums = Hook.useFetch({fn: Invoke.getRecent80Albums})
 
   switch albums {
   | Loading => React.null

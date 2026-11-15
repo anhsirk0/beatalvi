@@ -79,18 +79,18 @@ fn get_top_10_albums() -> Vec<BasicAlbum> {
 }
 
 #[tauri::command]
-fn get_top_64_albums() -> Vec<BasicAlbum> {
-    database::get_top_n_albums(64).unwrap_or(Vec::new())
+fn get_top_80_albums() -> Vec<BasicAlbum> {
+    database::get_top_n_albums(80).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
-fn get_random_64_albums() -> Vec<BasicAlbum> {
-    database::get_random_n_albums(64).unwrap_or(Vec::new())
+fn get_random_80_albums() -> Vec<BasicAlbum> {
+    database::get_random_n_albums(80).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
-fn get_recent_64_albums() -> Vec<BasicAlbum> {
-    database::get_recent_n_albums(64).unwrap_or(Vec::new())
+fn get_recent_80_albums() -> Vec<BasicAlbum> {
+    database::get_recent_n_albums(80).unwrap_or(Vec::new())
 }
 
 #[tauri::command]
@@ -392,10 +392,10 @@ fn get_volume(state: State<AppState>) -> i32 {
 
 #[tauri::command]
 fn set_volume(volume: i32, app_handle: AppHandle, state: State<AppState>) {
-    let vol = ((volume as f64) / 64.).max(0.).min(1.);
+    let vol = ((volume as f64) / 80.).max(0.).min(1.);
     match state.player.lock().unwrap().set_volume(vol) {
         Ok(_) => {
-            let _ = app_handle.emit(event::VOLUME, (vol * 64.) as i8);
+            let _ = app_handle.emit(event::VOLUME, (vol * 80.) as i8);
         }
         Err(e) => eprintln!("{:?}", e),
     }
@@ -569,10 +569,10 @@ pub fn run() {
             get_tracks_by_uris,
             get_top_10_tracks,
             get_top_10_albums,
-            get_top_64_albums,
-            get_random_64_albums,
+            get_top_80_albums,
+            get_random_80_albums,
             get_loved_albums,
-            get_recent_64_albums,
+            get_recent_80_albums,
             get_all_albums,
             find_album_by_id,
             get_tracks_by_albums,
