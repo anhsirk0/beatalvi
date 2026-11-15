@@ -1,5 +1,6 @@
 @react.component
 let make = (~track: Shape.Track.t, ~idx, ~onPlay, ~showArtist=false) => {
+  let (isOpen, _, setOpen) = Hook.useToggle() // track menu
   let currentTrack = Store.Player.useShallow(s => s.data.track)
   let isPlaying = Some(track.id) == currentTrack->Option.map(t => t.id)
   let bg = isPlaying ? "bg-primary text-primary-content nb-active" : "bg-base-100"
@@ -11,19 +12,28 @@ let make = (~track: Shape.Track.t, ~idx, ~onPlay, ~showArtist=false) => {
     }
   }
 
-  <div
-    role="button"
-    onClick={_ => onPlay()}
-    onMouseDown
-    className={`flex flex-row items-center cursor-pointer px-4 nb nb-box active:nb-plain gap-4 border-2 ${bg}`}
-  >
-    <TrackIndex uri=track.uri idx />
-    <p className="r-text-lg font-medium grow truncate py-2"> {track.name->React.string} </p>
-    {showArtist
-      ? <p className={`r-text font-medium ${isPlaying ? "text-primary-content/90" : "text-80"}`}>
-          {track.artist->React.string}
-        </p>
-      : React.null}
-    <p className="text-lg"> {track.duration->Util.durationToString->React.string} </p>
-  </div>
+  let onContextMenu = evt => {
+    ReactEvent.Mouse.preventDefault(evt)
+    setOpen(_ => true)
+  }
+
+  <React.Fragment>
+    <div
+      role="button"
+      onClick={_ => onPlay()}
+      onMouseDown
+      onContextMenu
+      className={`flex flex-row items-center cursor-pointer px-4 nb nb-box active:nb-plain gap-4 border-2 ${bg}`}
+    >
+      <TrackIndex uri=track.uri idx />
+      <p className="r-text-lg font-medium grow truncate py-2"> {track.name->React.string} </p>
+      {showArtist
+        ? <p className={`r-text font-medium ${isPlaying ? "text-primary-content/90" : "text-80"}`}>
+            {track.artist->React.string}
+          </p>
+        : React.null}
+      <p className="text-lg"> {track.duration->Util.durationToString->React.string} </p>
+    </div>
+    {isOpen ? <TrackMenuModal track onClose={() => setOpen(_ => false)} /> : React.null}
+  </React.Fragment>
 }

@@ -7,6 +7,7 @@ let make = name => invoke(name, _)
 
 type albums = array<Shape.Album.t>
 type tracks = array<Shape.Track.t>
+type playlists = array<Shape.Playlist.playlist>
 type coverArt = Nullable.t<Shape.Bytes.t>
 type byId = {id: float}
 
@@ -104,7 +105,7 @@ type updatePlaylistArgs = {id: float, name: string, uris: array<string>}
 let updatePlaylist: fn<updatePlaylistArgs, float> = make("update_playlist_with_track_uris")
 type updateSmartPlaylistArgs = {id: float, name: string, sql: string, json: string}
 let updateSmartPlaylist: fn<updateSmartPlaylistArgs, float> = make("update_smart_playlist")
-let getAllPlaylists: fn<unit, array<Shape.Playlist.playlist>> = make("get_all_playlists")
+let getAllPlaylists: fn<unit, playlists> = make("get_all_playlists")
 let getPlaylistsWithTracks: fn<unit, array<Shape.Playlist.t>> = make("get_playlists_with_tracks")
 let findPlaylistById: fn<byId, Nullable.t<Shape.Playlist.full>> = make(
   "find_playlist_with_tracks_by_id",
@@ -118,3 +119,8 @@ let getPlaylistsTracksById: fn<byId, tracks> = make("get_playlists_tracks_by_id"
 let findAlbumById: fn<byId, Nullable.t<Shape.Album.t>> = make("find_album_by_id")
 type getRelatedTracksArgs = {trackId: float, trackUri: string, artistNames: array<string>}
 let getRelatedTracks: fn<getRelatedTracksArgs, tracks> = make("get_related_tracks")
+type getPlaylistsForTrackArgs = {uri: string}
+let getPlaylistsForTrack: fn<getPlaylistsForTrackArgs, playlists> = make("get_playlists_for_track")
+type trackPlaylistArgs = {id: float, uri: string}
+let appendTrackToPlaylist: fn<trackPlaylistArgs, int> = make("append_track_to_playlist")
+let removeTrackFromPlaylist: fn<trackPlaylistArgs, int> = make("remove_track_from_playlist")

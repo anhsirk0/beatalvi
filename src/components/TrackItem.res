@@ -46,8 +46,8 @@ let make = (~track: Shape.Track.t, ~idx, ~onClick, ~cls="") => {
       role="button"
       onClick={_ => onClick()}
       onMouseDown
-      className={`flex flex-row items-center cursor-pointer p-4 py-2 nb nb-box active:nb-plain gap-4 border-2 ${bg} animate-slide-up ${cls}`}
       onContextMenu
+      className={`flex flex-row items-center cursor-pointer p-4 py-2 nb nb-box active:nb-plain gap-4 border-2 ${bg} animate-slide-up ${cls}`}
     >
       <TrackIndex uri=track.uri idx />
       <Cover track isPlaying />

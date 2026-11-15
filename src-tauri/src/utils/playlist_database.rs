@@ -22,6 +22,13 @@ CREATE TABLE IF NOT EXISTS tracks (playlist_id INT NOT NULL,
 ";
 const INSERT_INTO_TRACKS: &str = "INSERT INTO tracks (playlist_id, uri) VALUES (?1, ?2);";
 
+fn get_mtime() -> i64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap()
+        .as_millis() as i64
+}
+
 pub fn initialize() -> Result<()> {
     let conn = Connection::open(config::get_playlist_db_path())?;
     let sql = format!("{}{}", CREATE_PLAYLISTS, CREATE_TRACKS);
@@ -32,10 +39,7 @@ pub fn initialize() -> Result<()> {
 
 pub fn create_playlist_with_track_uris(name: &str, uris: Vec<String>) -> Result<i64> {
     let mut conn = Connection::open(config::get_playlist_db_path())?;
-    let mtime = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_millis() as i64;
+    let mtime = get_mtime();
     let tx = conn.transaction()?;
     tx.execute(INSERT_INTO_PLAYLISTS, params![name, "0", "", "", mtime])?;
     let playlist_id: i64 = tx.last_insert_rowid();
@@ -48,20 +52,14 @@ pub fn create_playlist_with_track_uris(name: &str, uris: Vec<String>) -> Result<
 
 pub fn create_smart_playlist(name: &str, sql: String, json: String) -> Result<i64> {
     let conn = Connection::open(config::get_playlist_db_path())?;
-    let mtime = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_millis() as i64;
+    let mtime = get_mtime();
     conn.execute(INSERT_INTO_PLAYLISTS, params![name, "1", sql, json, mtime])?;
     Ok(conn.last_insert_rowid())
 }
 
 pub fn update_smart_playlist(id: i64, name: &str, sql: String, json: String) -> Result<i64> {
     let conn = Connection::open(config::get_playlist_db_path())?;
-    let mtime = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_millis() as i64;
+    let mtime = get_mtime();
     conn.execute(
         "UPDATE playlists SET name = ?1, smart_sql = ?2, smart_json = ?3, mtime = ?4 WHERE id = ?5",
         params![name, sql, json, mtime, id],
@@ -264,4 +262,69 @@ pub fn get_other_tracks_in_playlist(track_uri: &str) -> Result<Vec<Track>> {
 
     let tracks = database::get_tracks_by_uris(uris)?;
     Ok(tracks)
+}
+
+pub fn get_playlists_for_track(uri: &str) -> Result<Vec<PlaylistItem>> {
+    let conn = Connection::open(config::get_playlist_db_path())?;
+    let mut stmt = conn.prepare(
+        "SELECT DISTINCT p.id, p.name
+         FROM playlists p
+         JOIN tracks t ON t.playlist_id = p.id
+         WHERE t.uri = ?1
+         ORDER BY p.name ASC",
+    )?;
+
+    let playlists = stmt
+        .query_map(params![uri], |row| {
+            Ok(PlaylistItem {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                is_smart: false,
+            })
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+
+    Ok(playlists)
+}
+
+pub fn append_track_to_playlist(playlist_id: i64, track_uri: &str) -> Result<bool> {
+    let mut conn = Connection::open(config::get_playlist_db_path())?;
+    let tx = conn.transaction()?;
+    let added = tx.execute(
+        "INSERT INTO tracks (playlist_id, uri) VALUES (?1, ?2)",
+        params![playlist_id, track_uri],
+    )?;
+    if added > 0 {
+        let mtime = get_mtime();
+        tx.execute(
+            "UPDATE playlists SET mtime = ?1 WHERE id = ?2",
+            params![mtime, playlist_id],
+        )?;
+    }
+    tx.commit()?;
+
+    Ok(added > 0)
+}
+
+pub fn remove_track_from_playlist(playlist_id: i64, track_uri: &str) -> Result<bool> {
+    let mut conn = Connection::open(config::get_playlist_db_path())?;
+    let tx = conn.transaction()?;
+    let removed = tx.execute(
+        "DELETE FROM tracks
+         WHERE rowid = (
+             SELECT rowid FROM tracks
+             WHERE playlist_id = ?1 AND uri = ?2
+             LIMIT 1
+         )",
+        params![playlist_id, track_uri],
+    )?;
+    if removed > 0 {
+        let mtime = get_mtime();
+        tx.execute(
+            "UPDATE playlists SET mtime = ?1 WHERE id = ?2",
+            params![mtime, playlist_id],
+        )?;
+    }
+    tx.commit()?;
+    Ok(removed > 0)
 }

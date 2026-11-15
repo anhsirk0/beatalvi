@@ -485,6 +485,23 @@ fn find_playlist_with_tracks_by_id(id: i64) -> Option<PlaylistWithTracks> {
 }
 
 #[tauri::command]
+fn get_playlists_for_track(uri: String) -> Vec<PlaylistItem> {
+    playlist_database::get_playlists_for_track(&uri).unwrap_or(Vec::new())
+}
+
+#[tauri::command]
+fn append_track_to_playlist(id: i64, uri: String) -> Result<bool, String> {
+    playlist_database::append_track_to_playlist(id, &uri)
+        .map_err(|_| "failed to append track to playlist".into())
+}
+
+#[tauri::command]
+fn remove_track_from_playlist(id: i64, uri: String) -> Result<bool, String> {
+    playlist_database::remove_track_from_playlist(id, &uri)
+        .map_err(|_| "failed to remove track from playlist".into())
+}
+
+#[tauri::command]
 fn reload_app(app_handle: AppHandle) {
     app_handle.restart()
 }
@@ -618,9 +635,12 @@ pub fn run() {
             get_playlists_with_tracks,
             get_smart_playlist_tracks,
             get_playlists_tracks_by_id,
+            get_playlists_for_track,
             find_playlist_with_tracks_by_id,
             find_playlist_by_id,
-            delete_playlist_by_id
+            delete_playlist_by_id,
+            append_track_to_playlist,
+            remove_track_from_playlist
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

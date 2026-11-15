@@ -16,6 +16,7 @@ pub fn get_db_path() -> PathBuf {
 
 pub fn get_playlist_db_path() -> PathBuf {
     get_config_dir().join("playlists.db")
+    // get_config_dir().join("playlists-dev.db")
 }
 
 pub fn get_music_dir() -> PathBuf {
