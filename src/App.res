@@ -1,6 +1,6 @@
 @react.component
 let make = () => {
-  let (isOpen, toggleOpen, _) = Hook.useToggle()
+  let (isOpen, toggleOpen, _) = Hook.useToggle() // queue sidebar
   let onClose = _ => {
     if isOpen {
       toggleOpen()
