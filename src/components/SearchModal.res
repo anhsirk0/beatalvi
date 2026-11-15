@@ -12,7 +12,7 @@ module Content = {
         groups->Array.length > 0
           ? groups
             ->Array.mapWithIndex((group, i) =>
-              <Delay key={group.id->Float.toString} timeout={i * 20}>
+              <Delay key={group.id->Float.toString} timeout={i * 10}>
                 <AlbumGroupItem group idx=i />
               </Delay>
             )

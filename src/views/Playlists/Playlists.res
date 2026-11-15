@@ -32,10 +32,7 @@ module Content = {
           <p className="r-text-lg text-center text-60">
             {"Gather the songs you love in your first playlist."->React.string}
           </p>
-          <Route.Link
-            to=NewPlaylist(Regular)
-            className="btn btn-lg 2xl:btn-xl btn-primary mt-4 animate-fade-slow"
-          >
+          <Route.Link to=NewPlaylist(Regular) className="btn btn-lg 2xl:btn-xl btn-primary mt-4">
             <Icon.plus className="r-icon" weight=Bold />
             {"New playlist"->React.string}
           </Route.Link>

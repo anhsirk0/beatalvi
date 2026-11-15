@@ -1,6 +1,3 @@
-@get @return(nullable)
-external firstElementChild: Dom.element => option<Dom.element> = "firstElementChild"
-
 @react.component
 let make = (~albums: array<Shape.Album.t>) => {
   let scrollerRef = Lenis.useScroller()

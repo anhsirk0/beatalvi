@@ -115,11 +115,15 @@
 }
 
 @utility nb-shadow {
-  box-shadow: 4px 4px 0 0 var(--color-accent);
+  box-shadow: 3px 3px 0 0 var(--color-accent);
+}
+
+@utility nb-shadow-hard {
+  box-shadow: 6px 6px 0 0 var(--color-accent);
 }
 
 @utility nb-active-shadow {
-  box-shadow: 4px 4px 0 0 var(--color-primary);
+  box-shadow: 3px 3px 0 0 var(--color-primary);
 }
 
 @utility nb-active {

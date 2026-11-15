@@ -1,3 +1,21 @@
+module TrackGrid = {
+  @react.component
+  let make = (~tracks, ~onTrackPlay) => {
+    let scrollerRef = Lenis.useScroller()
+
+    <Virtuoso.Grid
+      totalCount={tracks->Array.length}
+      style={{flexGrow: "1"}}
+      listClassName="grid grid-cols-1 lg:grid-cols-2 w-full px-1 pt-4 gap-x-4 min-h-0"
+      itemClassName="py-2"
+      data=tracks
+      itemContent={(idx, track) =>
+        <TrackItem key={track.id->Float.toString} idx track onClick={() => onTrackPlay(idx)} />}
+      scrollerRef
+    />
+  }
+}
+
 module Content = {
   @react.component
   let make = (~playlist: Shape.Playlist.playlist, ~tracks) => {
@@ -11,21 +29,17 @@ module Content = {
       Invoke.playManyFromIndex({uris: tracks->Array.map(t => t.uri), index: idx})->ignore
 
     <React.Fragment>
-      <div className="flex gap-4 items-end pb-4">
+      <div className="flex gap-4 items-end pb-4 -mt-2 border-b-2 border-accent">
         <div className="flex flex-col">
-          <p className="text-3xl 2xl:text-5xl pl-1 font-semibold truncate">
-            {playlist.name->React.string}
-          </p>
+          <p className="r-text-2xl pl-1 font-semibold truncate"> {playlist.name->React.string} </p>
           <p className="r-text pl-2 text-60">
             {`${trackCount->Int.toString} song${trackCount == 1 ? "" : "s"}`->React.string}
-            <span className="px-4"> {Constant.sep->React.string} </span>
+            <span className="px-2"> {Constant.sep->React.string} </span>
             {trackDuration->Util.durationToTimeString->React.string}
           </p>
         </div>
         <button
-          onClick=onStartPlay
-          id="play-all"
-          className="btn xl:btn-lg 2xl:btn-xl btn-primary w-40 ml-4 mb-1"
+          onClick=onStartPlay id="play-all" className="btn r-btn-lg btn-primary w-40 ml-4 mb-1"
         >
           <Icon.play className="r-icon-lg pr-2" weight=Fill />
           <span className="font-medium"> {" Play"->React.string} </span>
@@ -33,22 +47,12 @@ module Content = {
         <button onClick=onStartRandomPlay id="play-all" className="btn r-btn-lg btn-square mb-1">
           <Icon.shuffle className="r-icon-lg" weight=Bold />
         </button>
-        <Route.Link
-          to=EditPlaylist(playlist.id) className="btn xl:btn-lg 2xl:btn-xl btn-square mb-1"
-        >
+        <Route.Link to=EditPlaylist(playlist.id) className="btn r-btn-lg btn-square mb-1">
           <Icon.pencilSimple className="r-icon-lg" />
         </Route.Link>
       </div>
       {tracks->Array.length > 0
-        ? <div className="grid grid-cols-2 gap-4 w-full px-1 pt-4 border-t-2 border-accent">
-            {tracks
-            ->Array.mapWithIndex((track, idx) =>
-              <Delay key=track.uri timeout={idx * 20}>
-                <TrackItem idx track onClick={() => onTrackPlay(idx)} />
-              </Delay>
-            )
-            ->React.array}
-          </div>
+        ? <TrackGrid tracks onTrackPlay />
         : <div className="center r-gap flex-col border-t-2 border-accent">
             <p className="font-fraunces r-text-3xl font-light text-center italic mt-[20%]">
               {"No song fits these words yet."->React.string}
@@ -65,22 +69,18 @@ module Main = {
   @react.component
   let make = (~playlist: Shape.Playlist.t) => {
     let tracks = Hook.useFetch({
-      fn: () => {
+      fn: () =>
         switch playlist {
         | Regular({tracks}) => Invoke.getTracksByUris({uris: tracks})
         | Smart(data) => Invoke.getSmartPlaylistTracks({query: data.smartSql})
-        }
-      },
+        },
     })
     let info: Shape.Playlist.playlist = switch playlist {
     | Regular({playlist}) => playlist
     | Smart(data) => {id: data.id, name: data.name, isSmart: true}
     }
 
-    <Lenis.Component
-      options=Lenis.options
-      className="flex flex-col p-8 size-full gap-4 overflow-y-auto min-h-0 relative"
-    >
+    <div className="flex flex-col p-8 pb-4 size-full gap-4 overflow-y-auto min-h-0 relative">
       <Route.Link
         id="close-btn"
         to=Playlists
@@ -94,7 +94,7 @@ module Main = {
       | Loading | Failed => React.null
       | Success(tracks) => <Content playlist=info tracks />
       }}
-    </Lenis.Component>
+    </div>
   }
 }
 

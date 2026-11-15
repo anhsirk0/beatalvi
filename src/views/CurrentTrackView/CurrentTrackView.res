@@ -20,7 +20,7 @@ module Content = {
     >
       <div className="col-span-12 xl:col-span-7 hidden xl:center">
         <div
-          className="aspect-square bg-primary/40 rounded-box shrink-0 overflow-hidden nb-outline relative isolate nb nb-active w-full max-w-[800px] flex"
+          className="aspect-square bg-primary/40 rounded-box shrink-0 overflow-hidden nb-outline relative isolate nb nb-active nb-shadow-hard w-full max-w-[800px] flex"
         >
           <Cover id album=track.album key=track.album />
           <div className="center size-full p-4 absolute inset-0 animate-fade size-full">
