@@ -27,7 +27,7 @@ let make = (~name) => {
 
   <React.Fragment>
     <Popover.Btn target=popoverId anchor>
-      <button className="btn r-btn-lg btn-square btn-ghost bg-base-100 active:nb-plain mb-1">
+      <button className="btn r-btn-lg btn-square mb-1">
         <Icon.funnel className="r-icon-lg" />
       </button>
     </Popover.Btn>

@@ -58,13 +58,10 @@ module Content = {
         <button onClick=onStartRandomPlay id="play-all" className="btn r-btn-lg btn-square mb-1">
           <Icon.shuffle className="r-icon-lg" weight=Bold />
         </button>
-        <Route.Link
-          to=EditPlaylist(playlist.id)
-          className="btn r-btn-lg btn-square btn-ghost bg-base-100 active:nb-plain mb-1"
-        >
+        {playlist.isSmart ? React.null : <PlaylistSortBtn name=playlist.name />}
+        <Route.Link to=EditPlaylist(playlist.id) className="btn r-btn-lg btn-square mb-1">
           <Icon.pencilSimple className="r-icon-lg" />
         </Route.Link>
-        {playlist.isSmart ? React.null : <PlaylistSortBtn name=playlist.name />}
       </div>
       {tracks->Array.length > 0
         ? <TrackGrid key={sort->Shape.Sort.toString} tracks=sortedTracks onTrackPlay />
