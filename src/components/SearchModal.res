@@ -1,9 +1,10 @@
 module Content = {
   @react.component
-  let make = (~query) => {
+  let make = (~query, ~onNavigate) => {
     let data = Hook.useFetch({
       fn: () => Invoke.searchTracksGrouped({query: query}),
     })
+
     <div className="flex flex-col gap-4 2xl:gap-8 overflow-y-auto min-h-0 max-h-[60vh] grow">
       {switch data {
       | Loading => <div className="loading loading-spinner"></div>
@@ -13,7 +14,7 @@ module Content = {
           ? groups
             ->Array.mapWithIndex((group, i) =>
               <Delay key={group.id->Float.toString} timeout={i * 10}>
-                <AlbumGroupItem group idx=i />
+                <AlbumGroupItem onNavigate group idx=i />
               </Delay>
             )
             ->React.array
@@ -47,7 +48,7 @@ let make = (~onClose) => {
       <InputBase id="search-input" value onChange type_="text" className="grow" />
     </label>
     {query->String.length > 2
-      ? <Content query key=query />
+      ? <Content onNavigate=onClose query key=query />
       : <div className="center grow">
           <p className="r-text-xl text-80">
             {"Search for songs, albums and artists"->React.string}

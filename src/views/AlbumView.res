@@ -75,7 +75,7 @@ module Content = {
         </div>
         <div className="flex flex-col">
           <p className="r-text-3xl pl-1 font-semibold truncate"> {album.name->React.string} </p>
-          <p className="r-text-lg pl-1 text-80 truncate"> {album.artist->React.string} </p>
+          <ArtistNames className="r-text-lg pl-1 text-80 truncate" artists=album.artist />
           {switch tracks {
           | Loading | Failed => React.null
           | Success(_) =>

@@ -9,6 +9,7 @@ use models::{
 };
 use rand::prelude::SliceRandom;
 use rusqlite::OptionalExtension;
+use std::collections::HashMap;
 use tauri::{AppHandle, Emitter, Manager, State, Webview};
 use tokio::task;
 use utils::args::Args;
@@ -502,6 +503,11 @@ fn remove_track_from_playlist(id: i64, uri: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
+fn get_artist_ids_by_names(names: Vec<String>) -> HashMap<String, i64> {
+    database::get_artist_ids_by_names(names)
+}
+
+#[tauri::command]
 fn reload_app(app_handle: AppHandle) {
     app_handle.restart()
 }
@@ -640,7 +646,8 @@ pub fn run() {
             find_playlist_by_id,
             delete_playlist_by_id,
             append_track_to_playlist,
-            remove_track_from_playlist
+            remove_track_from_playlist,
+            get_artist_ids_by_names
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -111,7 +111,7 @@ let make = () => {
         <label id="close-btn" onClick=onClose ariaLabel="close sidebar" className="drawer-overlay">
         </label>
         <div className="bg-base-100 min-h-full w-120 flex flex-col r-gap p-4">
-          {isOpen ? <QueueSidebar /> : React.null}
+          {isOpen ? <QueueSidebar onNavigate=onClose /> : React.null}
         </div>
       </div>
     </div>

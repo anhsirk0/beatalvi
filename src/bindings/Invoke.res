@@ -124,3 +124,5 @@ let getPlaylistsForTrack: fn<getPlaylistsForTrackArgs, playlists> = make("get_pl
 type trackPlaylistArgs = {id: float, uri: string}
 let appendTrackToPlaylist: fn<trackPlaylistArgs, int> = make("append_track_to_playlist")
 let removeTrackFromPlaylist: fn<trackPlaylistArgs, int> = make("remove_track_from_playlist")
+type getArtistIdsByNamesArgs = {names: array<string>}
+let getArtistIdsByNames: fn<getArtistIdsByNamesArgs, dict<float>> = make("get_artist_ids_by_names")

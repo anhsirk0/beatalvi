@@ -1,6 +1,6 @@
 module Item = {
   @react.component
-  let make = (~group: Shape.Album.group, ~idx) => {
+  let make = (~group: Shape.Album.group, ~idx, ~onNavigate) => {
     let currentTrack = Store.Player.useShallow(s => s.data.track)
 
     let hasTrack = switch currentTrack {
@@ -8,7 +8,7 @@ module Item = {
     | None => false
     }
 
-    <AlbumGroupItem group closed={!hasTrack} showTrackCount=true idx cls="mb-4" />
+    <AlbumGroupItem onNavigate group closed={!hasTrack} showTrackCount=true idx cls="mb-4" />
   }
 }
 
@@ -35,7 +35,7 @@ module Item = {
 // }
 
 @react.component
-let make = () => {
+let make = (~onNavigate) => {
   let currentTrack = Store.Player.useShallow(s => s.data.track)
   let playings = Hook.useFetch({fn: Invoke.getPlayingAlbumGroups})
   let containerRef = React.useRef(Nullable.null)
@@ -78,7 +78,7 @@ let make = () => {
             className="flex flex-col min-h-0 gap-4 2xl:gap-8 grow"
             style={{display: "flex", flexDirection: "column", height: "100%", flexGrow: "1"}}
             data=groups
-            itemContent={(idx, group) => <Item group idx key={idx->Int.toString} />}
+            itemContent={(idx, group) => <Item group onNavigate idx key={idx->Int.toString} />}
             scrollerRef
           />
         : <p className="font-fraunces font-light r-text-2xl text-center italic mt-[100%]">

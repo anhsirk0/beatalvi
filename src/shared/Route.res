@@ -15,8 +15,6 @@ type t =
   | EditPlaylist(float)
   | Settings
   | NotFound
-// Todo: add routes for Album/Artist etc
-// | Album(float)
 
 let sidebar = [
   Home,
@@ -130,7 +128,5 @@ module Link = {
     <a ?id href=path className onClick> {children} </a>
   }
 }
-
-// let fromPlaylist = (item: Shape.Playlist.playlist) =>
 
 let goBack = () => Window.History.history->Window.History.back

@@ -40,7 +40,14 @@ module TrackItem = {
 }
 
 @react.component
-let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~idx, ~cls="") => {
+let make = (
+  ~group: Shape.Album.group,
+  ~closed=false,
+  ~showTrackCount=false,
+  ~idx,
+  ~cls="",
+  ~onNavigate,
+) => {
   let (collapsed, toggleCollapsed, setCollapsed) = Hook.useToggle(~init=closed)
 
   let id = `group-${idx->Int.toString}-${group.id->Float.toString}`
@@ -65,9 +72,15 @@ let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~id
           </p>
         </div>
       </div>
-      <div className="flex flex-col w-full min-w-0">
-        <p className="r-text-lg pl-1 -mt-1 font-medium truncate"> {group.name->React.string} </p>
-        <p className="r-text pl-1 -mt-1 text-80"> {group.artists->React.string} </p>
+      <div className="flex flex-col w-full min-w-0 py-1">
+        <Route.Link
+          to=Album(group.id, group.name)
+          onClick={_ => onNavigate()}
+          className="r-text-lg pl-1 -mt-1 font-medium truncate hover:underline"
+        >
+          {group.name->React.string}
+        </Route.Link>
+        <ArtistNames className="r-text pl-1 -mt-1 text-80" artists=group.artists onNavigate />
       </div>
       <div className="h-full ml-auto flex flex-col items-end">
         {collapsed

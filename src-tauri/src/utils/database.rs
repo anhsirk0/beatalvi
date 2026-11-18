@@ -5,6 +5,7 @@ use crate::models::{
     IdMtime, NameIdMap, Stats, Track, TrackInfo, TrackItem, TracksMetaMap,
 };
 use crate::utils::config;
+use std::collections::HashMap;
 
 /* ─────────────────────────── DB Initialize ─────────────────────────── */
 const CREATE_ALBUMS: &str = "
@@ -255,15 +256,24 @@ pub fn find_track_uri_by_id(id: i64) -> Option<String> {
     .ok()
 }
 
-// pub fn find_artist_id_by_name(name: &str) -> Option<i64> {
-//     let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
-//     conn.query_row(
-//         "SELECT id FROM artists WHERE name = ?1",
-//         params![name],
-//         |row| Ok(row.get(0)?),
-//     )
-//     .ok()
-// }
+fn find_artist_id_by_name(name: &str, conn: &Connection) -> Option<i64> {
+    conn.query_row(
+        "SELECT id FROM artists WHERE name = ?1",
+        params![name],
+        |row| Ok(row.get(0)?),
+    )
+    .ok()
+}
+
+pub fn get_artist_ids_by_names(names: Vec<String>) -> HashMap<String, i64> {
+    let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
+    let mut ids = HashMap::new();
+    for name in names {
+        let id = find_artist_id_by_name(&name, &conn).expect("Failed to get artist id");
+        ids.insert(name, id);
+    }
+    ids
+}
 
 /// Album that does not belong to any track
 pub fn find_albums_without_tracks(conn: &Connection) -> Result<Vec<i64>> {
@@ -814,6 +824,16 @@ pub fn search_tracks_grouped(query: &str) -> Result<Vec<AlbumGroup>> {
     Ok(results)
 }
 
+fn find_album_id_by_track_id(track_id: &i64) -> Option<i64> {
+    let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
+    conn.query_row(
+        "SELECT album_id FROM tracks WHERE id = ?1",
+        params![track_id],
+        |row| row.get(0),
+    )
+    .ok()
+}
+
 pub fn get_album_groups_from_uris(uris: Vec<String>) -> Vec<AlbumGroup> {
     let tracks = get_tracks_by_uris(uris).unwrap();
     let mut groups: Vec<AlbumGroup> = Vec::new();
@@ -824,8 +844,9 @@ pub fn get_album_groups_from_uris(uris: Vec<String>) -> Vec<AlbumGroup> {
             if last_track.album == track.album {
                 group_tracks.push(track);
             } else {
+                let id = find_album_id_by_track_id(&last_track.id).expect("No album for track");
                 groups.push(AlbumGroup {
-                    id: last_track.id.clone(), // should be album id, but its fine
+                    id: id,
                     name: last_track.album.clone(),
                     artists: last_track.artist.clone(),
                     tracks: group_tracks
