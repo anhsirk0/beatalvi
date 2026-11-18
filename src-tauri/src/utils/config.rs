@@ -11,7 +11,7 @@ pub fn get_cache_dir() -> PathBuf {
 }
 
 pub fn get_db_path() -> PathBuf {
-    let name = if DEV { format!("{}-dev", NAME) } else { NAME };
+    let name = if DEV { &format!("{}-dev", NAME) } else { NAME };
     get_config_dir().join(format!("{}.db", name))
 }
 
