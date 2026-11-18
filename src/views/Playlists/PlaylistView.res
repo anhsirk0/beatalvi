@@ -80,7 +80,7 @@ module Main = {
     | Smart(data) => {id: data.id, name: data.name, isSmart: true}
     }
 
-    <div className="flex flex-col p-8 pb-4 size-full gap-4 overflow-y-auto min-h-0 relative">
+    <div className="flex flex-col p-8 pb-0 size-full gap-4 overflow-y-auto min-h-0 relative">
       <Route.Link
         id="close-btn"
         to=Playlists

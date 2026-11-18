@@ -109,6 +109,7 @@ let toPath = route =>
   | NotFound => "/not-found"
   }
 
+module Mouse = ReactEvent.Mouse
 module Link = {
   @react.component
   let make = (~to, ~className, ~children, ~id=?, ~onClick=?, ~replace=false) => {
@@ -119,13 +120,10 @@ module Link = {
       | Some(fn) => fn(evt)
       | None => ignore()
       }
-      if replace {
-        RescriptReactRouter.replace(path)
-      } else {
-        RescriptReactRouter.push(path)
-      }
+      replace ? RescriptReactRouter.replace(path) : RescriptReactRouter.push(path)
     }
-    <a ?id href=path className onClick> {children} </a>
+
+    <a onContextMenu=Mouse.preventDefault ?id href=path className onClick> {children} </a>
   }
 }
 

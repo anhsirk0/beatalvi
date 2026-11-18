@@ -31,9 +31,12 @@ let make = (~album: Shape.Album.item, ~onPlay) => {
         </div>
       </div>
       <div className="flex flex-col 2xl:gap-1">
-        <p className="text-2xl 2xl:text-4xl pl-1 font-medium truncate">
+        <Route.Link
+          to=Album(album.id, album.name)
+          className="text-2xl 2xl:text-4xl pl-1 font-medium truncate hover:underline"
+        >
           {album.name->React.string}
-        </p>
+        </Route.Link>
         {trackCount > 0
           ? <p className="text-lg 2xl:text-2xl pl-1 text-80">
               {`${trackCount->Int.toString} song${trackCount == 1 ? "" : "s"}`->React.string}
