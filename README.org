@@ -12,14 +12,14 @@ Website: https://anhsirk0.codeberg.page/beatalvi/
 https://anhsirk0.codeberg.page/beatalvi#screenshots
 ** Features
   - Support aac, alac, flac, isomp4, mp3, ogg, vorbis and wav files.
-  - Keybindings for controlling the playback/navigation.
+  - Keybindings for controlling playback/navigation.
   - Polished UI with a neo-brutalist design and vibrant colors.
   - Playlist support (smart and regular).
   - Light/dark mode with 10 accent colors.
   - CLI args to control the player (or via script).
   - No networking fully offline.
 ** Scripting
-Beatalvi stores it database as =~/.config/beatalvi/beatalvi.db=
+Beatalvi stores its database as =~/.config/beatalvi/beatalvi.db=
 the db can be use to fetch info about tracks/albums/artists etc.\\
 Beatalvi has a cli arg =--queue <INT>= which can be used to add tracks via custom scripts.\\
 Script for =dmenu= and =rofi= are provided and can be find inside =scripts= directory.
@@ -51,24 +51,7 @@ This scripts are written in perl, but you can use any language you want to port/
 
 *** Update config for dev
 #+BEGIN_SRC rust
-pub fn get_db_path() -> PathBuf {
-    // get_config_dir().join("beatalvi.db")
-    get_config_dir().join("beatalvi-dev.db")
-}
-#+END_SRC
-#+BEGIN_SRC rust
-pub fn get_playlist_db_path() -> PathBuf {
-    // get_config_dir().join("playlists.db")
-    get_config_dir().join("playlists-dev.db")
-}
-#+END_SRC
-#+BEGIN_SRC rust
-pub fn get_music_dir() -> PathBuf {
-    dirs::home_dir()
-        .expect("failed to get home dir")
-        // .join("Music")
-        .join("test")
-}
+const DEV: bool = true;
 #+END_SRC
 
 *** Run rescript server
@@ -83,21 +66,7 @@ deno task tauri dev
 ** Building
 *** Update config for build
 #+BEGIN_SRC rust
-pub fn get_db_path() -> PathBuf {
-    get_config_dir().join("beatalvi.db")
-}
-#+END_SRC
-#+BEGIN_SRC rust
-pub fn get_playlist_db_path() -> PathBuf {
-    get_config_dir().join("playlists.db")
-}
-#+END_SRC
-#+BEGIN_SRC rust
-pub fn get_music_dir() -> PathBuf {
-    dirs::home_dir()
-        .expect("failed to get home dir")
-        .join("Music")
-}
+const DEV: bool = false;
 #+END_SRC
 *** Remove development build files (optional, to save disk space)
 #+BEGIN_SRC shell
