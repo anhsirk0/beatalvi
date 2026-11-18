@@ -15,7 +15,7 @@ module Item = {
       Popover.close(popoverId)
     }
 
-    <button onClick key=label className> {label->React.string} </button>
+    <button onClick className> {label->React.string} </button>
   }
 }
 
@@ -33,7 +33,9 @@ let make = (~name) => {
     </Popover.Btn>
     <Popover.Menu id=popoverId anchor>
       <div className="dropdown p-4 w-64 mt-4 bg-base-100 nb-box nb-active flex flex-col gap-2">
-        {Shape.Sort.all->Array.map(sort => <Item sort active name />)->React.array}
+        {Shape.Sort.all
+        ->Array.mapWithIndex((sort, idx) => <Item sort active name key={idx->Int.toString} />)
+        ->React.array}
       </div>
     </Popover.Menu>
   </React.Fragment>
