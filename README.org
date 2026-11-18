@@ -51,6 +51,7 @@ This scripts are written in perl, but you can use any language you want to port/
 
 *** Update config for dev
 #+BEGIN_SRC rust
+/// utils/config.rs
 const DEV: bool = true;
 #+END_SRC
 
@@ -66,6 +67,7 @@ deno task tauri dev
 ** Building
 *** Update config for build
 #+BEGIN_SRC rust
+/// utils/config.rs
 const DEV: bool = false;
 #+END_SRC
 *** Remove development build files (optional, to save disk space)

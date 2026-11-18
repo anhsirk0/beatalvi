@@ -34,6 +34,45 @@ module Stats = {
   }
 }
 
+module Sort = {
+  type kind = Track | Album | Artist | Popularity | TrackYear | DateAdded
+  type dir = Asc | Desc
+  type t = {kind: kind, dir: dir}
+  let default = {kind: Track, dir: Asc}
+  let kindToString = kind =>
+    switch kind {
+    | Track => "Song"
+    | Album => "Album"
+    | Artist => "Artist"
+    | Popularity => "Popularity"
+    | TrackYear => "Release year"
+    | DateAdded => "Date added"
+    }
+
+  let dirToString = dir =>
+    switch dir {
+    | Asc => "Ascending"
+    | Desc => "Descending"
+    }
+
+  let toString = sort => kindToString(sort.kind) ++ " (" ++ dirToString(sort.dir) ++ ")"
+
+  let all = [
+    {kind: Track, dir: Asc},
+    {kind: Track, dir: Desc},
+    {kind: Album, dir: Asc},
+    {kind: Album, dir: Desc},
+    {kind: Artist, dir: Asc},
+    {kind: Artist, dir: Desc},
+    {kind: Popularity, dir: Asc},
+    {kind: Popularity, dir: Desc},
+    {kind: TrackYear, dir: Asc},
+    {kind: TrackYear, dir: Desc},
+    {kind: DateAdded, dir: Asc},
+    {kind: DateAdded, dir: Desc},
+  ]
+}
+
 module Track = {
   type basic = {
     name: string,
@@ -45,6 +84,9 @@ module Track = {
     id: float,
     uri: string,
     duration: int,
+    popularity: int,
+    year: int,
+    mtime: float,
   }
 
   type item = {
@@ -73,6 +115,24 @@ module Track = {
 
   let totalDuration = (arr: array<t>) =>
     arr->Array.map(t => t.duration)->Array.reduce(0, (acc, num) => acc + num)
+
+  let sortBy = (tracks: array<t>, sort: Sort.t) => {
+    let fn = switch sort.kind {
+    | Track => (a: t, b: t) => a.name->String.localeCompare(b.name)
+    | Album => (a: t, b: t) => a.album->String.localeCompare(b.album)
+    | Artist => (a: t, b: t) => a.artist->String.localeCompare(b.artist)
+    | Popularity => (a: t, b: t) => (a.popularity - b.popularity)->Float.fromInt
+    | TrackYear => (a: t, b: t) => (a.year - b.year)->Float.fromInt
+    | DateAdded => (a: t, b: t) => a.mtime -. b.mtime
+    }
+
+    tracks->Array.toSorted((a, b) => {
+      switch sort.dir {
+      | Asc => fn(a, b)
+      | Desc => fn(b, a)
+      }
+    })
+  }
 }
 
 module Album = {
@@ -86,14 +146,14 @@ module Album = {
     id: float,
     name: string,
     year: int,
-    mtime: int,
+    mtime: float,
   }
 
   type group = {
     id: float,
     name: string,
     year: int,
-    mtime: int,
+    mtime: float,
     artists: string,
     tracks: array<Track.item>,
   }
@@ -389,6 +449,8 @@ module SmartPlaylist = {
        t.uri,
        t.duration,
        t.popularity,
+       t.year,
+       t.mtime,
        a.name AS album_name,
      GROUP_CONCAT(ar.name, ', ') AS artists
      FROM tracks t
@@ -418,7 +480,7 @@ module Playlist = {
   type data = {
     id: float,
     name: string,
-    mtime: int,
+    mtime: float,
     smartEnabled: bool,
     smartSql: string,
     smartJson: string,

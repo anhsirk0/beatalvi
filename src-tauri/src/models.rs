@@ -37,6 +37,8 @@ pub struct Track {
     pub album: String,
     pub artist: String,
     pub popularity: i32,
+    pub mtime: i64,
+    pub year: i64,
 }
 
 #[derive(Serialize, Clone)]

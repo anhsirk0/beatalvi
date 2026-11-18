@@ -1,4 +1,5 @@
 type modal = Keybindings | Search | Nope
+let popoverId = "settings-menu"
 
 @react.component
 let make = (~toggleOpen) => {
@@ -6,7 +7,6 @@ let make = (~toggleOpen) => {
   let (modal, setModal) = React.useState(_ => Nope)
 
   let track = Store.Player.useShallow(s => s.data.track)
-  let popoverId = "settings-menu"
 
   React.useEffect0(() => {
     Document.addKeyListener("keydown", handleKeys)

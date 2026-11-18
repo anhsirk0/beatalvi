@@ -57,3 +57,4 @@ type t = React.component<props>
 @module("@phosphor-icons/react") external speakerHigh: t = "SpeakerHighIcon"
 @module("@phosphor-icons/react") external speakerSimpleLow: t = "SpeakerSimpleLowIcon"
 @module("@phosphor-icons/react") external speakerSimpleHigh: t = "SpeakerSimpleHighIcon"
+@module("@phosphor-icons/react") external funnel: t = "FunnelIcon"

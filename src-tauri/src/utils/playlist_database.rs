@@ -211,8 +211,10 @@ pub fn get_smart_playlist_tracks(query: String) -> Result<Vec<Track>> {
                 uri: row.get(2)?,
                 duration: row.get(3)?,
                 popularity: row.get(4)?,
-                album: row.get(5)?,
-                artist: row.get(6)?,
+                year: row.get(5)?,
+                mtime: row.get(6)?,
+                album: row.get(7)?,
+                artist: row.get(8)?,
             })
         })?
         .collect::<Result<Vec<Track>, _>>()?;

@@ -19,6 +19,9 @@ module TrackGrid = {
 module Content = {
   @react.component
   let make = (~playlist: Shape.Playlist.playlist, ~tracks) => {
+    let sort = Store.Config.useShallow(s =>
+      s.config.sortMap->Dict.get(playlist.name)->Option.getOr(Shape.Sort.default)
+    )
     let (trackCount, trackDuration) = (tracks->Array.length, tracks->Shape.Track.totalDuration)
 
     let onPlay = (~shuffle) =>
@@ -27,6 +30,14 @@ module Content = {
     let onStartRandomPlay = _ => onPlay(~shuffle=true)
     let onTrackPlay = idx =>
       Invoke.playManyFromIndex({uris: tracks->Array.map(t => t.uri), index: idx})->ignore
+
+    let sortedTracks = React.useMemo3(() => {
+      if playlist.isSmart {
+        tracks
+      } else {
+        tracks->Shape.Track.sortBy(sort)
+      }
+    }, (sort, tracks, playlist.isSmart))
 
     <React.Fragment>
       <div className="flex gap-4 items-end pb-4 -mt-2 border-b-2 border-accent">
@@ -47,12 +58,16 @@ module Content = {
         <button onClick=onStartRandomPlay id="play-all" className="btn r-btn-lg btn-square mb-1">
           <Icon.shuffle className="r-icon-lg" weight=Bold />
         </button>
-        <Route.Link to=EditPlaylist(playlist.id) className="btn r-btn-lg btn-square mb-1">
+        <Route.Link
+          to=EditPlaylist(playlist.id)
+          className="btn r-btn-lg btn-square btn-ghost bg-base-100 active:nb-plain mb-1"
+        >
           <Icon.pencilSimple className="r-icon-lg" />
         </Route.Link>
+        {playlist.isSmart ? React.null : <PlaylistSortBtn name=playlist.name />}
       </div>
       {tracks->Array.length > 0
-        ? <TrackGrid tracks onTrackPlay />
+        ? <TrackGrid key={sort->Shape.Sort.toString} tracks=sortedTracks onTrackPlay />
         : <div className="center r-gap flex-col border-t-2 border-accent">
             <p className="font-fraunces r-text-3xl font-light text-center italic mt-[20%]">
               {"No song fits these words yet."->React.string}

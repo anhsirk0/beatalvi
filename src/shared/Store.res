@@ -3,21 +3,28 @@ module Config = {
     theme: Theme.t,
     volume: int,
     showPlaylistsInSidebar: bool,
+    sortMap: dict<Shape.Sort.t>,
   }
 
-  type action = SetTheme(Theme.t) | SetVolume(int) | SetShowPlaylistsInSidebar(bool)
+  type action =
+    | SetTheme(Theme.t)
+    | SetVolume(int)
+    | SetShowPlaylistsInSidebar(bool)
+    | SetSortMap(dict<Shape.Sort.t>)
 
   let reducer = (config, action) =>
     switch action {
     | SetTheme(theme) => {...config, theme}
     | SetVolume(volume) => {...config, volume}
     | SetShowPlaylistsInSidebar(b) => {...config, showPlaylistsInSidebar: b}
+    | SetSortMap(sortMap) => {...config, sortMap}
     }
 
   let defaultOptions = {
     theme: Lemon,
     volume: 100,
     showPlaylistsInSidebar: true,
+    sortMap: Dict.make(),
   }
   module StoreData = {
     type state = {
@@ -30,7 +37,7 @@ module Config = {
   let store = Store.create(Store.persist(set => {
       config: defaultOptions,
       update: action => set(state => {...state, config: state.config->reducer(action)}),
-    }, {name: "beatalvi-user-config"}))
+    }, {name: "beatalvi-config-v1"}))
 
   let use = _ => store->Store.use(state => state)
   let useShallow = selector => store->Store.use(Store.useShallow(selector))

@@ -64,6 +64,23 @@ const INSERT_INTO_TRACK_ARTISTS: &str = "
 INSERT INTO track_artists (track_id, artist_id) VALUES (?1, ?2);
 ";
 
+const SELECT_FROM_TRACKS: &str = "
+SELECT 
+  t.id,
+  t.name AS track_name,
+  t.uri,
+  t.duration,
+  t.popularity,
+  t.year,
+  t.mtime,
+  a.name AS album_name,
+GROUP_CONCAT(ar.name, ', ') AS artists
+FROM tracks t
+JOIN albums a ON t.album_id = a.id
+LEFT JOIN track_artists ta ON t.id = ta.track_id
+LEFT JOIN artists ar ON ta.artist_id = ar.id
+";
+
 pub fn initialize() -> Result<()> {
     let conn = Connection::open(config::get_db_path())?;
     let sql = format!(
@@ -192,34 +209,26 @@ pub fn find_album_by_id(id: i64) -> Option<BasicAlbum> {
 
 pub fn find_track_by_uri(uri: &str) -> Option<Track> {
     let conn = Connection::open(config::get_db_path()).expect("Failed to open db");
-    conn.query_one(
-        "SELECT 
-               t.id,
-               t.name AS track_name,
-               t.uri,
-               t.duration,
-               t.popularity,
-               a.name AS album_name,
-             GROUP_CONCAT(ar.name, ', ') AS artists
-             FROM tracks t
-             JOIN albums a ON t.album_id = a.id
-             LEFT JOIN track_artists ta ON t.id = ta.track_id
-             LEFT JOIN artists ar ON ta.artist_id = ar.id
+    let sql = format!(
+        "{}
              WHERE t.uri = ?1
-             GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name",
-        params![uri],
-        |row| {
-            Ok(Track {
-                id: row.get(0)?,
-                name: row.get(1)?,
-                uri: row.get(2)?,
-                duration: row.get(3)?,
-                popularity: row.get(4)?,
-                album: row.get(5)?,
-                artist: row.get(6)?,
-            })
-        },
-    )
+             GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name
+",
+        SELECT_FROM_TRACKS
+    );
+    conn.query_one(&sql, params![uri], |row| {
+        Ok(Track {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            uri: row.get(2)?,
+            duration: row.get(3)?,
+            popularity: row.get(4)?,
+            year: row.get(5)?,
+            mtime: row.get(6)?,
+            album: row.get(7)?,
+            artist: row.get(8)?,
+        })
+    })
     .ok()
 }
 
@@ -333,22 +342,13 @@ pub fn is_album_loved(album_id: i64) -> Result<bool> {
 
 pub fn get_all_tracks_grouped_by_album() -> Result<Vec<Track>> {
     let conn = Connection::open(config::get_db_path())?;
-    let query = "SELECT 
-                   t.id,
-                   t.name AS track_name,
-                   t.uri,
-                   t.duration,
-                   t.popularity,
-                   a.name AS album_name,
-                   GROUP_CONCAT(ar.name, ', ') AS artists
-             FROM tracks t
-             JOIN albums a ON t.album_id = a.id
-             LEFT JOIN track_artists ta ON t.id = ta.track_id
-             LEFT JOIN artists ar ON ta.artist_id = ar.id
+    let query = format!(
+        "{}
              GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name, a.id
-             ORDER BY a.name ASC, t.name ASC";
-
-    let mut stmt = conn.prepare(query)?;
+             ORDER BY a.name ASC, t.name ASC",
+        SELECT_FROM_TRACKS
+    );
+    let mut stmt = conn.prepare(&query)?;
     let tracks = stmt
         .query_map([], |row| {
             Ok(Track {
@@ -357,8 +357,10 @@ pub fn get_all_tracks_grouped_by_album() -> Result<Vec<Track>> {
                 uri: row.get(2)?,
                 duration: row.get(3)?,
                 popularity: row.get(4)?,
-                album: row.get(5)?,
-                artist: row.get(6)?,
+                year: row.get(5)?,
+                mtime: row.get(6)?,
+                album: row.get(7)?,
+                artist: row.get(8)?,
             })
         })?
         .collect::<Result<Vec<Track>, _>>()?;
@@ -368,23 +370,14 @@ pub fn get_all_tracks_grouped_by_album() -> Result<Vec<Track>> {
 
 pub fn get_top_10_tracks() -> Result<Vec<Track>> {
     let conn = Connection::open(config::get_db_path())?;
-    let mut stmt = conn.prepare(
-        "SELECT 
-               t.id,
-               t.name AS track_name,
-               t.uri,
-               t.duration,
-               t.popularity,
-               a.name AS album_name,
-             GROUP_CONCAT(ar.name, ', ') AS artists
-             FROM tracks t
-             JOIN albums a ON t.album_id = a.id
-             LEFT JOIN track_artists ta ON t.id = ta.track_id
-             LEFT JOIN artists ar ON ta.artist_id = ar.id
+    let query = format!(
+        "{}
              GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name
              ORDER BY t.popularity DESC
              LIMIT 10",
-    )?;
+        SELECT_FROM_TRACKS
+    );
+    let mut stmt = conn.prepare(&query)?;
     let tracks = stmt
         .query_map([], |row| {
             Ok(Track {
@@ -393,8 +386,10 @@ pub fn get_top_10_tracks() -> Result<Vec<Track>> {
                 uri: row.get(2)?,
                 duration: row.get(3)?,
                 popularity: row.get(4)?,
-                album: row.get(5)?,
-                artist: row.get(6)?,
+                year: row.get(5)?,
+                mtime: row.get(6)?,
+                album: row.get(7)?,
+                artist: row.get(8)?,
             })
         })?
         .collect::<Result<Vec<Track>, _>>()?;
@@ -409,22 +404,11 @@ pub fn get_tracks_by_uris(uris: Vec<String>) -> Result<Vec<Track>> {
         .collect();
     let cte = format!("CASE {} ELSE {} END", case_parts.join(" "), uris.len());
     let query = format!(
-        "SELECT 
-               t.id,
-               t.name AS track_name,
-               t.uri,
-               t.duration,
-               t.popularity,
-               a.name AS album_name,
-             GROUP_CONCAT(ar.name, ', ') AS artists
-             FROM tracks t
-             JOIN albums a ON t.album_id = a.id
-             LEFT JOIN track_artists ta ON t.id = ta.track_id
-             LEFT JOIN artists ar ON ta.artist_id = ar.id
+        "{}
              WHERE t.uri in ({})
              GROUP BY t.id, t.name, t.uri, t.duration, t.popularity, a.name
              ORDER BY {}",
-        joined_ids, cte
+        SELECT_FROM_TRACKS, joined_ids, cte
     );
 
     // Bind uris twice: once for WHERE IN, once for CASE WHEN
@@ -440,8 +424,10 @@ pub fn get_tracks_by_uris(uris: Vec<String>) -> Result<Vec<Track>> {
                 uri: row.get(2)?,
                 duration: row.get(3)?,
                 popularity: row.get(4)?,
-                album: row.get(5)?,
-                artist: row.get(6)?,
+                year: row.get(5)?,
+                mtime: row.get(6)?,
+                album: row.get(7)?,
+                artist: row.get(8)?,
             })
         })?
         .collect::<Result<Vec<Track>, _>>()?;
@@ -608,6 +594,8 @@ pub fn get_tracks_by_albums(ids: Vec<i64>) -> Result<Vec<Track>> {
           t.uri,
           t.duration,
           t.popularity,
+          t.year,
+          t.mtime,
           (SELECT GROUP_CONCAT(name, ', ')
            FROM (
              SELECT ar.name
@@ -636,8 +624,10 @@ pub fn get_tracks_by_albums(ids: Vec<i64>) -> Result<Vec<Track>> {
                 uri: row.get(4)?,
                 duration: row.get(5)?,
                 popularity: row.get(6)?,
+                year: row.get(7)?,
+                mtime: row.get(8)?,
                 album: row.get(1)?,
-                artist: row.get(7)?,
+                artist: row.get(9)?,
             })
         })?
         .collect::<Result<Vec<Track>, _>>()?;
@@ -894,6 +884,8 @@ pub fn get_other_tracks_of_same_album(track_id: i64) -> Result<Vec<Track>> {
                t.uri,
                t.duration,
                t.popularity,
+               t.year,
+               t.mtime,
                a.name AS album_name,
                (SELECT GROUP_CONCAT(ar.name, ', ')
                 FROM (SELECT DISTINCT ta.artist_id FROM track_artists ta WHERE ta.track_id = t.id) u
@@ -913,8 +905,10 @@ pub fn get_other_tracks_of_same_album(track_id: i64) -> Result<Vec<Track>> {
                 uri: row.get(2)?,
                 duration: row.get(3)?,
                 popularity: row.get(4)?,
-                album: row.get(5)?,
-                artist: row.get(6)?,
+                year: row.get(5)?,
+                mtime: row.get(6)?,
+                album: row.get(7)?,
+                artist: row.get(8)?,
             })
         })?
         .collect::<Result<Vec<_>>>()?;
@@ -931,6 +925,8 @@ pub fn get_top_20_tracks_by_artist_name(name: &str) -> Result<Vec<Track>> {
                t.uri,
                t.duration,
                t.popularity,
+               t.year,
+               t.mtime,
                a.name AS album_name,
                (SELECT GROUP_CONCAT(ar2.name, ', ')
                 FROM (SELECT DISTINCT ta2.artist_id FROM track_artists ta2 WHERE ta2.track_id = t.id) u
@@ -956,8 +952,10 @@ pub fn get_top_20_tracks_by_artist_name(name: &str) -> Result<Vec<Track>> {
                 uri: row.get(2)?,
                 duration: row.get(3)?,
                 popularity: row.get(4)?,
-                album: row.get(5)?,
-                artist: row.get(6)?,
+                year: row.get(5)?,
+                mtime: row.get(6)?,
+                album: row.get(7)?,
+                artist: row.get(9)?,
             })
         })?
         .collect::<Result<Vec<_>>>()?;
