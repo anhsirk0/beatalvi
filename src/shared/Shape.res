@@ -9,7 +9,8 @@ module Bytes = {
 }")
 
   let setImageSrc: (objectUrl, string) => unit = %raw("function(url, id) {
-    document.getElementById(id).src = url;
+    let el = document.getElementById(id);
+    if (el) el.src = url;
 }")
 
   let setCover = (data: Nullable.t<t>, id) => {

@@ -1,6 +1,7 @@
 use std::{fs, path::PathBuf};
 
 const NAME: &str = "beatalvi";
+const DEV: bool = true;
 
 fn get_config_dir() -> PathBuf {
     dirs::config_dir().expect("config dir not found").join(NAME)
@@ -10,20 +11,18 @@ pub fn get_cache_dir() -> PathBuf {
 }
 
 pub fn get_db_path() -> PathBuf {
-    get_config_dir().join("beatalvi.db")
-    // get_config_dir().join("beatalvi-dev.db")
+    let name = if DEV { "beatalvi-dev" } else { "beatalvi" };
+    get_config_dir().join(format!("{}.db", name))
 }
 
 pub fn get_playlist_db_path() -> PathBuf {
-    get_config_dir().join("playlists.db")
-    // get_config_dir().join("playlists-dev.db")
+    let name = if DEV { "playlists-dev" } else { "playlists" };
+    get_config_dir().join(format!("{}.db", name))
 }
 
 pub fn get_music_dir() -> PathBuf {
-    dirs::home_dir()
-        .expect("failed to get home dir")
-        .join("Music")
-    // .join("test")
+    let path = if DEV { "test" } else { "Music" };
+    dirs::home_dir().expect("failed to get home dir").join(path)
 }
 
 pub fn create_config_dir_if_not_exists() -> PathBuf {

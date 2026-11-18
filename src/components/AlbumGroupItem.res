@@ -1,3 +1,14 @@
+module Cover = {
+  @react.component
+  let make = (~id, ~name) => {
+    let _ = Hook.useFetch({
+      fn: () => Invoke.getAlbumCoverArt({album: name, size: Shape.CoverSize.Small}),
+      onSuccess: Shape.Bytes.setCover(_, id),
+    })
+
+    <img alt="" id className="object-cover h-full z-10" />
+  }
+}
 module TrackItem = {
   @react.component
   let make = (~track: Shape.Track.item, ~idx) => {
@@ -33,19 +44,13 @@ let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~id
   let (collapsed, toggleCollapsed, setCollapsed) = Hook.useToggle(~init=closed)
 
   let id = `group-${idx->Int.toString}-${group.id->Float.toString}`
-  let _ = Hook.useFetch({
-    fn: () => Invoke.getAlbumCoverArt({album: group.name, size: Shape.CoverSize.Small}),
-    onSuccess: Shape.Bytes.setCover(_, id),
-  })
 
   React.useEffect(() => {
     setCollapsed(_ => closed)
     None
   }, [closed])
 
-  <div
-    id={`group-${idx->Int.toString}`} className={`animate-slide-up flex flex-col r-gap px-1 ${cls}`}
-  >
+  <div className={`animate-slide-up flex flex-col r-gap px-1 ${cls}`}>
     <div
       onClick={_ => toggleCollapsed()}
       className="flex gap-4 r-gap cursor-pointer hover:bg-primary/10 rounded-box"
@@ -53,7 +58,7 @@ let make = (~group: Shape.Album.group, ~closed=false, ~showTrackCount=false, ~id
       <div
         className="size-12 2xl:size-14 aspect-square bg-primary/40 rounded-box flex shrink-0 overflow-hidden relative isolate group nb-outline"
       >
-        <img alt="" id className="object-cover h-full z-10" />
+        <Cover id name=group.name />
         <div className="center p-4 absolute inset-0 animate-fade">
           <p className="r-text-2xl text-center text-base-content font-serif">
             {Constant.logo->React.string}

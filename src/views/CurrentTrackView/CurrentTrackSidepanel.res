@@ -12,7 +12,7 @@ module TrackList = {
         switch containerRef.current->Nullable.toOption {
         | Some(flex) =>
           switch scrollToIdx {
-          | Some(idx) => flex->Virtuoso.scrollToIndex({index: idx})
+          | Some(idx) => flex->Virtuoso.scrollToIndex({index: idx, behavior: #smooth})
           | None => ignore()
           }
         | None => ignore()

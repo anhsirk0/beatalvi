@@ -8,17 +8,6 @@ module Item = {
     | None => false
     }
 
-    React.useEffect(() => {
-      if hasTrack {
-        setTimeout(() => {
-          `#group-${idx->Int.toString}`->Domapi.querySelectAndThen(
-            Domapi.Scroll.intoView(_, {behavior: Smooth, block: Center}),
-          )
-        }, 800)->ignore
-      }
-      None
-    }, [hasTrack])
-
     <AlbumGroupItem group closed={!hasTrack} showTrackCount=true idx cls="mb-4" />
   }
 }
@@ -47,18 +36,45 @@ module Item = {
 
 @react.component
 let make = () => {
+  let currentTrack = Store.Player.useShallow(s => s.data.track)
   let playings = Hook.useFetch({fn: Invoke.getPlayingAlbumGroups})
+  let containerRef = React.useRef(Nullable.null)
   let scrollerRef = Lenis.useScroller()
+
+  React.useEffect(() => {
+    let idx = switch playings {
+    | Loading | Failed => None
+    | Success(groups) =>
+      groups->Array.findIndexOpt(group => {
+        switch currentTrack {
+        | Some(track) => group.tracks->Array.some(t => t.uri == track.uri)
+        | None => false
+        }
+      })
+    }
+
+    let id = setTimeout(() => {
+      switch containerRef.current->Nullable.toOption {
+      | Some(flex) =>
+        switch idx {
+        | Some(idx) => flex->Virtuoso.scrollToIndex({index: idx, behavior: #smooth})
+        | None => ignore()
+        }
+      | None => ignore()
+      }
+    }, 400)
+    Some(() => clearTimeout(id))
+  }, [playings])
 
   <React.Fragment>
     // <UpNext />
     <p className="text-60 r-text uppercase"> {"Playing Albums"->React.string} </p>
     {switch playings {
-    | Loading => <div className="loading loading-spinner"></div>
-    | Failed => React.null
+    | Loading | Failed => React.null
     | Success(groups) =>
       groups->Array.length > 0
         ? <Virtuoso
+            ref=containerRef
             className="flex flex-col min-h-0 gap-4 2xl:gap-8 grow"
             style={{display: "flex", flexDirection: "column", height: "100%", flexGrow: "1"}}
             data=groups
