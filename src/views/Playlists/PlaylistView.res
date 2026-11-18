@@ -18,11 +18,17 @@ module TrackGrid = {
 
 module Content = {
   @react.component
-  let make = (~playlist: Shape.Playlist.playlist, ~tracks) => {
+  let make = (~playlist: Shape.Playlist.playlist, ~allTracks) => {
     let sort = Store.Config.useShallow(s =>
       s.config.sortMap->Dict.get(playlist.name)->Option.getOr(Shape.Sort.default)
     )
-    let (trackCount, trackDuration) = (tracks->Array.length, tracks->Shape.Track.totalDuration)
+    let (trackCount, trackDuration) = (
+      allTracks->Array.length,
+      allTracks->Shape.Track.totalDuration,
+    )
+    let tracks = React.useMemo3(() => {
+      playlist.isSmart ? allTracks : allTracks->Shape.Track.sortBy(sort)
+    }, (sort, allTracks, playlist.isSmart))
 
     let onPlay = (~shuffle) =>
       Invoke.playMany({uris: tracks->Array.map(t => t.uri), shuffle})->ignore
@@ -30,14 +36,6 @@ module Content = {
     let onStartRandomPlay = _ => onPlay(~shuffle=true)
     let onTrackPlay = idx =>
       Invoke.playManyFromIndex({uris: tracks->Array.map(t => t.uri), index: idx})->ignore
-
-    let sortedTracks = React.useMemo3(() => {
-      if playlist.isSmart {
-        tracks
-      } else {
-        tracks->Shape.Track.sortBy(sort)
-      }
-    }, (sort, tracks, playlist.isSmart))
 
     <React.Fragment>
       <div className="flex gap-4 items-end pb-4 -mt-2 border-b-2 border-accent">
@@ -64,7 +62,7 @@ module Content = {
         </Route.Link>
       </div>
       {tracks->Array.length > 0
-        ? <TrackGrid key={sort->Shape.Sort.toString} tracks=sortedTracks onTrackPlay />
+        ? <TrackGrid key={sort->Shape.Sort.toString} tracks onTrackPlay />
         : <div className="center r-gap flex-col border-t-2 border-accent">
             <p className="font-fraunces r-text-3xl font-light text-center italic mt-[20%]">
               {"No song fits these words yet."->React.string}
@@ -104,7 +102,7 @@ module Main = {
       </Route.Link>
       {switch tracks {
       | Loading | Failed => React.null
-      | Success(tracks) => <Content playlist=info tracks />
+      | Success(tracks) => <Content playlist=info allTracks=tracks />
       }}
     </div>
   }
