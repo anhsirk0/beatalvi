@@ -955,7 +955,7 @@ pub fn get_top_20_tracks_by_artist_name(name: &str) -> Result<Vec<Track>> {
                 year: row.get(5)?,
                 mtime: row.get(6)?,
                 album: row.get(7)?,
-                artist: row.get(9)?,
+                artist: row.get(8)?,
             })
         })?
         .collect::<Result<Vec<_>>>()?;
