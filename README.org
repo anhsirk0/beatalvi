@@ -8,9 +8,9 @@
 
 Beatalvi is a local music player for the files you own.\\
 Website: https://anhsirk0.codeberg.page/beatalvi/
-+ Git repo on Codeberg: <https://codeberg.org/anhsirk0/gacp>
++ Git repo on Codeberg: <https://codeberg.org/anhsirk0/beatalvi>
   - Mirrors:
-    + GitHub: <https://github.com/anhsirk0/gacp>
+    + GitHub: <https://github.com/anhsirk0/beatalvi>
 
 ** Screenshots
 https://anhsirk0.codeberg.page/beatalvi#screenshots
