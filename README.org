@@ -4,10 +4,14 @@
 #+ATTR_HTML: :style display: block; margin: auto;    
 #+CAPTION: Logo
 #+NAME: logo.svg
-[[https://codeberg.org/anhsirk0/beatalvi/raw/branch/main/public/icon.svg]]
+[[https://anhsirk0.codeberg.page/beatalvi/icon.svg]]
 
 Beatalvi is a local music player for the files you own.\\
 Website: https://anhsirk0.codeberg.page/beatalvi/
++ Git repo on Codeberg: <https://codeberg.org/anhsirk0/gacp>
+  - Mirrors:
+    + GitHub: <https://github.com/anhsirk0/gacp>
+
 ** Screenshots
 https://anhsirk0.codeberg.page/beatalvi#screenshots
 ** Features
