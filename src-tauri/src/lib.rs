@@ -393,10 +393,10 @@ fn get_volume(state: State<AppState>) -> i32 {
 
 #[tauri::command]
 fn set_volume(volume: i32, app_handle: AppHandle, state: State<AppState>) {
-    let vol = ((volume as f64) / 80.).max(0.).min(1.);
+    let vol = ((volume as f64) / 100.).max(0.).min(1.);
     match state.player.lock().unwrap().set_volume(vol) {
         Ok(_) => {
-            let _ = app_handle.emit(event::VOLUME, (vol * 80.) as i8);
+            let _ = app_handle.emit(event::VOLUME, (vol * 100.) as i8);
         }
         Err(e) => eprintln!("{:?}", e),
     }
